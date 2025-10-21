@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Your Profiles</h3>
+{% for profile in profiles %}
+    <div class="post card">
+        <table>
+            <tr>
+                <td valign="top">
+                    {% if profile.avatar %}
+                        <a target="_blank" href="{{ profile.avatar.url }}">
+                            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+                        </a>
+                    {% else %}
+                        <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
+                    {% endif %}
+                </td>
+                <td>&nbsp;&nbsp;</td>
+                <td>
+                    <b>{{ profile.displayname }} - {{ profile.profiletype }}</b>
+                    {% if profile.bio %}<p>{{ profile.bio|linebreaksbr }}</p>{% endif %}
+                    <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% empty %}
+    <p>You haven’t added any profiles yet.</p>
+{% endfor %}
+
+<div class="post card" style="margin-top:20px;">
+    <h3>Create New Profile</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Profile</button>
+    </form>
+</div>
+{% endblock %}

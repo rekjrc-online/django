@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <br>
+    <div class="post card" style="max-width: 800px;">
+        <h3>Create New Post</h3>
+        <form method="post" enctype="multipart/form-data" style="width: 100%;">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 10px; width: 100%;">
+                {{ form.profile_id.label_tag }}
+                {{ form.profile_id }}
+            </div>
+
+            <div style="margin-bottom: 10px; width: 100%;">
+                {{ form.content }}
+            </div>
+
+            <div style="margin-bottom: 10px; width: 100%;">
+                Image: {{ form.image }}
+            </div>
+
+            <div style="margin-bottom: 10px; width: 100%;">
+                Video URL: {{ form.video_url }}
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                Post
+            </button>
+        </form>
+    </div>
+{% endblock %}

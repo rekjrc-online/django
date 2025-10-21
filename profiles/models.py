@@ -1,0 +1,23 @@
+from django.db import models
+from django.conf import settings
+from rekjrc.base_models import BaseModel
+
+class Profile(BaseModel):
+	PROFILE_TYPE_CHOICES = [
+        ('PERSON', 'Person'),
+        ('TRUCK', 'Truck'),
+        ('STORE', 'Store'),
+    ]
+	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+	profiletype = models.CharField(max_length=30, choices=PROFILE_TYPE_CHOICES)
+	displayname = models.CharField(max_length=50, default='')
+	bio = models.TextField(blank=True)
+	avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+	location = models.CharField(max_length=100, blank=True)
+	website = models.URLField(blank=True)
+	birthdate = models.DateField(null=True, blank=True)
+	followers_count = models.PositiveIntegerField(default=0)
+	following_count = models.PositiveIntegerField(default=0)
+
+	def __str__(self):
+		return self.displayname

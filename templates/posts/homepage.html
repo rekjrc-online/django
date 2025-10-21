@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% comment %}
+  {% if request.user.is_authenticated %}
+    <div class="post card" style="max-width: 800px;">
+        <h3>Create New Post</h3>
+        <form method="post" enctype="multipart/form-data" style="width: 100%;">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 10px; width: 100%;">
+                {{ post_form.profile_id.label_tag }}
+                {{ post_form.profile_id }}
+            </div>
+
+            <div style="margin-bottom: 10px; width: 100%;">
+                {{ post_form.content }}
+            </div>
+
+            <div style="margin-bottom: 10px; width: 100%;">
+                Image: {{ post_form.image }}
+            </div>
+
+            <div style="margin-bottom: 10px; width: 100%;">
+                Video URL: {{ post_form.video_url }}
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                Post
+            </button>
+        </form>
+    </div>
+    <hr />
+  {% endif %}
+  {% endcomment %}
+  <br>
+  <div id="feed">
+    <div class="post">
+      <h3>RekjRC Feed</h3>
+    </div>
+    {% for post in posts %}
+      <div class="post">
+        <strong>{{ post.profile_id.displayname }} - {{ post.profile_id.profiletype }}</strong>
+        <p>{{ post.content }}</p>
+
+        {% if post.image %}
+          <a target="_blank" href="{{ post.image.url }}">
+            <img src="{{ post.image.url }}" alt="Post image" style="max-width:200px;">
+          </a>
+        {% endif %}
+
+        {% if post.video_url %}
+          <p><a href="{{ post.video_url }}" target="_blank">Watch Video</a></p>
+        {% endif %}
+
+        <div class="metrics">
+          ❤️ {{ post.likes_count }} | 💬 {{ post.comments_count }} | 🔁 {{ post.reposts_count }}
+        </div>
+      </div>
+    {% empty %}
+      <p>No posts yet. Be the first to post!</p>
+    {% endfor %}
+  </div>
+
+{% endblock %}

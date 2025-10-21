@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RekjRC Online</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+    <nav>
+        <b>RekjRC Online</b>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="{% url 'homepage' %}">Home</a>
+        {% if request.user.is_authenticated %}
+            <a href="/profiles/">Profiles</a>
+            {% if request.user.is_staff %}
+                <a href="/admin/">Admin</a>
+            {% endif %}
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="submit" value="Logout" class="nav-logout-button" />
+            </form>
+        {% else %}
+            <a href="/humans/login/">Login</a>
+        {% endif %}
+    </nav>
+
+    <div class="container">
+        <div class="left-col">
+            <div class="menu">
+                <h3>Menu</h3>
+                <ul>
+                    <li><a href="{% url 'homepage' %}">Home</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a href="/profiles/">Profiles</a></li>
+                        <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <li><a href="javascript:document.getElementById('logoutform').submit()">Logout</a></li>
+                        </form>
+                    {% else %}
+                        <li><a href="/humans/login/">Login</a></li>
+                    {% endif %}
+                </ul>
+                {% if request.user.is_authenticated %}
+                    <p>
+                        <input type="button"
+                            value="New Post"
+                            onclick="self.location.href='/posts/create/'"
+                            style="width:10em;height:2em;">
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="middle-col">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="right-col">
+            <div class="widgets">
+                <h3>Trending</h3>
+                <ul>
+                    <li>#RacingRC</li>
+                    <li>#Electric</li>
+                    <li>#DIY</li>
+                </ul>
+            </div>
+            <div class="widgets">
+                <h3>Who to follow</h3>
+                <ul>
+                    <li>User1</li>
+                    <li>User2</li>
+                    <li>User3</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

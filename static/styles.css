@@ -1,0 +1,222 @@
+/* ---------- Base Layout ---------- */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-sizing: border-box;
+    overflow: hidden; /* prevent page-level scrolling */
+}
+
+/* ---------- Navigation ---------- */
+nav {
+    text-align: center;
+    background-color: #2c2c2c;
+    border-bottom: 1px solid #444;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav a {
+    margin-right: 15px;
+    text-decoration: none;
+    color: #1da1f2;
+    font-weight: bold;
+}
+
+/* ---------- Responsive Layout ---------- */
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px;
+    gap: 20px;
+    box-sizing: border-box;
+    /* No fixed height for better responsiveness */
+}
+
+/* ---------- Columns ---------- */
+.left-col,
+.right-col {
+    flex: 0 0 200px; /* desktop width */
+    background-color: #1b1b1d;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+    position: sticky;
+    top: 60px;
+}
+
+.middle-col {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: calc(100vh - 40px);
+    box-sizing: border-box;
+}
+/* ---------- Custom Scrollbar ---------- */
+
+/* For Chrome, Edge, Brave, etc. */
+.middle-col::-webkit-scrollbar {
+    width: 16px; /* increase from 10px to 16px */
+}
+
+.middle-col::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 10px;
+}
+
+.middle-col::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 10px;
+    border: 3px solid #2a2a2a; /* slightly thicker border to match wider scrollbar */
+}
+
+.middle-col::-webkit-scrollbar-thumb:hover {
+    background-color: #1da1f2;
+}
+
+/* For Firefox */
+.middle-col {
+    scrollbar-width: auto; /* 'auto' makes it wider than 'thin' */
+    scrollbar-color: #444 #2a2a2a;
+}
+
+/* ---------- Cards and Posts ---------- */
+.post, .card {
+    background-color: #1b1b1d;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.post.card {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+}
+
+/* ---------- Post Header ---------- */
+.post .post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post .displayname {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.post .username {
+    color: #aaaaaa;
+    font-size: 0.9em;
+}
+
+/* ---------- Post Content ---------- */
+.post .metrics {
+    margin-top: 10px;
+    color: #888;
+    font-size: 0.9em;
+}
+
+.post img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* ---------- Inputs ---------- */
+.full-width,
+.post.card input,
+.post.card select,
+.post.card textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    resize: vertical;
+}
+
+/* ---------- Buttons ---------- */
+.post.card button {
+    width: 100%;
+    padding: 10px;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.post.card button:hover {
+    background-color: #0d8ddb;
+}
+
+/* ---------- Links ---------- */
+a {
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+.delete-link {
+    color: #e0245e;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* ---------- Responsive Stacking for Mobile ---------- */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto; /* allow content to expand */
+        padding: 10px;
+    }
+
+    .left-col,
+    .middle-col,
+    .right-col {
+        flex: 1 1 100%;
+        width: 100%;
+        height: auto;
+        position: relative; /* remove sticky */
+        overflow: visible;   /* allow content to expand */
+        margin-bottom: 20px;
+    }
+}
+
+/* ---------- Tablet adjustment (optional) ---------- */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .left-col,
+    .right-col {
+        flex: 0 0 180px; /* narrower sidebars */
+        height: calc(100vh - 100px);
+    }
+
+    .middle-col {
+        flex: 1 1 auto;
+        height: calc(100vh - 100px);
+    }
+}
