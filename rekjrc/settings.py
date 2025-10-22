@@ -73,6 +73,12 @@ TEMPLATES = [
     },
 ]
 
+# For Django 5.x+ the format requires scheme (http or https)
+CSRF_TRUSTED_ORIGINS = [
+    "https://www.rekjrc.com",
+    "https://rekjrc.com",
+]
+
 # ------------------------------
 # WSGI
 # ------------------------------
