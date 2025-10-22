@@ -1,7 +1,53 @@
-<h1>Update Account</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-<a href="/">Back to feed</a>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="middle-col">
+    <div class="card" style="max-width: 600px; margin: 30px auto; padding: 25px;">
+        <h2 style="text-align:center; margin-bottom:20px;">My Account</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Username -->
+            <div style="margin-bottom: 15px;">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+
+            <!-- Email -->
+            <div style="margin-bottom: 15px;">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+
+            <!-- First name -->
+            <div style="margin-bottom: 15px;">
+                {{ form.first_name.label_tag }}
+                {{ form.first_name }}
+            </div>
+
+            <!-- Last name -->
+            <div style="margin-bottom: 15px;">
+                {{ form.last_name.label_tag }}
+                {{ form.last_name }}
+            </div>
+
+            <button type="submit" style="
+                width: 100%;
+                padding: 10px;
+                background-color: #1da1f2;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            ">
+                Save Changes
+            </button>
+        </form>
+
+        <p style="text-align:center; margin-top:15px;">
+            <a href="/" style="color:#1da1f2; text-decoration:none;">Back to Home</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

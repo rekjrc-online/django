@@ -10,3 +10,14 @@ class HumanRegistrationForm(UserCreationForm):
     class Meta:
         model = Human
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
+class HumanForm(forms.ModelForm):
+    class Meta:
+        model = Human
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Username'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'First name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Last name'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
+        }
