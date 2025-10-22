@@ -12,43 +12,16 @@
             </a>
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" style="text-align: left;">
             {% csrf_token %}
 
-            <!-- Displayname -->
-            <div style="margin-bottom: 10px; text-align: left;">
-                {{ form.displayname.label_tag }}
-                {{ form.displayname }}
-            </div>
-
-            <!-- Bio -->
-            <div style="margin-bottom: 10px; text-align: left;">
-                {{ form.bio.label_tag }}
-                {{ form.bio }}
-            </div>
-
-            <!-- Avatar with circular preview -->
-            <div style="margin-bottom: 10px; text-align: left;">
-                {{ form.avatar.label_tag }}
-                {{ form.avatar }}
-            </div>
-
-            <!-- Location -->
-            <div style="margin-bottom: 10px; text-align: left;">
-                {{ form.location.label_tag }}
-                {{ form.location }}
-            </div>
-
-            <!-- Website -->
-            <div style="margin-bottom: 10px; text-align: left;">
-                {{ form.website.label_tag }}
-                {{ form.website }}
-            </div>
+            {{ form.as_p }}
 
             <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
                 Save
             </button>
         </form>
+
         <a href="{% url 'delete-profile' profile.pk %}" style="display:block; margin-top:15px; padding:10px; background-color:red; color:white; text-align:center; border-radius:5px; text-decoration:none;">
             Delete Profile
         </a>
