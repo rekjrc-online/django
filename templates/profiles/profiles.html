@@ -7,20 +7,20 @@
         <table>
             <tr>
                 <td valign="top" align="center">
-                    {{ profile.profiletype }}<p>
                     {% if profile.avatar %}
                         <a target="_blank" href="{{ profile.avatar.url }}">
                             <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
                         </a>
                     {% else %}
                         <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
-                    {% endif %}
+                    {% endif %}<p>
+                    {{ profile.get_profiletype_display }}
+                    <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a>
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td valign="top">
                     <b>{{ profile.displayname }}</b>
                     {% if profile.bio %}<p>{{ profile.bio|linebreaksbr }}</p>{% endif %}
-                    <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a>
                 </td>
             </tr>
         </table>

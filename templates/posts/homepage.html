@@ -40,7 +40,9 @@
     </div>
     {% for post in posts %}
       <div class="post">
-        <strong>{{ post.profile_id.displayname }} - {{ post.profile_id.profiletype }}</strong>
+        <strong>{{ post.profile_id.displayname }}</strong> -
+        {{ post.profile_id.get_profiletype_display }} -
+        {{ post.insertdate|date:"m/d/y h:iA" }}
         <p>{{ post.content|linebreaksbr }}</p>
 
         {% if post.image %}
