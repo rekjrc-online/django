@@ -1,4 +1,5 @@
 import os
+import environ
 from pathlib import Path
 
 # ------------------------------
@@ -6,12 +7,16 @@ from pathlib import Path
 # ------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Initialize environment
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # ------------------------------
 # SECURITY
 # ------------------------------
-SECRET_KEY = 'django-insecure-w6_g!$#eajvl7ey-d=u1@9lg4h#=1a0jpudk1i&26n2jem0+9c'
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.1.1.63']
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG')
+ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com']
 
 # ------------------------------
 # Installed Apps
@@ -78,16 +83,12 @@ WSGI_APPLICATION = "rekjrc.wsgi.application"
 # ------------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'RekjRC_django',
-        'USER': 'rekjrc_django',
-        'PASSWORD': 'TtQJBQKFy5vydN35Fh3zYdmv',
-        'HOST': 'localhost,1433',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'Encrypt': 'yes',
-            'TrustServerCertificate': 'yes',
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT', default='5432'),
     }
 }
 

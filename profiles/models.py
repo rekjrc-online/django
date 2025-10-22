@@ -4,8 +4,8 @@ from rekjrc.base_models import BaseModel
 
 class Profile(BaseModel):
 	PROFILE_TYPE_CHOICES = [
-        ('PERSON', 'Person'),
-        ('TRUCK', 'Truck'),
+        ('DRIVER', 'Driver'),
+        ('MODEL', 'Model'),
         ('STORE', 'Store'),
     ]
 	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
@@ -15,7 +15,6 @@ class Profile(BaseModel):
 	avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 	location = models.CharField(max_length=100, blank=True)
 	website = models.URLField(blank=True)
-	birthdate = models.DateField(null=True, blank=True)
 	followers_count = models.PositiveIntegerField(default=0)
 	following_count = models.PositiveIntegerField(default=0)
 
