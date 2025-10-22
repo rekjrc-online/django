@@ -6,7 +6,8 @@
     <div class="post card">
         <table>
             <tr>
-                <td valign="top">
+                <td valign="top" align="left">
+                    {{ profile.profiletype }}<p>
                     {% if profile.avatar %}
                         <a target="_blank" href="{{ profile.avatar.url }}">
                             <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
@@ -17,7 +18,7 @@
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-                    <b>{{ profile.displayname }} - {{ profile.profiletype }}</b>
+                    <b>{{ profile.displayname }} - </b>
                     {% if profile.bio %}<p>{{ profile.bio|linebreaksbr }}</p>{% endif %}
                     <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a>
                 </td>
