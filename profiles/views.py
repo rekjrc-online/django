@@ -5,6 +5,11 @@ from .models import Profile
 from .forms import ProfileCreateForm, ProfileEditForm
 from django.shortcuts import get_object_or_404
 
+def view_profile(request, pk):
+    profile = get_object_or_404(Profile, pk=pk)
+    posts_with_images = profile.posts.filter(image__isnull=False).exclude(image='')
+    return render(request, 'profiles/view_profile.html', {'profile': profile, 'posts_with_images': posts_with_images})
+
 @login_required
 def edit_profile(request, pk):
     profile = get_object_or_404(Profile, pk=pk, human=request.user)

@@ -15,7 +15,8 @@
                         <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                     {% endif %}<p>
                     {{ profile.get_profiletype_display }}
-                    <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a>
+                    <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a> /
+                    <a href="{% url 'view-profile' profile.pk %}">View</a>
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td valign="top">
