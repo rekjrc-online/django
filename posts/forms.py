@@ -26,4 +26,4 @@ class PostForm(forms.ModelForm):
                 Profile.objects
                     .filter(human=human)
                     .order_by('profiletype', 'displayname'))
-        self.fields['profile_id'].label_from_instance = lambda obj: f"{obj.profiletype} - {obj.displayname}"
+        self.fields['profile_id'].label_from_instance = lambda obj: f"{obj.get_profiletype_display()} - {obj.displayname}"
