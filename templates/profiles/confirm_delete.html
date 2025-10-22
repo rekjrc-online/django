@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="middle-col">
+    <h3>Delete Profile</h3>
+    <p>Are you sure you want to delete your profile "{{ profile.displayname }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color:red; color:white; padding:10px; border:none; border-radius:5px;">
+            Yes, delete my profile
+        </button>
+        <a href="{% url 'profiles-list-create' %}" style="margin-left:15px;">Cancel</a>
+    </form>
+</div>
+{% endblock %}
