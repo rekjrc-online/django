@@ -17,8 +17,8 @@
                     {% endif %}
                 </td>
                 <td>&nbsp;&nbsp;</td>
-                <td>
-                    <b>{{ profile.displayname }} - </b>
+                <td valign="top">
+                    <b>{{ profile.displayname }}</b>
                     {% if profile.bio %}<p>{{ profile.bio|linebreaksbr }}</p>{% endif %}
                     <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a>
                 </td>
