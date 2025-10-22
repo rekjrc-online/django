@@ -23,6 +23,7 @@ class Profile(BaseModel):
 		return self.displayname
 	
 	def save(self, *args, **kwargs):
+		print('SAAAAAAVE')
 		super().save(*args, **kwargs)  # Save first to ensure the image file exists
 
 		if self.avatar:
