@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from rekjrc.base_models import BaseModel
 from profiles.models import Profile
+from PIL import Image
 
 class Post(BaseModel):
     human_id = models.ForeignKey (
@@ -25,3 +26,12 @@ class Post(BaseModel):
 
     def __str__(self):
         return f"{self.profile_id.displayname}: {self.content[:50]}"
+	
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.image:
+            img_path = self.image.path
+            img = Image.open(img_path)
+            max_size = (1024, 1024)
+            img.thumbnail(max_size)
+            img.save(img_path, optimize=True, quality=85)

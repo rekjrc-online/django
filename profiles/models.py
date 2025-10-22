@@ -22,4 +22,11 @@ class Profile(BaseModel):
 	def __str__(self):
 		return self.displayname
 	
-	
+	def save(self, *args, **kwargs):
+		super().save(*args, **kwargs)  # Save first to ensure the image file exists
+		if self.avatar:
+			img_path = self.avatar.path
+			img = Image.open(img_path)
+			max_size = (1024, 1024)
+			img.thumbnail(max_size)
+			img.save(img_path, optimize=True, quality=85)

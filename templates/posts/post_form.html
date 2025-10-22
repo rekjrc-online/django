@@ -4,29 +4,43 @@
     <br>
     <div class="post card" style="max-width: 800px;">
         <h3>Create New Post</h3>
-        <form method="post" enctype="multipart/form-data" style="width: 100%;">
-            {% csrf_token %}
-            
-            <div style="margin-bottom: 10px; width: 100%;">
-                {{ form.profile_id.label_tag }}
-                {{ form.profile_id }}
-            </div>
-
-            <div style="margin-bottom: 10px; width: 100%;">
-                {{ form.content }}
-            </div>
-
-            <div style="margin-bottom: 10px; width: 100%;">
-                Image: {{ form.image }}
-            </div>
-
-            <div style="margin-bottom: 10px; width: 100%;">
-                Video URL: {{ form.video_url }}
-            </div>
-
-            <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-                Post
-            </button>
-        </form>
+        {% if user.profiles.exists %}
+            <form method="post" enctype="multipart/form-data" style="width: 100%;">
+                {% csrf_token %}
+                <div style="margin-bottom: 10px; width: 100%;">
+                    {{ form.profile_id.label_tag }}
+                    {{ form.profile_id }}
+                </div>
+                <div style="margin-bottom: 10px; width: 100%; text-align:right;">
+                    {{ form.content }}
+                    <span id="char-count" style="font-size:0.9em; color:gray;">200</span> characters remaining
+                </div>
+                <script>
+                    const textarea = document.getElementById('{{ form.content.id_for_label }}');
+                    const charCount = document.getElementById('char-count');
+                    const maxLength = 200;
+                    textarea.setAttribute('maxlength', maxLength);
+                    textarea.addEventListener('input', () => {
+                        const remaining = maxLength - textarea.value.length;
+                        charCount.textContent = remaining;
+                    });
+                </script>
+                <div style="margin-bottom: 10px; width: 100%;">
+                    Image: {{ form.image }}
+                </div>
+                <div style="margin-bottom: 10px; width: 100%;">
+                    Video URL: {{ form.video_url }}
+                </div>
+                <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                    Post
+                </button>
+            </form>
+        {% else %}
+            <p>
+                You must create a profile before you can post.
+                <br /><br />
+                <a href="/profiles/">Create a profile</a>
+            </p>
+        {% endif %}
     </div>
 {% endblock %}
