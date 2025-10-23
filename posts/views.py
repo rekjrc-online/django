@@ -45,7 +45,6 @@ class HomepageView(ListView):
             hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
 
         context['hours_remaining'] = hours_remaining
-        print("hours_remaining",hours_remaining)
         return context
 
     def post(self, request, *args, **kwargs):
