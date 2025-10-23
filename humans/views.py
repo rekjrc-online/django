@@ -41,17 +41,11 @@ class HumanUpdateView(UpdateView):
     success_url = '/humans/update'
 
     def get_object(self, queryset=None):
-        if self.request.user.is_authenticated:
-            return self.request.user
-        else:
-            return None
+        return self.request.user
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            user = self.request.user
-        else:
-            user = None
+        user = self.request.user
 
         # Calculate hours_remaining for invitation cooldown
         recent_invite = Invitation.objects.filter(
@@ -63,8 +57,8 @@ class HumanUpdateView(UpdateView):
         if recent_invite:
             elapsed = timezone.now() - recent_invite.insertdate
             hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
-
         context['hours_remaining'] = hours_remaining
+
         return context
 
 class GenerateInvitationView(LoginRequiredMixin, View):

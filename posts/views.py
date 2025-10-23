@@ -9,17 +9,17 @@ from .forms import PostForm
 
 class PostCreateView(CreateView):
     model = Post
-    form_class = PostForm        # <-- use the custom form
+    form_class = PostForm
     template_name = 'posts/post_form.html'
     success_url = '/'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['human'] = self.request.user  # pass logged-in user to form
+        kwargs['human'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        form.instance.human_id = self.request.user  # automatically set author
+        form.instance.human_id = self.request.user
         return super().form_valid(form)
 
 class HomepageView(ListView):
@@ -31,7 +31,7 @@ class HomepageView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
+        user = self.request.user if self.request.user.is_authenticated else None
 
         # Calculate hours_remaining
         recent_invite = Invitation.objects.filter(
