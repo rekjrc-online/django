@@ -1,7 +1,8 @@
 from django.views.generic import ListView, CreateView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import timedelta
 from humans.models import Invitation
 from .models import Post
@@ -27,32 +28,36 @@ class HomepageView(ListView):
     template_name = 'posts/homepage.html'
     context_object_name = 'posts'
     ordering = ['-insertdate']
-    paginate_by = 3
+    paginate_by = 5
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user if self.request.user.is_authenticated else None
+    # ... keep get_context_data and post methods ...
 
-        # Calculate hours_remaining
-        recent_invite = Invitation.objects.filter(
-            Q(from_human=user) | Q(to_human=user),
-            insertdate__gte=timezone.now() - timedelta(hours=72)
-        ).order_by('-insertdate').first()
+    def paginate_queryset(self, queryset, page_size):
+        """
+        Paginate the queryset. For AJAX requests, return empty list if page invalid.
+        Must return exactly 4 values: paginator, page_obj, object_list, is_paginated
+        """
+        paginator = Paginator(queryset, page_size)
+        page_number = self.request.GET.get('page', 1)
 
-        hours_remaining = 0
-        if recent_invite:
-            elapsed = timezone.now() - recent_invite.insertdate
-            hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
+        try:
+            page_obj = paginator.page(page_number)
+            object_list = page_obj.object_list
+        except (EmptyPage, PageNotAnInteger):
+            if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                # AJAX: return empty list instead of 404
+                page_obj = None
+                object_list = []
+                is_paginated = False
+                return paginator, page_obj, object_list, is_paginated
+            else:
+                raise  # normal request still raises 404
 
-        context['hours_remaining'] = hours_remaining
-        return context
+        is_paginated = page_obj.has_other_pages()
+        return paginator, page_obj, object_list, is_paginated
 
-    def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('login')
-        form = PostForm(request.POST, request.FILES, human=request.user)
-        if form.is_valid():
-            new_post = form.save(commit=False)
-            new_post.human_id = request.user
-            new_post.save()
-        return redirect('/')
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # AJAX requests render only the posts partial
+            return render(self.request, 'posts/post_list.html', {'posts': context['posts']})
+        return super().render_to_response(context, **response_kwargs)

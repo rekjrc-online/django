@@ -194,7 +194,9 @@ a {
         height: auto; /* allow content to expand */
         padding: 10px;
     }
-
+    .middle-col {
+        -webkit-overflow-scrolling: touch;
+    }
     .left-col,
     .middle-col,
     .right-col {
@@ -223,7 +225,8 @@ a {
     .middle-col {
         flex: 1 1 auto;
         height: auto;
-    }
+        -webkit-overflow-scrolling: touch;
+   }
 
     html, body {
     min-height: 100%;

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+  <script src="static/scroll.js"></script>
   <br>
   <div id="feed">
     <div class="post">
@@ -11,30 +12,13 @@
         {% endif %}
       </h2>
     </div>
-    {% for post in posts %}
-      <div class="post">
-        <strong><a href="/profiles/{{ post.profile_id.pk }}/view">{{ post.profile_id.displayname }}</a></strong> -
-        {{ post.profile_id.get_profiletype_display }} -
-        {{ post.insertdate|date:"m/d/y h:iA" }}
-        <p>{{ post.content|linebreaksbr }}</p>
+    {% include 'posts/post_list.html' %}
+  </div>
 
-        {% if post.image %}
-          <a target="_blank" href="{{ post.image.url }}">
-            <img src="{{ post.image.url }}" alt="Post image" style="max-width:200px;">
-          </a>
-        {% endif %}
+  <div id="loading" style="display:block;">Loading more posts...</div>
 
-        {% if post.video_url %}
-          <p><a href="{{ post.video_url }}" target="_blank">Watch Video</a></p>
-        {% endif %}
-
-        <div class="metrics">
-          ❤️ {{ post.likes_count }} | 💬 {{ post.comments_count }} | 🔁 {{ post.reposts_count }}
-        </div>
-      </div>
-    {% empty %}
-      <p>No posts yet. Be the first to post!</p>
-    {% endfor %}
+  <div class="post" id="end-message" style="display:none; text-align:center; font-weight:bold;">
+    You have run out of posts
   </div>
 
 {% endblock %}
