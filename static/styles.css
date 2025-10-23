@@ -205,6 +205,11 @@ a {
         overflow: visible;   /* allow content to expand */
         margin-bottom: 20px;
     }
+
+    html, body {
+    min-height: 100%;
+    overflow-y: auto;
+}
 }
 
 /* ---------- Tablet adjustment (optional) ---------- */
@@ -219,4 +224,9 @@ a {
         flex: 1 1 auto;
         height: auto;
     }
+
+    html, body {
+    min-height: 100%;
+    overflow-y: auto;
+}
 }

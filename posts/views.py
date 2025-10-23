@@ -27,7 +27,7 @@ class HomepageView(ListView):
     template_name = 'posts/homepage.html'
     context_object_name = 'posts'
     ordering = ['-insertdate']
-    paginate_by = 20
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

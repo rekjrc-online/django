@@ -16,7 +16,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # ------------------------------
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
-ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com']
+ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com','10.1.1.63']
 
 # ------------------------------
 # Installed Apps
