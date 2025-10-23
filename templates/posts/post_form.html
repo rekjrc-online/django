@@ -4,7 +4,12 @@
     <br>
     <div class="post card" style="max-width: 800px;">
         <h3>Create New Post</h3>
-        {% if user.profile_set.all %}
+        {% if not user.is_verified %}
+            <p class="text-danger">
+                Your account is not verified. You must verify your account before you can post.
+            </p>
+            <a href="/humans/update/">Verify your account</a>
+        {% elif user.profile_set.all %}
             <form method="post" enctype="multipart/form-data" style="width: 100%;">
                 {% csrf_token %}
                 <div style="margin-bottom: 10px; width: 100%;">

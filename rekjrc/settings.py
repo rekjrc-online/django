@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'django_extensions',
+    'phonenumber_field',
     # Your apps
     "humans",
     "profiles",

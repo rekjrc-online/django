@@ -12,7 +12,7 @@
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         <a href="{% url 'homepage' %}">Home</a>
         {% if request.user.is_authenticated %}
-            <a href="/humans/update">My Account</a>
+            <a href="/humans/update">Account</a>
             <a href="/profiles/">Profiles</a>
             {% if request.user.is_staff %}
                 <a href="/admin/" target="_blank">Admin</a>
@@ -33,7 +33,7 @@
                 <ul>
                     <li><a href="{% url 'homepage' %}">Home</a></li>
                     {% if request.user.is_authenticated %}
-                        <li><a href="/humans/update/">My Account</a></li>
+                        <li><a href="/humans/update/">Account</a></li>
                         <li><a href="/profiles/">Profiles</a></li>
                         <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
                             {% csrf_token %}

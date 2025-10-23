@@ -1,5 +1,9 @@
 from django.views.generic import ListView, CreateView
 from django.shortcuts import redirect
+from django.utils import timezone
+from django.db.models import Q
+from datetime import timedelta
+from humans.models import Invitation
 from .models import Post
 from .forms import PostForm
 
@@ -27,10 +31,23 @@ class HomepageView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context['post_form'] = PostForm(human=self.request.user)
+        user = self.request.user
+
+        # Calculate hours_remaining
+        recent_invite = Invitation.objects.filter(
+            Q(from_human=user) | Q(to_human=user),
+            insertdate__gte=timezone.now() - timedelta(hours=72)
+        ).order_by('-insertdate').first()
+
+        hours_remaining = 0
+        if recent_invite:
+            elapsed = timezone.now() - recent_invite.insertdate
+            hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
+
+        context['hours_remaining'] = hours_remaining
+        print("hours_remaining",hours_remaining)
         return context
-    
+
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('login')
