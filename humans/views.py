@@ -41,11 +41,17 @@ class HumanUpdateView(UpdateView):
     success_url = '/humans/update'
 
     def get_object(self, queryset=None):
-        return self.request.user
+        if self.request.user.is_authenticated:
+            return None
+        else:
+            return self.request.user
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
+        if self.request.user.is_authenticated:
+            user = None
+        else:
+            user = self.request.user
 
         # Calculate hours_remaining for invitation cooldown
         recent_invite = Invitation.objects.filter(
