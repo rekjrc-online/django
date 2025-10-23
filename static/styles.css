@@ -212,11 +212,11 @@ a {
     .left-col,
     .right-col {
         flex: 0 0 180px; /* narrower sidebars */
-        height: calc(100vh - 100px);
+        height: auto;
     }
 
     .middle-col {
         flex: 1 1 auto;
-        height: calc(100vh - 100px);
+        height: auto;
     }
 }
