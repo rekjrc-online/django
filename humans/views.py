@@ -58,6 +58,7 @@ class HumanUpdateView(UpdateView):
             elapsed = timezone.now() - recent_invite.insertdate
             hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
         context['hours_remaining'] = hours_remaining
+        context['random_number'] = random.randint(10000000, 99999999)
 
         return context
 

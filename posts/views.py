@@ -1,10 +1,6 @@
 from django.views.generic import ListView, CreateView
-from django.shortcuts import redirect, render
-from django.utils import timezone
-from django.db.models import Q
+from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import timedelta
-from humans.models import Invitation
 from .models import Post
 from .forms import PostForm
 
