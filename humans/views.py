@@ -42,16 +42,16 @@ class HumanUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         if self.request.user.is_authenticated:
-            return None
-        else:
             return self.request.user
+        else:
+            return None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            user = None
-        else:
             user = self.request.user
+        else:
+            user = None
 
         # Calculate hours_remaining for invitation cooldown
         recent_invite = Invitation.objects.filter(
