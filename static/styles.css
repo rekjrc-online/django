@@ -32,7 +32,7 @@ nav a {
 /* ---------- Responsive Layout ---------- */
 .container {
     display: flex;
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 0 10px;
     gap: 20px;
