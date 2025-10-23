@@ -1,12 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <script>
-    const rnd = Math.floor(Math.random() * 90000000) + 10000000;
-    const script = document.createElement('script');
-    script.src = "/static/scroll.js?rnd=" + rnd;
-    document.head.appendChild(script);
-  </script>
+  <script src="static/scroll.js"></script>
   <br>
   <div id="feed">
     <div class="post">
