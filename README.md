@@ -1,11 +1,17 @@
 # django
 
-To install, first create file with full name ".env"
-using the following template
+To install/run locally using sqllite for database:
 
-DEBUG=True (false for prod)
-SECRET_KEY='secret key'
-DB_NAME=database name
-DB_USER=database username
-DB_PASSWORD=database password
-DB_HOST=database host
+1.  git clone https://github.com/rekjrc-online/rekjrc.git
+2.  cd rekjrc
+3.  pip install -r requirements.txt
+4.  rename .env.template to .env
+5.  edit .env
+6.  provide secret key at least 50 characters
+7.  optionally configure postgres entries (sqllite is default)
+8.  optionally edit /rekjrc/rekjrc/settings.py
+    comment out DATABASES=sqllite block
+    uncomment DATABASES=postgres block
+9.  run.bat / run.sh (chmod +x run.sh)
+    (runs "python manage.py runserver 0.0.0.0:8000")
+10. browse to http://localhost:8000
