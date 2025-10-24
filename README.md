@@ -8,11 +8,11 @@ To install/run locally using sqllite for database:
 4.  copy .env.template to .env
 5.  edit .env
 6.  provide secret key at least 50 characters
-    7a. optionally configure postgres entries in .env
-    7b. optionally edit /rekjrc/rekjrc/settings.py
-    comment out DATABASES=sqllite block
-    uncomment DATABASES=postgres block
-7.  migrations.bat ("python manage.py migrate")
-8.  run.bat / run.sh ("chmod +x run.sh")
+7.  configure postgres db fields in .env
+8.  edit /rekjrc/rekjrc/settings.py
+    comment out either the sqllite block or the postgres block
+9.  "migrate.bat" ("python manage.py migrate")
+    or "migrate.sh" ("chmod +x migrate.sh")
+10. runserver.bat / runserver.sh ("chmod +x runserver.sh")
     (runs "python manage.py runserver 0.0.0.0:8000")
-9.  browse to http://localhost:8000
+11. browse to http://localhost:8000

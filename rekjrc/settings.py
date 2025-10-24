@@ -16,7 +16,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # ------------------------------
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
-ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com','10.1.1.63']
+ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com']
 
 # ------------------------------
 # Installed Apps
@@ -92,23 +92,23 @@ WSGI_APPLICATION = "rekjrc.wsgi.application"
 # Database
 # ------------------------------
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': env('DB_NAME'),
-#        'USER': env('DB_USER'),
-#        'PASSWORD': env('DB_PASSWORD'),
-#        'HOST': env('DB_HOST'),
-#        'PORT': env('DB_PORT', default='5432'),
-#    }
-#}
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT', default='5432'),
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
 
 # ------------------------------
 # Password Validation
