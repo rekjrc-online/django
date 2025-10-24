@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from rekjrc.base_models import BaseModel
 from profiles.models import Profile
+from humans.models import Human
 from PIL import Image
 
 class Post(BaseModel):
@@ -15,6 +16,12 @@ class Post(BaseModel):
         on_delete=models.PROTECT,
         related_name='posts',
         db_index=True )
+    parent = models.ForeignKey (
+        'self',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='replies' )
     content = models.TextField(max_length=200)
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
@@ -33,3 +40,11 @@ class Post(BaseModel):
             max_size = (1024, 1024)
             img.thumbnail(max_size)
             img.save(img_path, optimize=True, quality=85)
+
+class PostLike(models.Model):
+    human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('human', 'post')

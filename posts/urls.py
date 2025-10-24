@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [
     # Example placeholder view
 	path('create/', views.PostCreateView.as_view(), name='post-create'),
+    path('<int:post_id>/reply/', views.PostReplyView.as_view(), name='post_reply'),
 ]

@@ -23,8 +23,12 @@
         {% endif %}
 
         <div class="metrics">
-            ❤️ {{ post.likes_count }} |
-            💬 {{ post.comments_count }} |
+            ❤️ {{ post.likes_count }}
+            |
+            <a href="/posts/{{ post.id }}/reply" class="text-decoration-none">
+                💬 {{ post.replies.count }}
+            </a>
+            |
             🔁 {{ post.reposts_count }}
         </div>
     </div>
