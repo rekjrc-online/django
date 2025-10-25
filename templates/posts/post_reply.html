@@ -10,7 +10,7 @@
             <strong>@{{ parent_post.profile_id.displayname }}</strong>
             - <font size="-1">{{ parent_post.profile_id.get_profiletype_display }}
             - {{ parent_post.insertdate|date:"m/d/y h:iA" }}</font><br>
-            <small class="text-muted">{{ parent_post.created_at|date:"M d, Y H:i" }}</small>
+            <small class="text-muted">{{ parent_post.insertdate|date:"M d, Y H:i" }}</small>
             <p style="margin-top: 8px;">{{ parent_post.content }}</p>
             {% if parent_post.image %}
                 <img src="{{ parent_post.image.url }}" alt="Post image" style="max-width: 100%; border-radius: 6px; margin-top: 5px;">

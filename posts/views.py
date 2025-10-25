@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, CreateView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -42,10 +44,16 @@ class PostReplyView(LoginRequiredMixin, CreateView):
 
 class HomepageView(ListView):
     model = Post
-    template_name = 'posts/homepage.html'
+    template_name = 'homepage.html'
     context_object_name = 'posts'
     ordering = ['-insertdate']
     paginate_by = 5
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            for post in context['posts']:
+                post.liked_by_user = post.likes.filter(human=self.request.user).exists()
+        return context
     def paginate_queryset(self, queryset, page_size):
         paginator = Paginator(queryset, page_size)
         page_number = self.request.GET.get('page', 1)
@@ -75,3 +83,24 @@ def toggle_like(request, post_id):
     if not created:
         like.delete()
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@login_required
+@require_POST
+def toggle_like_ajax(request, post_id):
+    try:
+        human = request.user
+        post = get_object_or_404(Post, id=post_id)
+        like, created = PostLike.objects.get_or_create(human=human, post=post)
+        if not created:
+            like.delete()
+            liked = False
+        else:
+            liked = True
+        return JsonResponse({
+            'liked': liked,
+            'likes_count': post.likes.count(),
+        })
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=500)

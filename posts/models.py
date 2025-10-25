@@ -31,7 +31,11 @@ class Post(BaseModel):
 
     def __str__(self):
         return f"{self.profile_id.displayname}: {self.content[:50]}"
-	
+
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.image:
@@ -42,9 +46,7 @@ class Post(BaseModel):
             img.save(img_path, optimize=True, quality=85)
 
 class PostLike(models.Model):
-    human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='likes')
+    human = models.ForeignKey(Human, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
-    created_at = models.DateTimeField(auto_now_add=True)
-
     class Meta:
         unique_together = ('human', 'post')
