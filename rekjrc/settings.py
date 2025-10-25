@@ -16,7 +16,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # ------------------------------
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
-ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com']
+ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com','10.1.1.63']
 
 # ------------------------------
 # Installed Apps
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "humans",
     "profiles",
     "posts",
+    "builds",
 ]
 
 # ------------------------------
@@ -81,6 +82,7 @@ TEMPLATES = [
 CSRF_TRUSTED_ORIGINS = [
     "https://www.rekjrc.com",
     "https://rekjrc.com",
+    "http://10.1.1.63"
 ]
 
 # ------------------------------

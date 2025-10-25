@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Build Details</h3>
+
+<div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+    <!-- Profile info -->
+    <table>
+        <tr>
+            <td valign="top" align="center">
+                {% if build.profile.avatar %}
+                    <a target="_blank" href="{{ build.profile.avatar.url }}">
+                        <img src="{{ build.profile.avatar.url }}" alt="Avatar" class="avatar">
+                    </a>
+                {% else %}
+                    <img src="/static/nophoto_{{ build.profile.profiletype }}.png" alt="Avatar" class="avatar">
+                {% endif %}
+            </td>
+            <td style="width: 10px;"></td>
+            <td valign="top">
+                <b>{{ build.profile.displayname }}</b>
+                <p>{{ build.profile.get_profiletype_display }}</p>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Build info -->
+    <div style="margin-top: 15px;">
+        <h4>{{ build.name }}</h4>
+        {% if build.description %}
+            <p>{{ build.description|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Build attributes -->
+    {% if build.attributes.exists %}
+        <div style="margin-top: 15px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; border-bottom:1px solid #ccc;">Attribute</th>
+                        <th style="text-align:left; border-bottom:1px solid #ccc;">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attr in build.attributes.all|dictsort:"attribute_type.name" %}
+                        <tr>
+                            <td>{{ attr.attribute_type.name }}</td>
+                            <td>{{ attr.value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p style="margin-top: 15px;"><em>No attributes added yet.</em></p>
+    {% endif %}
+
+    <!-- Actions -->
+    <div style="margin-top: 15px;">
+        <a href="/builds/{{profile.id}}/edit" style="margin-right: 10px;">Edit Build</a>
+    </div>
+</div>
+{% endblock %}

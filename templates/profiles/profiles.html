@@ -17,6 +17,9 @@
                     {{ profile.get_profiletype_display }}
                     <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a> /
                     <a href="{% url 'view-profile' profile.pk %}">View</a>
+                    {% if profile.profiletype == "MODEL" %}
+                        <br><a href="/builds/{{ profile.id }}">Build</a>
+                    {% endif %}
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td valign="top">

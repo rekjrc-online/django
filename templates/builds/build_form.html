@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>{% if build %}Edit Build{% else %}Create New Build{% endif %}</h3>
+
+{% if not user.is_verified %}
+    <p class="text-danger">
+        Your account is not verified. You must verify your account before you can create a build.
+    </p>
+    <a href="/humans/update/">Verify your account</a>
+
+{% elif user.profile_set.exists %}
+    <div class="post card" style="margin-top: 20px; padding: 10px;">
+        <!-- Profile info -->
+        <table>
+            <tr>
+                <td valign="top" align="center">
+                    {% if profile.avatar %}
+                        <a target="_blank" href="{{ profile.avatar.url }}">
+                            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+                        </a>
+                    {% else %}
+                        <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
+                    {% endif %}
+                </td>
+                <td style="width: 10px;"></td>
+                <td valign="top">
+                    <h2>{{ profile.displayname }}</h2>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Build form -->
+        <form method="post" enctype="multipart/form-data" style="width: 100%; margin-top: 15px;">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <!-- Profile (hidden) -->
+            {{ form.profile }}
+
+            <!-- Build name -->
+            <div style="margin-bottom: 10px;">
+                {{ form.name.label_tag }}<br>
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            <!-- Description with live character count -->
+            <div style="margin-bottom: 10px;">
+                {{ form.description.label_tag }}<br>
+                {{ form.description }}
+                {{ form.description.errors }}
+                <div style="text-align: right; font-size: 0.9em; color: gray;">
+                    <span id="char-count">500</span> characters remaining
+                </div>
+            </div>
+
+            <script>
+                const textarea = document.getElementById('id_description');
+                const charCount = document.getElementById('char-count');
+                const maxLength = 500;
+                textarea.setAttribute('maxlength', maxLength);
+                textarea.addEventListener('input', () => {
+                    const remaining = maxLength - textarea.value.length;
+                    charCount.textContent = remaining;
+                });
+            </script>
+
+            <div style="margin-top: 20px;">
+                {% if attribute_formset %}
+                    {{ attribute_formset.management_form }}
+
+                    <table id="attributes-table" style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left; padding:5px;">Attribute</th>
+                                <th style="text-align:left; padding:5px;">Value</th>
+                                <th style="padding:5px;">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in attribute_formset.forms %}
+                                {{ form.id }}
+                                <tr>
+                                    <td style="padding:5px;">{{ form.attribute_type }}</td>
+                                    <td style="padding:5px;">{{ form.value }}</td>
+                                    <td style="text-align:center; padding:5px;">
+                                        {% if form.instance.pk %}
+                                            {{ form.DELETE }}
+                                        {% else %}
+                                            <button type="button" id="add-attribute" style="padding: 2px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer; width:30px;">
+                                                +
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr class="empty-form" style="display:none;">
+                                <td style="padding:5px;">{{ attribute_formset.empty_form.attribute_type }}</td>
+                                <td style="padding:5px;">{{ attribute_formset.empty_form.value }}</td>
+                                <td style="text-align:center; padding:5px;">
+                                    <button type="button" id="pending" style="padding: 2px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer; width:30px;">
+                                        +
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <script>
+                        function addAttributeRow(event) {
+                            const tableBody = document.querySelector('#attributes-table tbody');
+                            const totalForms = document.getElementById('id_attributes-TOTAL_FORMS');
+                            const formIdx = parseInt(totalForms.value);
+
+                            // Get the current row where the button was clicked
+                            const currentRow = event.target.closest('tr');
+                            const attributeSelect = currentRow.querySelector('select'); // or input[name$="-attribute_type"]
+                            const valueInput = currentRow.querySelector('input');       // adjust selector if needed
+
+                            // Validation: only proceed if both fields have a value
+                            if (!attributeSelect.value || !valueInput.value.trim()) {
+                                return;
+                            }
+                            const newRow = document.querySelector('.empty-form').cloneNode(true);
+                            newRow.classList.remove('empty-form');
+                            newRow.style.display = '';
+                            newRow.innerHTML = newRow.innerHTML.replace(/__prefix__/g, formIdx);
+                            const btn = newRow.querySelector('#pending');
+                            if (btn) {
+                                btn.id = 'add-attribute';
+                                btn.addEventListener('click', addAttributeRow);
+                            }
+                            tableBody.appendChild(newRow);
+                            totalForms.value = formIdx + 1;
+                            const btn2 = event.target;
+                            const textNode = document.createElement('span');
+                            textNode.textContent = "Add";
+                            btn2.replaceWith(textNode);
+                        }
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const addBtn = document.getElementById('add-attribute');
+                            if (addBtn) {
+                                addBtn.addEventListener('click', addAttributeRow);
+                            }
+                        });
+                    </script>
+                {% endif %}
+            </div>
+
+            <button type="submit" style="padding: 10px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                {% if build %}Update Build{% else %}Create Build{% endif %}
+            </button>
+        </form>
+    </div>
+
+{% else %}
+    <p>
+        You must create a profile before you can create a build.
+        <br /><br />
+        <a href="/profiles/">Create a profile</a>
+    </p>
+{% endif %}
+{% endblock %}

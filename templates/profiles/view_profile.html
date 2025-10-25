@@ -13,9 +13,6 @@
         <h1 style="margin:10px 0; font-size:2em; color:#1da1f2;">
             {{ profile.displayname }}
         </h1>
-        <p style="font-size:1.1em; color:#ccc; margin-bottom:25px;">
-            {{ profile.get_profiletype_display }}
-        </p>
 
         {% if profile.bio %}
             <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
@@ -24,18 +21,41 @@
             </div>
         {% endif %}
 
-        {% if profile.location %}
-            <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
-                <h3 style="margin-top:0; color:#1da1f2;">Location</h3>
-                <p style="margin:0;">{{ profile.location }}</p>
-            </div>
-        {% endif %}
-
         {% if profile.website %}
             <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
                 <h3 style="margin-top:0; color:#1da1f2;">Web Site</h3>
                 <p><a href="{{ profile.website }}" target="_blank"
                     style="color:#1da1f2; text-decoration:none;">{{ profile.website }}</a></p>
+            </div>
+        {% endif %}
+
+        {% if profile.builds %}
+            <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+                <h3 style="margin-top:0; color:#1da1f2;">{{ profile.builds.name }}</h3>
+                {% if profile.builds.description %}
+                    <p>{{ profile.builds.description|linebreaksbr }}</p>
+                {% else %}
+                    <p><em>No description provided.</em></p>
+                {% endif %}
+
+                {% if profile.builds.attributes.all %}
+                    <table style="width:100%; margin-top:10px; border-collapse: collapse;">
+                        {% for attr in profile.builds.attributes.all %}
+                            <tr style="border-bottom:1px solid #444;">
+                                <td>{{ attr.attribute_type.name }}</td>
+                                <td>{{ attr.value }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="2"><em>No attributes added yet.</em></td></tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    {% comment %}<p><em>No attributes added yet.</em></p>{% endcomment %}
+                {% endif %}
+
+                <div style="margin-top:10px;">
+                    <a href="/builds/{{profile.id}}/edit">Edit Build</a>
+                </div>
             </div>
         {% endif %}
 
@@ -52,7 +72,13 @@
                 </div>
             </div>
         {% endif %}
-
+        
+        {% if profile.location %}
+            <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+                <h3 style="margin-top:0; color:#1da1f2;">Location</h3>
+                <p style="margin:0;">{{ profile.location }}</p>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
