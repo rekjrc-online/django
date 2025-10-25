@@ -132,8 +132,8 @@ class VerifyInvitationView(LoginRequiredMixin, View):
         current_user.save()
 
         # Step 2: clear inviter's invitation_code
-        #inviter.invitation_code = None
-        #inviter.save()
+        inviter.invitation_code = None
+        inviter.save()
 
         # Step 3: create the Invitation record
         try:
