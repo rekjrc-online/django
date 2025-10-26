@@ -7,6 +7,7 @@ class Profile(BaseModel):
 	PROFILE_TYPE_CHOICES = [
         ('DRIVER', 'Driver'),
         ('MODEL', 'Model'),
+		('LOCATION', 'Location'),
         ('STORE', 'Store'),
 		('TRACK', 'Track'),
 		('CLUB', 'Club'),
@@ -26,7 +27,7 @@ class Profile(BaseModel):
 
 	def __str__(self):
 		return self.displayname
-	
+
 	def save(self, *args, **kwargs):
 		try:
 			super().save(*args, **kwargs)  # Save first to ensure the image file exists
