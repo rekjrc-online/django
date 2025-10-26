@@ -50,13 +50,13 @@ class HumanUpdateView(UpdateView):
         # Calculate hours_remaining for invitation cooldown
         recent_invite = Invitation.objects.filter(
             Q(from_human=user) | Q(to_human=user),
-            insertdate__gte=timezone.now() - timedelta(hours=72)
+            insertdate__gte=timezone.now() - timedelta(hours=12)
         ).order_by('-insertdate').first()
 
         hours_remaining = 0
         if recent_invite:
             elapsed = timezone.now() - recent_invite.insertdate
-            hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
+            hours_remaining = max(0, 12 - elapsed.total_seconds() / 3600)
         context['hours_remaining'] = hours_remaining
 
         return context
@@ -67,16 +67,16 @@ class GenerateInvitationView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
 
-        # Check if user has any invitation in the last 72 hours
+        # Check if user has any invitation in the last 12 hours
         recent_invite = Invitation.objects.filter(
             Q(from_human=user) | Q(to_human=user),
-            insertdate__gte=timezone.now() - timedelta(hours=72)
+            insertdate__gte=timezone.now() - timedelta(hours=12)
         ).order_by('-insertdate').first()
 
         hours_remaining = 0
         if recent_invite:
             elapsed = timezone.now() - recent_invite.insertdate
-            hours_remaining = max(0, 72 - elapsed.total_seconds() / 3600)
+            hours_remaining = max(0, 12 - elapsed.total_seconds() / 3600)
 
         context = {
             'user': user,
@@ -87,10 +87,10 @@ class GenerateInvitationView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user = request.user
 
-        # Prevent generation if user is still in 72-hour cooldown
+        # Prevent generation if user is still in 12-hour cooldown
         recent_invite = Invitation.objects.filter(
             Q(from_human=user) | Q(to_human=user),
-            insertdate__gte=timezone.now() - timedelta(hours=72)
+            insertdate__gte=timezone.now() - timedelta(hours=12)
         ).first()
 
         if recent_invite:

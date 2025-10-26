@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     "profiles",
     "posts",
     "builds",
+    "tracks",
+    "clubs",
+    "teams",
+    "events",
+    "races",
+    "locations",
 ]
 
 # ------------------------------

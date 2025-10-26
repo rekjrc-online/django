@@ -8,6 +8,11 @@ class Profile(BaseModel):
         ('DRIVER', 'Driver'),
         ('MODEL', 'Model'),
         ('STORE', 'Store'),
+		('TRACK', 'Track'),
+		('CLUB', 'Club'),
+		('TEAM', 'Team'),
+		('EVENT', 'Event'),
+		('RACE', 'Race'),
     ]
 	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 	profiletype = models.CharField(max_length=30, choices=PROFILE_TYPE_CHOICES)

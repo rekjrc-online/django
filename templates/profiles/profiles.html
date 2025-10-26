@@ -13,12 +13,16 @@
                         </a>
                     {% else %}
                         <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
-                    {% endif %}<p>
-                    {{ profile.get_profiletype_display }}
+                    {% endif %}
+                    <p>{{ profile.get_profiletype_display }}
                     <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a> /
                     <a href="{% url 'view-profile' profile.pk %}">View</a>
                     {% if profile.profiletype == "MODEL" %}
                         <br><a href="/builds/{{ profile.id }}">Build</a>
+                    {% elif profile.profiletype == "CLUB" %}
+                        <br><a href="/clubs/{{ profile.id }}">Build</a>
+                    {% elif profile.profiletype == "STORE" %}
+                        <br><a href="/stores/{{ profile.id }}">Build</a>
                     {% endif %}
                 </td>
                 <td>&nbsp;&nbsp;</td>
