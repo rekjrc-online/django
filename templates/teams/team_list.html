@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 style="text-align:center;">Teams</h2>
+  <div style="max-width:600px; margin:0 auto;">
+    <ul>
+      {% for team in teams %}
+        <li>
+          <strong>{{ team.name }}</strong><br>
+          Profile: {{ team.profile.displayname }}
+          {% if team.website %}
+            <br><a href="{{ team.website }}" target="_blank">{{ team.website }}</a>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li>No teams found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

@@ -9,10 +9,15 @@ class TrackTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
-    list_display = ('name', 'track_type', 'location')
+    list_display = ('name', 'track_type', 'location', 'get_profile_username')
     list_filter = ('track_type', 'location')
-    search_fields = ('name', 'track_type__name', 'location__name')
+    search_fields = ('name', 'track_type__name', 'location__name', 'profile__username')
     ordering = ('name',)
+
+    def get_profile_username(self, obj):
+        return obj.profile.username if hasattr(obj, 'profile') and obj.profile else None
+    get_profile_username.short_description = 'Profile Username'
+    get_profile_username.admin_order_field = 'profile__username'
 
 @admin.register(TrackAttributeEnum)
 class TrackAttributeEnumAdmin(admin.ModelAdmin):

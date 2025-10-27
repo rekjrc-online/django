@@ -5,13 +5,19 @@ from django.conf.urls.static import static
 from posts import views as post_views
 
 urlpatterns = [
-    path('', post_views.HomepageView.as_view(), name='homepage'),
     path('admin/', admin.site.urls),
-	path('humans/', include('humans.urls')),
-    path('profiles/', include('profiles.urls')),
-    path('posts/', include('posts.urls')),
+    path('', post_views.HomepageView.as_view(), name='homepage'),
     path('builds/', include('builds.urls')),
+    path('clubs/', include('clubs.urls')),
+    path('events/', include('events.urls')),
+	path('humans/', include('humans.urls')),
+    path('locations/', include('locations.urls')),
+    path('posts/', include('posts.urls')),
+    path('profiles/', include('profiles.urls')),
+    path('races/', include('races.urls')),
     path('stores/', include('stores.urls')),
+    path('teams/', include('teams.urls')),
+    path('tracks/', include('tracks.urls')),
 ]
 
 # Serve media files in development

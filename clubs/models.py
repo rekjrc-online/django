@@ -4,7 +4,10 @@ from profiles.models import Profile
 from locations.models import Location
 
 class Club(models.Model):
-    profile = models.OneToOneField(Profile, on_delete=models.PROTECT, related_name='clubs')
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='clubs')
     name = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.name}"

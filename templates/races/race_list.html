@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Races</h1>
+<a href="{% url 'races:race_create' %}">Create New Race</a>
+<ul>
+  {% for race in races %}
+    <li>
+      <a href="{% url 'races:race_detail' race.pk %}">{{ race }}</a> |
+      <a href="{% url 'races:race_update' race.pk %}">Edit</a> |
+      <a href="{% url 'races:race_delete' race.pk %}">Delete</a>
+    </li>
+  {% empty %}
+    <li>No races yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

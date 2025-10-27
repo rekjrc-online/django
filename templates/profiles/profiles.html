@@ -6,7 +6,7 @@
     <div class="post card">
         <table>
             <tr>
-                <td valign="top" align="center">
+                <td valign="top" align="center" nowrap>
                     {% if profile.avatar %}
                         <a target="_blank" href="{{ profile.avatar.url }}">
                             <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
@@ -15,14 +15,25 @@
                         <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                     {% endif %}
                     <p>{{ profile.get_profiletype_display }}
-                    <p><a href="{% url 'edit-profile' profile.pk %}">Edit</a> /
-                    <a href="{% url 'view-profile' profile.pk %}">View</a>
+                    <br><a href="{% url 'edit-profile' profile.pk %}">Edit</a> /
+                    <a href="{% url 'view-profile' profile.pk %}">View</a><br>
+
                     {% if profile.profiletype == "MODEL" %}
-                        <br><a href="/builds/{{ profile.id }}">Build</a>
+                        <a href="/builds/{{ profile.id }}/build">Build</a>
                     {% elif profile.profiletype == "CLUB" %}
-                        <br><a href="/clubs/{{ profile.id }}">Build</a>
+                        <a href="/clubs/{{ profile.id }}/build">Build</a>
+                    {% elif profile.profiletype == "LOCATION" %}
+                        <a href="/locations/{{ profile.id }}/build">Build</a>
+                    {% elif profile.profiletype == "EVENT" %}
+                        <a href="/events/{{ profile.id }}/build">Build</a>
+                    {% elif profile.profiletype == "RACE" %}
+                        <a href="/races/{{ profile.id }}/build">Build</a>
                     {% elif profile.profiletype == "STORE" %}
-                        <br><a href="/stores/{{ profile.id }}">Build</a>
+                        <a href="/stores/{{ profile.id }}/build">Build</a>
+                    {% elif profile.profiletype == "TEAM" %}
+                        <a href="/teams/{{ profile.id }}/build">Build</a>
+                    {% elif profile.profiletype == "TRACK" %}
+                        <a href="/tracks/{{ profile.id }}/build">Build</a>
                     {% endif %}
                 </td>
                 <td>&nbsp;&nbsp;</td>

@@ -21,7 +21,7 @@ class ClubLocationAdmin(admin.ModelAdmin):
 
 @admin.register(ClubMember)
 class ClubMemberAdmin(admin.ModelAdmin):
-    list_display = ('club', 'human')
-    search_fields = ('club__name', 'role')
+    list_display = ('club', 'human', 'role')
+    search_fields = ('club__name', 'human__name', 'role')
     list_filter = ('club', 'role')
-    ordering = ('club__name', 'role')
+    ordering = ('club__name', 'human__name')

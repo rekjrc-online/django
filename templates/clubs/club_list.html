@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 style="text-align:center;">Clubs</h2>
+  <div style="max-width:600px; margin:0 auto;">
+    <ul>
+      {% for club in clubs %}
+        <li>
+          <strong>{{ club.name }}</strong><br>
+          Profile: {{ club.profile.displayname }}
+        </li>
+      {% empty %}
+        <li>No clubs found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

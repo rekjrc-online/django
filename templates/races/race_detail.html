@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ race }}</h1>
+<p><strong>Profile:</strong> {{ race.profile }}</p>
+<p><strong>Human:</strong> {{ race.human }}</p>
+<p><strong>Event:</strong> {{ race.event }}</p>
+<p><strong>Location:</strong> {{ race.location }}</p>
+<p><strong>Club:</strong> {{ race.club }}</p>
+<p><strong>Team:</strong> {{ race.team }}</p>
+<p><strong>Race Type:</strong> {{ race.race_type }}</p>
+
+<h2>Attributes</h2>
+<ul>
+  {% for attr in race.attributes.all %}
+    <li>{{ attr.attribute }}: {{ attr.value }}</li>
+  {% empty %}
+    <li>No attributes.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'races:race_update' race.pk %}">Edit</a> |
+<a href="{% url 'races:race_list' %}">Back to list</a>
+{% endblock %}

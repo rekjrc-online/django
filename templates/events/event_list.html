@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 style="text-align:center;">Events for {{ profile.displayname }}</h2>
+
+  <div style="max-width:700px; margin:auto;">
+    <div style="text-align:center; margin-bottom:15px;">
+      <a href="{% url 'events:event_build' profile.id %}" 
+         style="display:inline-block; padding:10px 15px; background:#1da1f2; color:white; border-radius:5px; text-decoration:none;">
+        + Create Event
+      </a>
+    </div>
+
+    {% for event in events %}
+      <div class="card" style="margin-bottom:15px; padding:15px;">
+        <h3>{{ event.profile.displayname }}</h3>
+        <p><strong>Date:</strong> {{ event.eventdate|date:"Y-m-d H:i" }}</p>
+        <p><strong>Location:</strong> {{ event.location.name }}</p>
+        {% if event.multiday %}<p><em>Multi-day Event</em></p>{% endif %}
+        <p style="margin-top:10px;">
+          <a href="{% url 'events:event_edit' profile.id event.id %}">Edit</a> | 
+          <a href="{% url 'events:event_delete' profile.id event.id %}">Delete</a>
+        </p>
+      </div>
+    {% empty %}
+      <p style="text-align:center;">No events found.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

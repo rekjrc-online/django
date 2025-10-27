@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 style="text-align:center;">Tracks</h2>
+  <div style="max-width:600px; margin:0 auto;">
+    <ul>
+      {% for track in tracks %}
+        <li>
+          <strong>{{ track.name }}</strong><br>
+          Type: {{ track.track_type.name }}<br>
+          Location: {{ track.location.name }}
+        </li>
+      {% empty %}
+        <li>No tracks found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
