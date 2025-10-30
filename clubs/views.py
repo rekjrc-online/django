@@ -16,7 +16,6 @@ class ClubListView(ListView):
 # Detail view for a single club
 class ClubDetailView(View):
     template_name = 'clubs/club_detail.html'
-
     def get(self, request, profile_id):
         club = get_object_or_404(Club, profile__id=profile_id)
         locations = club.clubs.all()  # ClubLocation
@@ -27,34 +26,26 @@ class ClubDetailView(View):
             'members': members,
         })
 
-# Build (create) a new club
 class ClubBuildView(View):
     template_name = 'clubs/club_build.html'
-
     def get(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
-
-        # Redirect to update if Club exists
         club = Club.objects.filter(profile=profile).first()
         if club:
-            return redirect('clubs:club_detail', profile_id=profile_id)
-
+            return redirect('clubs:club_update', profile_id=profile_id)
         form = ClubForm()
         return render(request, self.template_name, {
             'profile': profile,
             'form': form,
         })
-
     def post(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
         form = ClubForm(request.POST)
-
         if form.is_valid():
             club = form.save(commit=False)
             club.profile = profile
             club.save()
             return redirect('clubs:club_detail', profile_id=profile_id)
-
         return render(request, self.template_name, {
             'profile': profile,
             'form': form,

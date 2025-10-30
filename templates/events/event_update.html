@@ -2,32 +2,36 @@
 
 {% block content %}
 
-  <!-- Profile summary section -->
-  {% include "profiles/profile_header.html" %}
+<div class="post card" style="margin-top:20px; padding:0px; text-align:center;">
+  <h3>Build Event</h3>
+</div>
 
-  <!-- Event update form section -->
-  <div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
-    <h2 style="text-align:center;">
-      Edit Event
-    </h2>
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
 
-    <form method="post" style="text-align:left;">
-      {% csrf_token %}
-      {{ form.as_p }}
+<!-- Event update form section -->
+<div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+  <h2 style="text-align:center;">
+    Edit Event
+  </h2>
 
-      <button type="submit"
-          style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-        Save
-      </button>
-    </form>
+  <form method="post" style="text-align:left;">
+    {% csrf_token %}
+    {{ form.as_p }}
 
-    <br />
+    <button type="submit"
+        style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+      Save
+    </button>
+  </form>
 
-    <div style="text-align:center; margin-bottom:20px;">
-      <a href="{% url 'events:event_list' profile.id %}">Cancel</a>
-    </div>
+  <br />
+
+  <div style="text-align:center; margin-bottom:20px;">
+    <a href="{% url 'events:event_list' profile.id %}">Cancel</a>
   </div>
+</div>
 
-  <br /><br /><br />
+<br /><br /><br />
 
 {% endblock %}

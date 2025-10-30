@@ -1,24 +1,25 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-  <h2 style="text-align:center;">
-    {% if form.instance.pk %}Edit Location{% else %}Create Location{% endif %}
-  </h2>
+<div class="post card" style="margin-top:20px; padding:0px; text-align:center;">
+    <h3>Build Location</h3>
+</div>
 
-  <!-- Profile summary section -->
-  {% include "profiles/profile_header.html" %}
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
 
-  <!-- Location form section -->
-  <div class="card" style="max-width: 600px; margin: 20px auto; padding: 15px; text-align: center;">
-    <form method="post" style="text-align: left;">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" 
-          style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-          Save
-      </button>
-    </form>
-  </div>
+<!-- Location form section -->
+<div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+  <form method="post" style="text-align: left;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+        Save
+    </button>
+  </form>
+  <br />
+</div>
+<br />
+<br />
 
 {% endblock %}

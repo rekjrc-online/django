@@ -59,7 +59,6 @@ class BuildUpdateView(UpdateView):
     model = Build
     form_class = BuildForm
     template_name = 'builds/build_form.html'
-
     def dispatch(self, request, *args, **kwargs):
         """Redirect to update page if Build already exists."""
         profile_id = self.kwargs['profile_id']
@@ -69,15 +68,12 @@ class BuildUpdateView(UpdateView):
             return redirect('builds:build_create', profile_id=profile_id)
         self.object = build
         return super().dispatch(request, *args, **kwargs)
-
     def get_object(self):
         # self.object is already set in dispatch
         return self.object
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['profile'] = self.object.profile
-
         # Attribute formset
         if self.request.method == "POST":
             formset = BuildAttributeFormSet(

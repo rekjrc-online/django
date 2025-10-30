@@ -15,8 +15,8 @@
                         <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                     {% endif %}
                     <p>{{ profile.get_profiletype_display }}
-                    <br><a href="{% url 'edit-profile' profile.pk %}">Edit</a> /
-                    <a href="{% url 'view-profile' profile.pk %}">View</a><br>
+                    <br><a href="{% url 'update-profile' profile.pk %}">Edit</a> /
+                    <a href="{% url 'detail-profile' profile.pk %}">View</a><br>
 
                     {% if profile.profiletype == "MODEL" %}
                         <a href="/builds/{{ profile.id }}/build">Build</a>

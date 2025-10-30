@@ -1,0 +1,26 @@
+<div class="menu">
+    <h3>Menu</h3>
+    <ul>
+        <li><a href="{% url 'homepage' %}">Home</a></li>
+        {% if request.user.is_authenticated %}
+            <li><a href="/humans/update/">Account</a></li>
+            <li><a href="/profiles/">Profiles</a></li>
+            <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <li><a href="javascript:document.getElementById('logoutform').submit()">Logout</a></li>
+            </form>
+        {% else %}
+            <li><a href="/humans/login/">Login</a></li>
+        {% endif %}
+    </ul>
+
+    {% if request.user.is_authenticated %}
+        <p>
+            <input type="button"
+                value="New Post"
+                onclick="self.location.href='/posts/create/'"
+                style="width:10em;height:2em;">
+        </p>
+    {% endif %}
+
+</div>

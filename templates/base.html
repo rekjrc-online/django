@@ -29,30 +29,7 @@
     <div class="container">
         {% if not is_mobile %}
             <div class="left-col">
-                <div class="menu">
-                    <h3>Menu</h3>
-                    <ul>
-                        <li><a href="{% url 'homepage' %}">Home</a></li>
-                        {% if request.user.is_authenticated %}
-                            <li><a href="/humans/update/">Account</a></li>
-                            <li><a href="/profiles/">Profiles</a></li>
-                            <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
-                                {% csrf_token %}
-                                <li><a href="javascript:document.getElementById('logoutform').submit()">Logout</a></li>
-                            </form>
-                        {% else %}
-                            <li><a href="/humans/login/">Login</a></li>
-                        {% endif %}
-                    </ul>
-                    {% if request.user.is_authenticated %}
-                        <p>
-                            <input type="button"
-                                value="New Post"
-                                onclick="self.location.href='/posts/create/'"
-                                style="width:10em;height:2em;">
-                        </p>
-                    {% endif %}
-                </div>
+                {% include "panel_left.html" %}
             </div>
         {% endif %}
 
@@ -62,23 +39,7 @@
 
         {% if not is_mobile %}
             <div class="right-col">
-                <h2>Fake Links</h2>
-                <div class="widgets">
-                    <h3>Trending</h3>
-                    <ul>
-                        <li>#RacingRC</li>
-                        <li>#Electric</li>
-                        <li>#DIY</li>
-                    </ul>
-                </div>
-                <div class="widgets">
-                    <h3>Who to follow</h3>
-                    <ul>
-                        <li>User1</li>
-                        <li>User2</li>
-                        <li>User3</li>
-                    </ul>
-                </div>
+                {% include "panel_right.html" %}
             </div>
         {% endif %}
     </div>

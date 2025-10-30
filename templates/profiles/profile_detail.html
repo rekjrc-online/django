@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+
+    <center>
+        {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}'s avatar"
+                style="width:180px; height:180px; border-radius:50%; object-fit:cover; margin-bottom:20px; border:4px solid #1da1f2;">
+        {% else %}
+            <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="{{ profile.displayname }}'s avatar"
+                style="width:180px; height:180px; border-radius:50%; object-fit:cover; margin-bottom:20px; border:4px solid #1da1f2;">
+        {% endif %}
+        <h1 style="margin:10px 0; font-size:2em; color:#1da1f2;">
+            {{ profile.displayname }}
+        </h1>
+    </center>
+
+    {% if profile.bio %}
+        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+            <h3 style="margin-top:0; color:#1da1f2;">Bio</h3>
+            <p style="margin:0;">{{ profile.bio|linebreaksbr }}</p>
+        </div>
+    {% endif %}
+
+    {% if profile.website %}
+        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+            <h3 style="margin-top:0; color:#1da1f2;">Web Site</h3>
+            <p><a href="{{ profile.website }}" target="_blank"
+                style="color:#1da1f2; text-decoration:none;">{{ profile.website }}</a></p>
+        </div>
+    {% endif %}
+
+    {% if profile.builds %}
+        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+            <h3 style="margin-top:0; color:#1da1f2;">{{ profile.builds.name }}</h3>
+            {% if profile.builds.description %}
+                <p>{{ profile.builds.description|linebreaksbr }}</p>
+            {% else %}
+                <p><em>No description provided.</em></p>
+            {% endif %}
+
+            {% if profile.builds.attributes.all %}
+                <table style="width:100%; margin-top:10px; border-collapse: collapse;">
+                    {% for attr in profile.builds.attributes.all %}
+                        <tr style="border-bottom:1px solid #444;">
+                            <td>{{ attr.attribute_type.name }}</td>
+                            <td>{{ attr.value }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="2"><em>No attributes added yet.</em></td></tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                {% comment %}<p><em>No attributes added yet.</em></p>{% endcomment %}
+            {% endif %}
+
+            <div style="margin-top:10px;">
+                <a href="/builds/{{profile.id}}/edit">Edit Build</a>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if posts_with_images %}
+        <div class="card" style="max-width:600px; margin:20px auto; padding:20px; background-color:#222; border-radius:12px;">
+            <h3 style="color:#1da1f2; margin-bottom:15px; text-align:left;">Photos</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:10px;">
+                {% for post in posts_with_images %}
+                    <a href="{{ post.image.url }}" target="_blank">
+                        <img src="{{ post.image.url }}" alt="Post image"
+                            style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; transition:transform 0.2s;">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if profile.location %}
+        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+            <h3 style="margin-top:0; color:#1da1f2;">Location</h3>
+            <p style="margin:0;">{{ profile.location }}</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

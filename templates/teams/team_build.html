@@ -1,36 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
 
-  <!-- Profile summary section -->
-  {% include "profiles/profile_header.html" %}
+<div class="post card" style="margin-top:20px; padding:0px; text-align:center;">
+    <h3>Build Team</h3>
+</div>
 
-  <h2 style="text-align:center;">
-    {% if form.instance.pk %}Edit Team{% else %}Create Team{% endif %}
-  </h2>
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
 
-  <!-- Team Form -->
-  <div class="card" style="max-width: 600px; margin: 20px auto; padding: 15px;">
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
+<h2 style="text-align:center;">
+  {% if form.instance.pk %}Edit Team{% else %}Create Team{% endif %}
+</h2>
 
-      <h3>Team Members</h3>
-      {{ member_formset.management_form }}
-      {% for f in member_formset %}
-        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
-          {{ f.as_p }}
-          {% if f.instance.pk %}
-            <label>
-              Delete: {{ f.DELETE }}
-            </label>
-          {% endif %}
-        </div>
-      {% endfor %}
+<!-- Team Form -->
+<div class="card" style="max-width: 600px; margin: 20px auto; padding: 15px;">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
 
-      <button type="submit"
-        style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-        Save
-      </button>
-    </form>
-  </div>
+    <h3>Team Members</h3>
+    {{ member_formset.management_form }}
+    {% for f in member_formset %}
+      <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
+        {{ f.as_p }}
+        {% if f.instance.pk %}
+          <label>
+            Delete: {{ f.DELETE }}
+          </label>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit"
+      style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+      Save
+    </button>
+  </form>
+</div>
 {% endblock %}

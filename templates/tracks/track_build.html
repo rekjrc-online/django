@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2 style="text-align:center;">
-    {% if form.instance.pk %}Edit Track{% else %}Create Track{% endif %}
-</h2>
+<div class="post card" style="margin-top:20px; padding:0px; text-align:center;">
+    <h3>Build Track</h3>
+</div>
 
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
 <!-- Track form -->
 <div class="card" style="max-width: 600px; margin: 20px auto; padding: 15px;">
+    <h2 style="text-align:center;">
+        {% if form.instance.pk %}Edit Track{% else %}Create Track{% endif %}
+    </h2>
     <form method="post" style="text-align:left;">
         {% csrf_token %}
 

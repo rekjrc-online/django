@@ -34,8 +34,8 @@ nav a {
     display: flex;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 0 10px;
-    gap: 20px;
+    padding-left: 10px;
+    gap: 10px;
     box-sizing: border-box;
     /* No fixed height for better responsiveness */
 }
@@ -47,17 +47,18 @@ nav a {
     background-color: #1b1b1d;
     border: 1px solid #333;
     border-radius: 8px;
-    padding: 15px;
     height: calc(100vh - 100px);
     overflow: hidden;
     position: sticky;
     top: 60px;
+    padding-left: 10px;
 }
 
 .middle-col {
     flex: 1 1 auto;
     overflow-y: auto;
     height: calc(100vh - 40px);
+    padding-right: 10px;
     box-sizing: border-box;
 }
 /* ---------- Custom Scrollbar ---------- */
@@ -100,7 +101,6 @@ nav a {
 }
 
 .post.card {
-    background-color: #2a2a2a;
     border: 1px solid #444;
 }
 

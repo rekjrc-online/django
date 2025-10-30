@@ -2,11 +2,14 @@
 {% load widget_tweaks %}
 {% block content %}
 
+<div class="post card" style="margin-top:20px; padding:0px; text-align:center;">
+    <h3>Build Club</h3>
+</div>
+
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
 <div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
-    <h3>Edit Club</h3>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
