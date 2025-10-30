@@ -8,10 +8,10 @@ from locations.models import Location
 
 class Race(models.Model):
     RACE_TYPE_CHOICES = [
-        ('Laps', 'Laps'),
-        ('Drag', 'Drag'),
-		('Out and back', 'Out and back'),
-        ('Long jump', 'Long jump'),
+        ('Lap Race', 'Lap Race'),
+        ('Drag Race', 'Drag Race'),
+		('Out and Back', 'Out and Back'),
+        ('Long Jump', 'Long Jump'),
     ]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
     profile = models.OneToOneField(
@@ -55,10 +55,8 @@ class Race(models.Model):
         null=True,
         blank=True
     )
-
     def __str__(self):
         return f"Race for {self.event or 'No Event'}"
-
 
 class RaceAttributeEnum(models.Model):
     """
@@ -72,7 +70,6 @@ class RaceAttributeEnum(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class RaceAttribute(models.Model):
     """
@@ -99,9 +96,31 @@ class RaceAttribute(models.Model):
         related_name='race_attributes'
     )
     value = models.CharField(max_length=255)
-
     class Meta:
         unique_together = ('race', 'attribute')
-
     def __str__(self):
         return f"{self.race}: {self.attribute.name} = {self.value}"
+
+class LapMonitorResult(models.Model):
+    session_id = models.UUIDField()
+    session_name = models.CharField(max_length=100)
+    session_date = models.DateTimeField()
+    session_kind = models.CharField(max_length=50)
+    session_duration = models.FloatField()
+    driver_id = models.UUIDField()
+    driver_name = models.CharField(max_length=100)
+    driver_transponder_id = models.CharField(max_length=50)
+    driver_rank = models.IntegerField()
+    lap_index = models.IntegerField()
+    lap_end_time = models.FloatField()
+    lap_duration = models.FloatField()
+    lap_kind = models.CharField(max_length=50)
+    class Meta:
+        verbose_name = "Lap Monitor Result"
+        verbose_name_plural = "Lap Monitor Results"
+        indexes = [
+            models.Index(fields=["session_id"]),
+            models.Index(fields=["driver_id"]),
+        ]
+    def __str__(self):
+        return f"{self.session_name} - {self.driver_name} (Lap {self.lap_index})"

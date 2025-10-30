@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2 style="text-align:center;">Clubs</h2>
-  <div style="max-width:600px; margin:0 auto;">
-    <ul>
-      {% for club in clubs %}
+<h2>My Clubs</h2>
+<ul>
+    {% for club in clubs %}
         <li>
-          <strong>{{ club.name }}</strong><br>
-          Profile: {{ club.profile.displayname }}
+            <a href="{% url 'clubs:club_detail' club.profile.id %}">{{ club.name }}</a>
         </li>
-      {% empty %}
+    {% empty %}
         <li>No clubs found.</li>
-      {% endfor %}
-    </ul>
-  </div>
+    {% endfor %}
+</ul>
+<a href="{% url 'clubs:club_build' 1 %}">Create New Club</a> <!-- Replace 1 with a dynamic profile_id -->
 {% endblock %}

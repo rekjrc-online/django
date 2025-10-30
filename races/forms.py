@@ -1,28 +1,26 @@
 from django import forms
+from django.forms import inlineformset_factory
 from .models import Race, RaceAttribute
-from django.forms.models import inlineformset_factory
 
 class RaceForm(forms.ModelForm):
     class Meta:
         model = Race
         fields = [
-            'profile',
-            'human',
-            'event',
-            'location',
-            'club',
-            'team',
-            'race_type'
+            "race_type",
+            "event",
+            "location",
+            "club",
+            "team",
         ]
         widgets = {
-            'race_type': forms.Select(),
+            field: forms.Select(attrs={"class": "form-control"})
+            for field in fields
         }
 
-# Inline formset for RaceAttribute
 RaceAttributeFormSet = inlineformset_factory(
     Race,
     RaceAttribute,
-    fields=('attribute', 'value'),
+    fields=("attribute", "value"),
     extra=1,
-    can_delete=True
+    can_delete=True,
 )

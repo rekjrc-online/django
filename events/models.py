@@ -10,6 +10,7 @@ class Event(models.Model):
         on_delete=models.PROTECT,
         related_name='events',
         default=1)
+    published = models.BooleanField(default=False)
     location = models.ForeignKey(
         Location,
         on_delete=models.PROTECT,
@@ -17,7 +18,7 @@ class Event(models.Model):
     eventdate = models.DateTimeField(default=timezone.now)
     multiday = models.BooleanField(default=False)
     def __str__(self):
-        return f"{self.profile.displayname}"
+        return f"{self.eventdate.strftime('%a %m/%d/%y')} - {self.profile.displayname}"
 
 class EventInterest(models.Model):
     event = models.ForeignKey(

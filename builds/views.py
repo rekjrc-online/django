@@ -5,10 +5,16 @@ from django.urls import reverse_lazy
 from .models import Build, BuildAttributeEnum
 from .forms import BuildForm, BuildAttributeFormSet
 
-class BuildCreateView(LoginRequiredMixin, CreateView):
+class BuildBuildView(LoginRequiredMixin, CreateView):
     model = Build
     form_class = BuildForm
     template_name = 'builds/build_form.html'
+    def dispatch(self, request, *args, **kwargs):
+        profile_id = self.kwargs.get('profile_id')
+        build = Build.objects.filter(profile_id=profile_id).first()
+        if build:
+            return redirect('builds:build_detail', profile_id=profile_id)
+        return super().dispatch(request, *args, **kwargs)
     def get_initial(self):
         profile_id = self.kwargs.get('profile_id')
         from profiles.models import Profile
@@ -26,7 +32,7 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
         context['profile'] = Profile.objects.get(id=profile_id)
         return context
     def get_success_url(self):
-        return reverse('build_detail', kwargs={'profile_id': self.object.profile.id})
+        return redirect('builds:build_detail', profile_id=profile_id)
 
 class BuildDetailView(LoginRequiredMixin, DetailView):
     model = Build
@@ -54,18 +60,25 @@ class BuildUpdateView(UpdateView):
     form_class = BuildForm
     template_name = 'builds/build_form.html'
 
-    def get_object(self):
-        print("BuildUpdateView.get_object")
+    def dispatch(self, request, *args, **kwargs):
+        """Redirect to update page if Build already exists."""
         profile_id = self.kwargs['profile_id']
-        return get_object_or_404(Build, profile_id=profile_id)
+        build = Build.objects.filter(profile_id=profile_id).first()
+        if not build:
+            # If no build exists, forward to the build creation page
+            return redirect('builds:build_create', profile_id=profile_id)
+        self.object = build
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        # self.object is already set in dispatch
+        return self.object
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Add the profile
         context['profile'] = self.object.profile
 
-        # Instantiate formset depending on request method
+        # Attribute formset
         if self.request.method == "POST":
             formset = BuildAttributeFormSet(
                 self.request.POST,
@@ -78,10 +91,10 @@ class BuildUpdateView(UpdateView):
                 prefix='attributes'
             )
 
-        # Sort the existing attributes in the queryset
+        # Sort existing attributes
         formset.queryset = formset.queryset.order_by('attribute_type__name')
 
-        # Sort the attribute_type dropdown in each form
+        # Sort attribute_type dropdown
         for form in formset.forms:
             form.fields['attribute_type'].queryset = BuildAttributeEnum.objects.order_by('name')
 
@@ -89,24 +102,25 @@ class BuildUpdateView(UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        print("BuildUpdateView.post")
-        """Handle POST to process both form and formset"""
         self.object = self.get_object()
-        print("BuildUpdateView.post 2")
         form = self.get_form()
-        print("BuildUpdateView.post 3")
         context = self.get_context_data()
-        print("BuildUpdateView.post 4")
         formset = context['attribute_formset']
 
         if form.is_valid() and formset.is_valid():
-            print("BuildUpdateView.post 5")
             return self.form_valid(form)
         else:
-            print("BuildUpdateView.post 6")
-            print("Form errors:", form.errors)
-            print("Formset errors:", formset.errors)
             return self.form_invalid(form, formset)
+
+    def form_valid(self, form):
+        # Save form and formset
+        form.save()
+        self.get_context_data()['attribute_formset'].save()
+        return redirect('builds:build_detail', profile_id=self.object.profile.id)
+
+    def form_invalid(self, form, formset):
+        # Re-render the page with errors
+        return self.render_to_response(self.get_context_data())
 
     def form_valid(self, form):
         print("BuildUpdateView.form_valid")

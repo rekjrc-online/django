@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<h3>Create New Race</h3>
+
+<div class="post card" style="margin-top:20px; padding:10px;">
+    <div style="margin-top:15px;">
+        {% include "races/race_form.html" %}
+    </div>
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+    <a href="{% url 'races:race_list' %}">Cancel</a>
+</div>
+
+{% endblock %}

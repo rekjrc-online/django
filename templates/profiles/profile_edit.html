@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card" style="max-width: 600px; margin: 20px auto; padding: 15px; text-align: center;">
+    <h4>{{ profile.profiletype }} PROFILE</h4>
+    {% if profile.avatar %}
+        <a target="_blank" href="{{ profile.avatar.url }}">
+            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px;">
+        </a>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" style="text-align: left;">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Save
+        </button>
+    </form>
+
+    {% if profile.profiletype  == "MODEL" %}
+        <a href="/builds/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Model</a>
+    {% elif profile.profiletype == "LOCATION" %}
+        <a href="/locations/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Location</a>
+    {% elif profile.profiletype == "STORE" %}
+        <a href="/stores/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Store</a>
+    {% elif profile.profiletype == "TRACK" %}
+        <a href="/tracks/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Track</a>
+    {% elif profile.profiletype == "CLUB" %}
+        <a href="/clubs/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Club</a>
+    {% elif profile.profiletype == "TEAM" %}
+        <a href="/teams/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Team</a>
+    {% elif profile.profiletype == "EVENT" %}
+        <a href="/events/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Event</a>
+    {% elif profile.profiletype == "RACE" %}
+        <a href="/races/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Race</a>
+    {% endif %}
+
+</div>
+{% endblock %}

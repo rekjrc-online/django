@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django_user_agents',
     'django_extensions',
     'phonenumber_field',
+    'widget_tweaks',
     # Your apps
     "humans",
     "profiles",

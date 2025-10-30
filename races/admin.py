@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Race, RaceAttributeEnum, RaceAttribute
+from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult
 
 # Inline for RaceAttribute to edit directly within Race
 class RaceAttributeInline(admin.TabularInline):
@@ -7,6 +7,13 @@ class RaceAttributeInline(admin.TabularInline):
     extra = 1  # number of empty rows to show
     autocomplete_fields = ['attribute']
     fields = ['attribute', 'value']
+
+@admin.register(LapMonitorResult)
+class LapMonitorResultAdmin(admin.ModelAdmin):
+    list_display = ('session_name', 'driver_name', 'lap_index', 'lap_duration', 'lap_kind')
+    search_fields = ('session_name', 'driver_name', 'session_id', 'driver_id')
+    list_filter = ('session_kind', 'lap_kind')
+    ordering = ('session_date', 'driver_name', 'lap_index')
 
 @admin.register(Race)
 class RaceAdmin(admin.ModelAdmin):

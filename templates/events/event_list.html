@@ -17,8 +17,8 @@
         <p><strong>Location:</strong> {{ event.location.name }}</p>
         {% if event.multiday %}<p><em>Multi-day Event</em></p>{% endif %}
         <p style="margin-top:10px;">
-          <a href="{% url 'events:event_edit' profile.id event.id %}">Edit</a> | 
-          <a href="{% url 'events:event_delete' profile.id event.id %}">Delete</a>
+          <a href="{% url 'events:event_edit' profile.id %}">Edit</a> | 
+          <a href="{% url 'events:event_delete' profile.id %}">Delete</a>
         </p>
       </div>
     {% empty %}

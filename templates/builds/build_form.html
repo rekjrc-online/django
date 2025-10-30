@@ -1,51 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>{% if build %}Edit Build{% else %}Create New Build{% endif %}</h3>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<h3>{% if build %}Edit Model Build{% else %}Create New Model Build{% endif %}</h3>
 
 {% if not user.is_verified %}
     <p class="text-danger">
         Your account is not verified. You must verify your account before you can create a build.
     </p>
     <a href="/humans/update/">Verify your account</a>
-
 {% elif user.profile_set.exists %}
-    <div class="post card" style="margin-top: 20px; padding: 10px;">
-        <!-- Profile info -->
-        <table>
-            <tr>
-                <td valign="top" align="center">
-                    {% if profile.avatar %}
-                        <a target="_blank" href="{{ profile.avatar.url }}">
-                            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
-                        </a>
-                    {% else %}
-                        <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
-                    {% endif %}
-                </td>
-                <td style="width: 10px;"></td>
-                <td valign="top">
-                    <h2>{{ profile.displayname }}</h2>
-                </td>
-            </tr>
-        </table>
-
-        <!-- Build form -->
-        <form method="post" enctype="multipart/form-data" style="width: 100%; margin-top: 15px;">
+    <form method="post" enctype="multipart/form-data" style="width: 100%; margin-top: 15px;">
+        <div class="post card" style="margin-top: 20px; padding: 10px;">
             {% csrf_token %}
             {{ form.non_field_errors }}
-
-            <!-- Profile (hidden) -->
             {{ form.profile }}
-
-            <!-- Build name -->
             <div style="margin-bottom: 10px;">
                 {{ form.name.label_tag }}<br>
                 {{ form.name }}
                 {{ form.name.errors }}
             </div>
-
-            <!-- Description with live character count -->
             <div style="margin-bottom: 10px;">
                 {{ form.description.label_tag }}<br>
                 {{ form.description }}
@@ -54,7 +31,6 @@
                     <span id="char-count">500</span> characters remaining
                 </div>
             </div>
-
             <script>
                 const textarea = document.getElementById('id_description');
                 const charCount = document.getElementById('char-count');
@@ -65,11 +41,15 @@
                     charCount.textContent = remaining;
                 });
             </script>
+            <button type="submit" style="padding: 10px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                {% if build %}Save Build{% else %}Create Build{% endif %}
+            </button>
 
+        </div>
+        <div class="post card" style="padding: 10px;">
             <div style="margin-top: 20px;">
                 {% if attribute_formset %}
                     {{ attribute_formset.management_form }}
-
                     <table id="attributes-table" style="width:100%; border-collapse: collapse;">
                         <thead>
                             <tr>
@@ -146,13 +126,12 @@
                     </script>
                 {% endif %}
             </div>
-
             <button type="submit" style="padding: 10px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-                {% if build %}Update Build{% else %}Create Build{% endif %}
+                {% if build %}Save Build{% else %}Create Build{% endif %}
             </button>
-        </form>
+        <br /><br /><br /><br />
     </div>
-
+    </form>
 {% else %}
     <p>
         You must create a profile before you can create a build.

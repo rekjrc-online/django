@@ -24,7 +24,7 @@ def edit_profile(request, pk):
             print(form.non_field_errors())
     else:
         form = ProfileEditForm(instance=profile)
-    return render(request, 'profiles/edit_profile.html', {'form': form, 'profile': profile})
+    return render(request, 'profiles/profile_edit.html', {'form': form, 'profile': profile})
 
 @login_required(login_url='/')
 def profiles_list_create(request):

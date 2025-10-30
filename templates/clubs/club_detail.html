@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+    <h2>{{ club.name }}</h2>
+    <h3>Locations</h3>
+    <ul>
+        {% for loc in locations %}
+            <li>{{ loc.location.name }}</li>
+        {% empty %}
+            <li>No locations</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Members</h3>
+    <ul>
+        {% for m in members %}
+            <li>{{ m.human }} {% if m.role %}({{ m.role }}){% endif %}</li>
+        {% empty %}
+            <li>No members</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'clubs:club_update' club.profile.id %}">Edit Club</a> |
+    <a href="{% url 'clubs:club_delete' club.profile.id %}">Delete Club</a> |
+    <a href="{% url 'clubs:club_list' %}">Back to Clubs</a>
+</div>
+
+{% endblock %}

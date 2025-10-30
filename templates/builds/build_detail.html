@@ -1,36 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>Build Details</h3>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
 
 <div class="post card" style="margin-top: 20px; padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
-    <!-- Profile info -->
-    <table>
-        <tr>
-            <td valign="top" align="center">
-                {% if build.profile.avatar %}
-                    <a target="_blank" href="{{ build.profile.avatar.url }}">
-                        <img src="{{ build.profile.avatar.url }}" alt="Avatar" class="avatar">
-                    </a>
-                {% else %}
-                    <img src="/static/nophoto_{{ build.profile.profiletype }}.png" alt="Avatar" class="avatar">
-                {% endif %}
-            </td>
-            <td style="width: 10px;"></td>
-            <td valign="top">
-                <b>{{ build.profile.displayname }}</b>
-                <p>{{ build.profile.get_profiletype_display }}</p>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Build info -->
-    <div style="margin-top: 15px;">
-        <h4>{{ build.name }}</h4>
-        {% if build.description %}
-            <p>{{ build.description|linebreaksbr }}</p>
-        {% endif %}
-    </div>
+    <h4>{{ build.name }}</h4>
+    {% if build.description %}
+        <p>{{ build.description|linebreaksbr }}</p>
+    {% endif %}
 
     <!-- Build attributes -->
     {% if build.attributes.exists %}
@@ -58,7 +37,10 @@
 
     <!-- Actions -->
     <div style="margin-top: 15px;">
-        <a href="/builds/{{profile.id}}/edit" style="margin-right: 10px;">Edit Build</a>
+        <a href="/builds/{{profile.id}}/update/" style="margin-right: 10px;">Edit Build</a>
     </div>
+
+    <br /><br /><br /><br />
+
 </div>
 {% endblock %}
