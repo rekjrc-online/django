@@ -1,14 +1,21 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Race, RaceAttribute
+from .models import Race, RaceAttribute, Track
 
 class RaceForm(forms.ModelForm):
+    track = forms.ModelChoiceField(
+        queryset=Track.objects.all(),
+        required=True,
+        empty_label="Select Track",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
     class Meta:
         model = Race
         fields = [
             "race_type",
             "event",
             "location",
+            "track",
             "club",
             "team",
         ]

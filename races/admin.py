@@ -17,10 +17,11 @@ class LapMonitorResultAdmin(admin.ModelAdmin):
 
 @admin.register(Race)
 class RaceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'profile', 'human', 'event', 'race_type', 'location', 'club', 'team']
-    list_filter = ['event', 'race_type', 'location', 'club', 'team']
+    list_display = ['id', 'profile', 'human', 'event', 'race_type',
+                    'location', 'track', 'club', 'team']
+    list_filter = ['event', 'race_type', 'location', 'track', 'club', 'team']
     search_fields = ['profile__user__username', 'human__username', 'event__name']
-    autocomplete_fields = ['profile', 'human', 'event', 'location', 'club', 'team']
+    autocomplete_fields = ['profile', 'human', 'event', 'location', 'track', 'club', 'team']
     inlines = [RaceAttributeInline]
 
 @admin.register(RaceAttributeEnum)

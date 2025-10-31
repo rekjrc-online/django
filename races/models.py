@@ -5,6 +5,7 @@ from events.models import Event
 from humans.models import Human
 from profiles.models import Profile
 from locations.models import Location
+from tracks.models import Track
 
 class Race(models.Model):
     RACE_TYPE_CHOICES = [
@@ -41,6 +42,12 @@ class Race(models.Model):
         null=True,
         blank=True
     )
+    track = models.ForeignKey(
+        Track,
+        on_delete=models.PROTECT,
+        related_name='races',
+        null=True,
+        blank=True)
     club = models.ForeignKey(
         Club,
         on_delete=models.PROTECT,

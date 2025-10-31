@@ -13,10 +13,11 @@
     <div style="margin-top:15px;">
         {% include "races/race_form.html" %}
     </div>
+    <div style="text-align:center;">
+        <a href="{% url 'races:race_list' %}">Cancel</a>
+    </div>
+    <br />
 </div>
 
-<div style="text-align:center; margin-top:20px;">
-    <a href="{% url 'races:race_list' %}">Cancel</a>
-</div>
-
+<br /><br /><br />
 {% endblock %}

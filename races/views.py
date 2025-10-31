@@ -30,8 +30,9 @@ class RaceDetailView(LoginRequiredMixin, DetailView):
 
 # /races/<profile_id>/build/
 class RaceBuildView(LoginRequiredMixin, FormView):
-    template_name = "races/race_build.html"
+    model = Race
     form_class = RaceForm
+    template_name = "races/race_build.html"
     def dispatch(self, request, *args, **kwargs):
         self.profile = get_object_or_404(Profile, id=kwargs["profile_id"])
         return super().dispatch(request, *args, **kwargs)
