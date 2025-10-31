@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from rekjrc.base_models import BaseModel
 from locations.models import Location
 from profiles.models import Profile
 from humans.models import Human
 
-class Event(models.Model):
+class Event(BaseModel):
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,
@@ -20,7 +21,7 @@ class Event(models.Model):
     def __str__(self):
         return f"{self.eventdate.strftime('%a %m/%d/%y')} - {self.profile.displayname}"
 
-class EventInterest(models.Model):
+class EventInterest(BaseModel):
     event = models.ForeignKey(
         Event,
         on_delete=models.PROTECT,

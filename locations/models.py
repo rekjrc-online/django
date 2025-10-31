@@ -1,8 +1,9 @@
 from django.db import models
 from profiles.models import Profile
+from rekjrc.base_models import BaseModel
 
 # Create your models here.
-class Location(models.Model):
+class Location(BaseModel):
     profile = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name='locations')
     name = models.CharField(max_length=100)
     website = models.URLField(blank=True)

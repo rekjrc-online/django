@@ -1,16 +1,17 @@
 from django.db import models
 from humans.models import Human
 from profiles.models import Profile
+from rekjrc.base_models import BaseModel
 
 # Create your models here.
-class Team(models.Model):
+class Team(BaseModel):
     profile = models.OneToOneField(Profile, on_delete=models.PROTECT, related_name='teams')
     name = models.CharField(max_length=100)
     website = models.URLField(blank=True)
     def __str__(self):
         return f"{self.name}"
 
-class TeamMember(models.Model):
+class TeamMember(BaseModel):
     Team = models.ForeignKey(
         Team,
         on_delete=models.PROTECT,

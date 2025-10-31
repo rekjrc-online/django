@@ -1,9 +1,10 @@
 from django.db import models
+from rekjrc.base_models import BaseModel
 from humans.models import Human
 from profiles.models import Profile
 from locations.models import Location
 
-class Club(models.Model):
+class Club(BaseModel):
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,
@@ -12,7 +13,7 @@ class Club(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-class ClubLocation(models.Model):
+class ClubLocation(BaseModel):
     club = models.ForeignKey(
         Club,
         on_delete=models.PROTECT,
@@ -24,7 +25,7 @@ class ClubLocation(models.Model):
     def __str__(self):
         return f"{self.club.name}"
 
-class ClubMember(models.Model):
+class ClubMember(BaseModel):
     club = models.ForeignKey(
         Club,
         on_delete=models.PROTECT,

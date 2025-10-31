@@ -68,7 +68,7 @@ class Post(BaseModel):
 
         return None
 
-class PostLike(models.Model):
+class PostLike(BaseModel):
     human = models.ForeignKey(Human, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     class Meta:

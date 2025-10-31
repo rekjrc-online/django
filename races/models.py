@@ -1,13 +1,14 @@
 from django.db import models
+from rekjrc.base_models import BaseModel
 from clubs.models import Club
-from teams.models import Team
 from events.models import Event
 from humans.models import Human
-from profiles.models import Profile
 from locations.models import Location
+from profiles.models import Profile
+from teams.models import Team
 from tracks.models import Track
 
-class Race(models.Model):
+class Race(BaseModel):
     RACE_TYPE_CHOICES = [
         ('Lap Race', 'Lap Race'),
         ('Drag Race', 'Drag Race'),
@@ -29,7 +30,7 @@ class Race(models.Model):
     )
     event = models.ForeignKey(
         Event,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='races',
         db_index=True,
         null=True,
@@ -37,27 +38,27 @@ class Race(models.Model):
     )
     location = models.ForeignKey(
         Location,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='races',
         null=True,
         blank=True
     )
     track = models.ForeignKey(
         Track,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='races',
         null=True,
         blank=True)
     club = models.ForeignKey(
         Club,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='races',
         null=True,
         blank=True
     )
     team = models.ForeignKey(
         Team,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='races',
         null=True,
         blank=True
@@ -65,7 +66,7 @@ class Race(models.Model):
     def __str__(self):
         return f"Race for {self.event or 'No Event'}"
 
-class RaceAttributeEnum(models.Model):
+class RaceAttributeEnum(BaseModel):
     """
     Lookup table for race attributes.  
     This model defines the possible attribute types that a race can have, like 'Track Surface' or 'Lap Count'.
@@ -78,7 +79,7 @@ class RaceAttributeEnum(models.Model):
     def __str__(self):
         return self.name
 
-class RaceAttribute(models.Model):
+class RaceAttribute(BaseModel):
     """
     Stores specific attribute values for a race.  
     Each entry links a race to an attribute type (from RaceAttributeEnum) and a value.
@@ -108,7 +109,7 @@ class RaceAttribute(models.Model):
     def __str__(self):
         return f"{self.race}: {self.attribute.name} = {self.value}"
 
-class LapMonitorResult(models.Model):
+class LapMonitorResult(BaseModel):
     session_id = models.UUIDField()
     session_name = models.CharField(max_length=100)
     session_date = models.DateTimeField()

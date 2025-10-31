@@ -35,6 +35,9 @@ class RaceBuildView(LoginRequiredMixin, FormView):
     template_name = "races/race_build.html"
     def dispatch(self, request, *args, **kwargs):
         self.profile = get_object_or_404(Profile, id=kwargs["profile_id"])
+        race = Race.objects.filter(profile_id=self.profile.id).first()
+        if race:
+            return redirect('races:race_detail', profile_id=self.profile.id)
         return super().dispatch(request, *args, **kwargs)
     def get_form(self, form_class=None):
         race, _ = Race.objects.get_or_create(profile=self.profile, human=self.request.user)

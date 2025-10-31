@@ -1,8 +1,9 @@
 from django.db import models
 from humans.models import Human
 from profiles.models import Profile
+from rekjrc.base_models import BaseModel
 
-class Store(models.Model):
+class Store(BaseModel):
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,

@@ -5,8 +5,8 @@
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
-<h2>Race Details</h2>
 <div class="card" style="max-width:600px; margin:auto; padding:20px;">
+    <h2>Race Details</h2>
     <p><strong>Type:</strong> {{ race.race_type }}</p>
     {% if race.event %}<p><strong>Event:</strong> {{ race.event }}</p>{% endif %}
     {% if race.location %}<p><strong>Location:</strong> {{ race.location }}</p>{% endif %}
@@ -29,5 +29,5 @@
         <p>No attributes defined.</p>
     {% endif %}
 </div>
-<br />
+<br /><br /><br /><br />
 {% endblock %}
