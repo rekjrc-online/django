@@ -1,29 +1,22 @@
-# Python
 __pycache__/
 *.py[cod]
 *.so
 _*.bat
+*.sh
 *.egg
+*.csv
 *.egg-info/
 dist/
 build/
 env/
 venv/
-
-# Django
 *.log
 local_settings.py
 db.sqlite3
 /staticfiles/
 /media/
-
-# VSCode / JetBrains
 .vscode/
 .idea/
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Environment variables
 .env
