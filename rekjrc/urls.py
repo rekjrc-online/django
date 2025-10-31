@@ -15,10 +15,14 @@ urlpatterns = [
     path('posts/', include('posts.urls')),
     path('profiles/', include('profiles.urls')),
     path('races/', include('races.urls')),
+    path('sponsors/', include('sponsors.urls')),
     path('stores/', include('stores.urls')),
     path('teams/', include('teams.urls')),
     path('tracks/', include('tracks.urls')),
 ]
+
+handler404 = 'django.views.defaults.page_not_found'
+handler500 = 'django.views.defaults.server_error'
 
 # Serve media files in development
 if settings.DEBUG:

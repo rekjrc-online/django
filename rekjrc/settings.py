@@ -34,17 +34,18 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'widget_tweaks',
     # Your apps
-    "humans",
-    "profiles",
-    "posts",
     "builds",
-    "tracks",
     "clubs",
-    "teams",
     "events",
-    "races",
+    "humans",
     "locations",
+    "posts",
+    "profiles",
+    "races",
+    "sponsors",
     "stores",
+    "teams",
+    "tracks",
 ]
 
 # ------------------------------
@@ -81,6 +82,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "rekjrc.context.device_type",
+                "sponsors.context_processors.sponsors_context",
             ],
         },
     },

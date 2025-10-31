@@ -47,7 +47,7 @@ nav a {
     background-color: #1b1b1d;
     border: 1px solid #333;
     border-radius: 8px;
-    height: calc(100vh - 75px);
+    height: calc(100vh - 100px);
     overflow: hidden;
     position: sticky;
     top: 60px;
@@ -57,7 +57,7 @@ nav a {
 .middle-col {
     flex: 1 1 auto;
     overflow-y: auto;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 40px);
     padding-right: 10px;
     box-sizing: border-box;
 }

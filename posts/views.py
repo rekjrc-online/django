@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -20,6 +20,24 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         form.instance.human_id = self.request.user
         return super().form_valid(form)
+
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'posts/post_detail.html'
+    context_object_name = 'post'
+    pk_url_kwarg = 'post_id'
+    def get_object(self, queryset=None):
+        return get_object_or_404(Post.objects.select_related('human_id', 'profile_id'), pk=self.kwargs['post_id'])
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = context['post']
+        post.liked_by_user = (
+            self.request.user.is_authenticated
+            and post.likes.filter(human=self.request.user).exists()
+        )
+        context['likes'] = post.likes.select_related('human').all()
+        context['replies'] = post.replies.select_related('human_id', 'profile_id').all()
+        return context
 
 class PostReplyView(LoginRequiredMixin, CreateView):
     model = Post
