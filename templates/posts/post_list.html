@@ -13,10 +13,21 @@
                 <img src="{{ post.image.url }}" alt="Post image" style="max-width:200px;">
             </a>
         {% endif %}
-        {% if post.video_url %}
-            <p>
-                <a href="{{ post.video_url }}" target="_blank">Watch Video</a>
+        {% if post.youtube_id %}
+            <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                <iframe src="https://www.youtube.com/embed/{{ post.youtube_id }}"
+                        frameborder="0" allowfullscreen
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                </iframe>
+            </div>
+            <noscript><p><a href="https://www.youtube.com/watch?v={{ post.youtube_id }}" target="_blank">Watch on YouTube</a></p></noscript>
+            <p style="font-size: small; text-align: center;">
+                <a href="https://www.youtube.com/watch?v={{ post.youtube_id }}" target="_blank">
+                    Watch on YouTube
+                </a>
             </p>
+        {% else %}
+            <p><a href="{{ post.video_url }}" target="_blank">Watch Video</a></p>
         {% endif %}
         {% include "posts/post_metrics.html" %}
     </div>
