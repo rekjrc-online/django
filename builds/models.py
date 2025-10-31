@@ -4,8 +4,14 @@ from profiles.models import Profile
 from rekjrc.base_models import BaseModel
 
 class Build(BaseModel):
-    human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='builds')
-    profile = models.OneToOneField(Profile, on_delete=models.PROTECT, related_name='builds')
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.PROTECT,
+        related_name='builds')
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='builds')
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     def __str__(self):

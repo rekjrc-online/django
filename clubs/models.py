@@ -5,6 +5,12 @@ from profiles.models import Profile
 from locations.models import Location
 
 class Club(BaseModel):
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.PROTECT,
+        related_name='clubs',
+        null=True,
+        blank=True)
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,

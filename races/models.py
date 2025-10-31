@@ -16,16 +16,17 @@ class Race(BaseModel):
         ('Long Jump', 'Long Jump'),
     ]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
-    profile = models.OneToOneField(
-        Profile,
-        on_delete=models.PROTECT,
-        related_name='race',
-        default=1
-    )
     human = models.ForeignKey(
         Human,
         on_delete=models.PROTECT,
         related_name='races',
+        null=True,
+        blank=True,
+    )
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='race',
         default=1
     )
     event = models.ForeignKey(
@@ -34,7 +35,7 @@ class Race(BaseModel):
         related_name='races',
         db_index=True,
         null=True,
-        blank=True
+        blank=True,
     )
     location = models.ForeignKey(
         Location,
@@ -94,7 +95,7 @@ class RaceAttribute(BaseModel):
     """
     race = models.ForeignKey(
         Race,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='attributes',
         db_index=True
     )

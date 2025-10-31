@@ -6,6 +6,12 @@ from profiles.models import Profile
 from humans.models import Human
 
 class Event(BaseModel):
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.PROTECT,
+        related_name='events',
+        null=True,
+        blank=True)
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,

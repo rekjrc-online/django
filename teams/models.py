@@ -5,24 +5,28 @@ from rekjrc.base_models import BaseModel
 
 # Create your models here.
 class Team(BaseModel):
-    profile = models.OneToOneField(Profile, on_delete=models.PROTECT, related_name='teams')
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='teams')
     name = models.CharField(max_length=100)
     website = models.URLField(blank=True)
     def __str__(self):
         return f"{self.name}"
 
 class TeamMember(BaseModel):
-    Team = models.ForeignKey(
+    team = models.ForeignKey(
         Team,
-        on_delete=models.PROTECT,
-        related_name='members')
+        on_delete=models.CASCADE,
+        related_name='members',
+        default=1)
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
-        related_name='Team_memberships')
+        on_delete=models.CASCADE,
+        related_name='team_memberships')
     role = models.CharField(max_length=100, blank=True)
     class Meta:
-        unique_together = ('Team', 'human')
+        unique_together = ('team', 'human')
     def __str__(self):
         role_display = f" ({self.role})" if self.role else ""
         return f"{self.human} @ {self.Team}{role_display}"

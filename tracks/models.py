@@ -1,6 +1,7 @@
 from django.db import models
 from locations.models import Location
 from profiles.models import Profile
+from humans.models import Human
 from rekjrc.base_models import BaseModel
 
 class TrackType(BaseModel):
@@ -9,6 +10,11 @@ class TrackType(BaseModel):
         return self.name
 
 class Track(BaseModel):
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.PROTECT,
+        related_name='tracks',
+        default=1)
     profile = models.OneToOneField(Profile, on_delete=models.PROTECT, related_name='track', default=1)
     name = models.CharField(max_length=100, unique=True)
     track_type = models.ForeignKey(TrackType, on_delete=models.PROTECT, related_name='tracks')

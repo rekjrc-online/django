@@ -69,7 +69,7 @@ class Post(BaseModel):
         return None
 
 class PostLike(BaseModel):
-    human = models.ForeignKey(Human, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    human = models.ForeignKey(Human, on_delete=models.PROTECT)
+    post = models.ForeignKey(Post, on_delete=models.PROTECT, related_name='likes')
     class Meta:
         unique_together = ('human', 'post')

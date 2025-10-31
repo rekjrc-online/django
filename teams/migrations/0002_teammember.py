@@ -14,15 +14,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='TeamMember',
+            name='teamMember',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('role', models.CharField(blank=True, max_length=100)),
-                ('Team', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='members', to='teams.team')),
-                ('human', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='Team_memberships', to=settings.AUTH_USER_MODEL)),
+                ('team', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='members', to='teams.team')),
+                ('human', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='team_memberships', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'unique_together': {('Team', 'human')},
+                'unique_together': {('team', 'human')},
             },
         ),
     ]

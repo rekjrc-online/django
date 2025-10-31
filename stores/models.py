@@ -4,14 +4,14 @@ from profiles.models import Profile
 from rekjrc.base_models import BaseModel
 
 class Store(BaseModel):
-    profile = models.OneToOneField(
-        Profile,
-        on_delete=models.PROTECT,
-        related_name='store')
     human = models.ForeignKey(
         Human,
         on_delete=models.PROTECT,
         related_name='stores')
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='store')
     name = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.name}"

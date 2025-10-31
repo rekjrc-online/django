@@ -1,9 +1,16 @@
 from django.db import models
 from profiles.models import Profile
 from rekjrc.base_models import BaseModel
+from humans.models import Human
 
 # Create your models here.
 class Location(BaseModel):
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.PROTECT,
+        related_name='locations',
+        null=True,
+        blank=True)
     profile = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name='locations')
     name = models.CharField(max_length=100)
     website = models.URLField(blank=True)

@@ -13,13 +13,15 @@ class Sponsor(BaseModel):
 class SponsorClick(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         null=True,
         blank=True,
         related_name='sponsor_clicks')
     sponsor = models.ForeignKey(
         Sponsor,
-        on_delete=models.CASCADE,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
         related_name='clicks')
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(blank=True)

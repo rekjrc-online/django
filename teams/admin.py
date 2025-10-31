@@ -15,6 +15,6 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(TeamMember)
 class TeamMemberAdmin(admin.ModelAdmin):
-    list_display = ('human', 'Team', 'role')
-    search_fields = ('human__name', 'Team__name', 'role')
-    list_filter = ('Team', 'role')
+    list_display = ('human', 'team', 'role')
+    search_fields = ('human__name', 'team__name', 'role')
+    list_filter = ('team', 'role')

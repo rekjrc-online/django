@@ -26,8 +26,8 @@ class Invitation(BaseModel):
         return f"Invitation from {self.from_human} to {self.to_human or 'unclaimed'}"
 
 class HumanFriend(BaseModel):
-    human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='friends')
-    friend_human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='friend_of')
+    human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friends')
+    friend_human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friend_of')
     class Meta:
         unique_together = ('human', 'friend_human')
     def __str__(self):
