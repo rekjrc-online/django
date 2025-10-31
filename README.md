@@ -14,5 +14,5 @@ To install/run locally using sqllite for database:
 9.  "migrate.bat" ("python manage.py migrate")
     or "migrate.sh" ("chmod +x migrate.sh")
 10. runserver.bat / runserver.sh ("chmod +x runserver.sh")
-    (runs "python manage.py runserver 0.0.0.0:8000")
+    (runs "python manage.py runserver")
 11. browse to http://localhost:8000
