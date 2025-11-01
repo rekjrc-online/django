@@ -1,19 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2 style="text-align:center;">Teams</h2>
-  <div style="max-width:600px; margin:0 auto;">
-    <ul>
-      {% for team in teams %}
-        <li>
-          <strong>{{ team.name }}</strong><br>
-          Profile: {{ team.profile.displayname }}
-          {% if team.website %}
-            <br><a href="{{ team.website }}" target="_blank">{{ team.website }}</a>
-          {% endif %}
-        </li>
-      {% empty %}
-        <li>No teams found.</li>
-      {% endfor %}
-    </ul>
+
+<!-- Profile summary -->
+{% include "profiles/profile_header.html" %}
+
+<div class="post card">
+  <div class="post card">
+    <h1>Teams</h1>
   </div>
+  {% for team in teams %}
+    <h3>{{ team.name }}</h3>
+    {% if team.website %}
+      <p><a href="{{ team.website }}" target="_blank">{{ team.website }}</a></p>
+    {% endif %}
+    <p>Profile: <a href="{% url 'profiles:detail-profile' profile_id=team.profile.id %}">{{ team.profile }}</a></p>
+    <p>Members: {{ team.members.count }}</p>
+    <a href="{% url 'teams:team_detail' profile_id=team.profile.id %}" class="btn" style="color:#1da1f2;">View</a>
+    <a href="{% url 'teams:team_update' profile_id=team.profile.id %}" class="btn" style="color:#1da1f2;">Edit</a>
+    <a href="{% url 'teams:team_delete' profile_id=team.profile.id %}" class="btn" style="color:red;">Delete</a>
+  {% empty %}
+    <p>No teams found.</p>
+  {% endfor %}
+</div>
 {% endblock %}

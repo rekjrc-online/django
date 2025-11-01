@@ -1,54 +1,48 @@
-from django.views.generic import DetailView
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Profile
 from .forms import ProfileCreateForm, ProfileEditForm
-from django.shortcuts import get_object_or_404
 
-def detail_profile(request, profile_id):
-    profile = get_object_or_404(Profile, id=profile_id)
-    posts_with_images = profile.posts.filter(image__isnull=False).exclude(image='')
-    return render(request, 'profiles/profile_detail.html', {'profile': profile, 'posts_with_images': posts_with_images})
+class ProfilesListView(LoginRequiredMixin, ListView):
+    model = Profile
+    template_name = 'profiles/profiles.html'
+    context_object_name = 'profiles'
+    login_url = '/humans/login/'
+    def get_queryset(self):
+        return Profile.objects.filter(human=self.request.user).order_by('profiletype', 'displayname')
 
-@login_required(login_url='/')
-def profiles_list_create(request):
-    user_profiles = Profile.objects.filter(human=request.user).order_by('profiletype', 'displayname')
-    if request.method == 'POST':
-        form = ProfileCreateForm(request.POST, request.FILES)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.human = request.user
-            profile.save()
-            return redirect('profiles-list-create')
-    else:
-        form = ProfileCreateForm()
-    context = {
-        'profiles': user_profiles,
-        'form': form,
-    }
-    return render(request, 'profiles/profiles.html', context)
+class ProfileDetailView(DetailView):
+    model = Profile
+    template_name = 'profiles/profile_detail.html'
+    context_object_name = 'profile'
+    pk_url_kwarg = 'profile_id'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts_with_images'] = self.object.posts.filter(image__isnull=False).exclude(image='')
+        return context
 
-@login_required
-def update_profile(request, profile_id):
-    profile = get_object_or_404(Profile, id=profile_id, human=request.user)
-    if request.method == 'POST':
-        form = ProfileEditForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profiles-list-create')
-        else:
-            print("FORM NOT VALID")
-            print(form.errors)
-            print(form.non_field_errors())
-    else:
-        form = ProfileEditForm(instance=profile)
-    return render(request, 'profiles/profile_edit.html', {'form': form, 'profile': profile})
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileEditForm
+    template_name = 'profiles/profile_edit.html'
+    pk_url_kwarg = 'profile_id'
+    login_url = '/humans/login/'
+    def get_queryset(self):
+        return Profile.objects.filter(human=self.request.user)
+    def form_valid(self, form):
+        form.save()
+        return redirect('profiles:profiles-list')
 
-@login_required
-def delete_profile(request, profile_id):
-    profile = get_object_or_404(Profile, id=profile_id, human=request.user)
-    if request.method == 'POST':
+class ProfileDeleteView(LoginRequiredMixin, DeleteView):
+    model = Profile
+    template_name = 'profiles/confirm_delete.html'
+    pk_url_kwarg = 'profile_id'
+    login_url = '/humans/login/'
+    def get_queryset(self):
+        return Profile.objects.filter(human=self.request.user)
+    def post(self, request, *args, **kwargs):
+        profile = self.get_object()
         profile.deleted = True
         profile.save()
         return redirect('/profiles/')
-    return render(request, 'profiles/confirm_delete.html', {'profile': profile})

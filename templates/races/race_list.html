@@ -1,7 +1,9 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h3>Your Races</h3>
+
+<div class="post card" style="text-align: center;">
+    <h3>Your Races</h3>
+</div>
 
 {% if races %}
     {% for race in races %}
@@ -59,24 +61,4 @@
 {% else %}
     <p>You haven’t added any races yet.</p>
 {% endif %}
-
-<div class="post card" style="margin-top:20px;">
-    <h3>Create New Race</h3>
-    <form method="get" action="">
-        {% comment %}
-        Typically, the user would choose which profile this race belongs to.
-        Replace this with your actual profile selection logic.
-        {% endcomment %}
-        <p>Select a profile to create a race for:</p>
-        <ul style="list-style-type:none; padding:0;">
-            {% for profile in profiles %}
-                <li>
-                    <a href="{% url 'races:race_create' profile.id %}" style="text-decoration:none;">
-                        ➕ {{ profile.displayname }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    </form>
-</div>
 {% endblock %}

@@ -37,7 +37,7 @@ class RaceBuildView(LoginRequiredMixin, FormView):
         self.profile = get_object_or_404(Profile, id=kwargs["profile_id"])
         race = Race.objects.filter(profile_id=self.profile.id).first()
         if race:
-            return redirect('races:race_detail', profile_id=self.profile.id)
+            return redirect('races:race_update', profile_id=self.profile.id)
         return super().dispatch(request, *args, **kwargs)
     def get_form(self, form_class=None):
         race, _ = Race.objects.get_or_create(profile=self.profile, human=self.request.user)

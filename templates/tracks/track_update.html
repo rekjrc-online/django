@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card" style="padding:0px; text-align:center;">
+    <h3>Edit Track</h3>
+</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<!-- Track form -->
+<div class="post card" style="max-width: 600px; padding-left: 15px; padding-right: 15px;">
+    <h2 style="text-align:center;">
+        {% if form.instance.pk %}Edit Track{% else %}Create Track{% endif %}
+    </h2>
+    <form method="post" style="text-align:left;">
+        {% csrf_token %}
+
+        <!-- Track fields as table -->
+        <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
+            {% for field in form %}
+            <tr>
+                <th style="text-align:left; padding:5px; width:35%;">{{ field.label_tag }}</th>
+                <td style="padding:5px; width:65%;">{{ field }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <button type="submit"
+                style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Save
+        </button>
+    </form>
+</div>
+
+{% endblock %}

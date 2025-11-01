@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 from posts import views as post_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', post_views.HomepageView.as_view(), name='homepage'),
+    path('admin/', admin.site.urls),
     path('builds/', include('builds.urls')),
     path('clubs/', include('clubs.urls')),
     path('events/', include('events.urls')),

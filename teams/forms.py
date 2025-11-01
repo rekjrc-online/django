@@ -7,12 +7,10 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ['name', 'website']
 
-
 class TeamMemberForm(forms.ModelForm):
     class Meta:
         model = TeamMember
         fields = ['human', 'role']
-
 
 TeamMemberFormSet = inlineformset_factory(
     Team,

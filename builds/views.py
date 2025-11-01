@@ -13,7 +13,7 @@ class BuildBuildView(LoginRequiredMixin, CreateView):
         profile_id = self.kwargs.get('profile_id')
         build = Build.objects.filter(profile_id=profile_id).first()
         if build:
-            return redirect('builds:build_detail', profile_id=profile_id)
+            return redirect('builds:build_update', profile_id=profile_id)
         return super().dispatch(request, *args, **kwargs)
     def get_initial(self):
         profile_id = self.kwargs.get('profile_id')
