@@ -32,7 +32,7 @@ class BuildBuildView(LoginRequiredMixin, CreateView):
         context['profile'] = Profile.objects.get(id=profile_id)
         return context
     def get_success_url(self):
-        return redirect('builds:build_detail', profile_id=profile_id)
+        return redirect('builds:build_detail', profile_id=self.profile_id)
 
 class BuildDetailView(LoginRequiredMixin, DetailView):
     model = Build
