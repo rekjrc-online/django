@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="card" style="max-width: 600px; margin: 20px auto; padding: 15px; text-align: center;">
+<div class="card" style="max-width: 600px; padding: 15px; text-align: center;">
     <h4>{{ profile.profiletype }} PROFILE</h4>
     {% if profile.avatar %}
         <a target="_blank" href="{{ profile.avatar.url }}">
@@ -36,6 +36,6 @@
     {% elif profile.profiletype == "RACE" %}
         <a href="/races/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Race</a>
     {% endif %}
-
 </div>
+<br /><br /><br />
 {% endblock %}

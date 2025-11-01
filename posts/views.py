@@ -90,6 +90,7 @@ class PostRepliesAjax(View):
         })
 
 class PostReplyView(LoginRequiredMixin, CreateView):
+    login_url = '/humans/login/'
     model = Post
     form_class = PostForm
     template_name = 'posts/post_reply.html'
