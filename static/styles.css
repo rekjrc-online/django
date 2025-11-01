@@ -45,12 +45,12 @@ nav a {
 .right-col {
     flex: 0 0 200px; /* desktop width */
     background-color: #1b1b1d;
-    border: 1px solid #333;
+    border: 1px solid #444;
     border-radius: 8px;
     height: calc(100vh - 100px);
     overflow: hidden;
     position: sticky;
-    top: 60px;
+    top: 50px;
     padding-left: 10px;
 }
 
@@ -60,6 +60,7 @@ nav a {
     height: calc(100vh - 40px);
     padding-right: 10px;
     box-sizing: border-box;
+    padding-top: 10px;
 }
 /* ---------- Custom Scrollbar ---------- */
 
@@ -92,10 +93,10 @@ nav a {
 /* ---------- Cards and Posts ---------- */
 .post, .card {
     background-color: #1b1b1d;
-    border: 1px solid #333;
+    border: 1px solid #444;
     border-radius: 8px;
     padding: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     width: 100%;
     box-sizing: border-box;
 }

@@ -15,7 +15,7 @@ class TrackAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
     def get_profile_username(self, obj):
-        return obj.profile.username if hasattr(obj, 'profile') and obj.profile else None
+        return obj.profile.displayname if hasattr(obj, 'profile') and obj.profile else None
     get_profile_username.short_description = 'Profile Username'
     get_profile_username.admin_order_field = 'profile__username'
 

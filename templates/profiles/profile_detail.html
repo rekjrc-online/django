@@ -17,14 +17,14 @@
     </center>
 
     {% if profile.bio %}
-        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
             <h3 style="margin-top:0; color:#1da1f2;">Bio</h3>
             <p style="margin:0;">{{ profile.bio|linebreaksbr }}</p>
         </div>
     {% endif %}
 
     {% if profile.website %}
-        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
             <h3 style="margin-top:0; color:#1da1f2;">Web Site</h3>
             <p><a href="{{ profile.website }}" target="_blank"
                 style="color:#1da1f2; text-decoration:none;">{{ profile.website }}</a></p>
@@ -32,7 +32,7 @@
     {% endif %}
 
     {% if profile.builds %}
-        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
             <h3 style="margin-top:0; color:#1da1f2;">{{ profile.builds.name }}</h3>
             {% if profile.builds.description %}
                 <p>{{ profile.builds.description|linebreaksbr }}</p>
@@ -55,14 +55,16 @@
                 {% comment %}<p><em>No attributes added yet.</em></p>{% endcomment %}
             {% endif %}
 
-            <div style="margin-top:10px;">
-                <a href="/builds/{{profile.id}}/update/">Update Build</a>
-            </div>
+            {% if race.human == request.user %}
+                <div style="margin-top:10px;">
+                    <a href="/builds/{{profile.id}}/update/">Update Build</a>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 
     {% if posts_with_images %}
-        <div class="card" style="max-width:600px; margin:20px auto; padding:20px; background-color:#222; border-radius:12px;">
+        <div class="card" style="max-width:600px; border:solid 1px #444; margin:20px auto; padding:20px; background-color:#222; border-radius:12px;">
             <h3 style="color:#1da1f2; margin-bottom:15px; text-align:left;">Photos</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:10px;">
                 {% for post in posts_with_images %}
