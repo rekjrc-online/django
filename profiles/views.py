@@ -5,8 +5,8 @@ from .models import Profile
 from .forms import ProfileCreateForm, ProfileEditForm
 from django.shortcuts import get_object_or_404
 
-def detail_profile(request, pk):
-    profile = get_object_or_404(Profile, pk=pk)
+def detail_profile(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id)
     posts_with_images = profile.posts.filter(image__isnull=False).exclude(image='')
     return render(request, 'profiles/profile_detail.html', {'profile': profile, 'posts_with_images': posts_with_images})
 
@@ -29,8 +29,8 @@ def profiles_list_create(request):
     return render(request, 'profiles/profiles.html', context)
 
 @login_required
-def update_profile(request, pk):
-    profile = get_object_or_404(Profile, pk=pk, human=request.user)
+def update_profile(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id, human=request.user)
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -45,8 +45,8 @@ def update_profile(request, pk):
     return render(request, 'profiles/profile_edit.html', {'form': form, 'profile': profile})
 
 @login_required
-def delete_profile(request, pk):
-    profile = get_object_or_404(Profile, pk=pk, human=request.user)
+def delete_profile(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id, human=request.user)
     if request.method == 'POST':
         profile.deleted = True
         profile.save()
