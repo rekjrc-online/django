@@ -46,7 +46,7 @@ class BuildDetailView(LoginRequiredMixin, DetailView):
         build = self.get_object()
         if build is None:
             profile_id = self.kwargs['profile_id']
-            return redirect(reverse('build_create', args=[profile_id]))
+            return redirect(reverse('build_build', args=[profile_id]))
         self.object = build
         context = self.get_context_data(object=build)
         return self.render_to_response(context)
@@ -65,7 +65,7 @@ class BuildUpdateView(UpdateView):
         build = Build.objects.filter(profile_id=profile_id).first()
         if not build:
             # If no build exists, forward to the build creation page
-            return redirect('builds:build_create', profile_id=profile_id)
+            return redirect('builds:build_build', profile_id=profile_id)
         self.object = build
         return super().dispatch(request, *args, **kwargs)
     def get_object(self):
