@@ -23,7 +23,7 @@ class BuildAttributeEnum(BaseModel):
         return self.name
 
 class BuildAttribute(BaseModel):
-    build = models.ForeignKey(Build, on_delete=models.PROTECT, related_name='attributes')
+    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attributes')
     attribute_type = models.ForeignKey(BuildAttributeEnum, on_delete=models.PROTECT)
     value = models.CharField(max_length=255)
     def __str__(self):
