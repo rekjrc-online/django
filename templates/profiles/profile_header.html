@@ -22,8 +22,8 @@
     <p style="color: #555; font-size: 14px; margin-top: 0;">{{ profile.bio|linebreaksbr }}</p>
 {% endif %}
 
-{% if profile.location %}
-    <p style="color: #555; font-size: 14px; margin-top: 0;">{{ profile.location }}</p>
+{% if profile.city %}
+    <p style="color: #555; font-size: 14px; margin-top: 0;">{{ profile.city }} {{ profile.state }}</p>
 {% endif %}
 
 {% if profile.website %}

@@ -20,13 +20,14 @@ class Profile(BaseModel):
 	displayname = models.CharField(max_length=50, default='')
 	bio = models.TextField(blank=True)
 	avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-	location = models.CharField(max_length=100, blank=True)
+	city = models.CharField(max_length=100, blank=True)
+	state = models.CharField(max_length=100, blank=True)
 	website = models.URLField(blank=True)
 	followers_count = models.PositiveIntegerField(default=0)
 	following_count = models.PositiveIntegerField(default=0)
 
 	def __str__(self):
-		return self.displayname
+		return f"{self.displayname} - {self.city} {self.state}"
 
 	def save(self, *args, **kwargs):
 		try:

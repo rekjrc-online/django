@@ -75,10 +75,10 @@
         </div>
     {% endif %}
     
-    {% if profile.location %}
+    {% if profile.city %}
         <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
             <h3 style="margin-top:0; color:#1da1f2;">Location</h3>
-            <p style="margin:0;">{{ profile.location }}</p>
+            <p style="margin:0;">{{ profile.city }} {{ profile.state }}</p>
         </div>
     {% endif %}
 </div>

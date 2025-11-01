@@ -1,0 +1,19 @@
+<div class="post" onclick="window.location.href='/posts/{{ post.id }}/';" style="cursor: pointer;">
+    <strong>
+        <a href="/profiles/{{ post.profile_id.pk }}/">
+            {{ post.profile_id.displayname }}
+        </a>
+    </strong>
+    - {{ post.profile_id.get_profiletype_display }}
+    - {{ post.insertdate|date:"m/d/y h:iA" }}
+    <p>{{ post.content|linebreaksbr }}</p>
+    {% if post.image %}
+        <a target="_blank" href="{{ post.image.url }}">
+            <img src="{{ post.image.url }}" alt="Post image" style="max-width:200px;">
+        </a>
+    {% endif %}
+    {% if post.youtube_id %}
+        <p><a href="{{ post.video_url }}" target="_blank">Watch Video</a></p>
+    {% endif %}
+    {% include "posts/post_metrics.html" %}
+</div>

@@ -1,0 +1,35 @@
+<!-- Replies Section -->
+<h4>Replies</h4>
+
+<!-- Container for replies -->
+<div id="replies-container">
+    {% for reply in replies %}
+        {% include "posts/_reply_item.html" with post=reply %}
+    {% endfor %}
+</div>
+
+<!-- Loading indicator / end message -->
+<div id="loading" style="text-align:center; display:block;">
+    {% if replies.has_next %}
+        Scroll for more...
+    {% else %}
+        No replies yet.
+    {% endif %}
+</div>
+<div id="end-message" style="text-align:center; display:none;">
+    <br /><br /><br /><br />
+</div>
+
+<!-- Configure scroll.js for this container -->
+<script>
+window.SCROLL_CONFIG = {
+    feedId: 'replies-container',   // must match container ID
+    loadingId: 'loading',          // must match loading indicator ID
+    endMessageId: 'end-message',   // must match end message ID
+    startPage: {{ replies.number|default:2 }},  // next page to fetch
+    fetchUrl: "{% url 'posts:PostRepliesAjax' post.id %}"
+};
+</script>
+
+<!-- Include scroll.js AFTER the elements exist -->
+<script src="/static/scroll_replies.js"></script>
