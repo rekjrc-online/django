@@ -32,7 +32,7 @@ class BuildBuildView(LoginRequiredMixin, CreateView):
         context['profile'] = Profile.objects.get(id=profile_id)
         return context
     def get_success_url(self):
-        return redirect('builds:build_detail', profile_id=self.profile_id)
+        return redirect('builds:build_detail', profile_id=self.object.profile.id)
 
 class BuildDetailView(LoginRequiredMixin, DetailView):
     model = Build
@@ -64,36 +64,26 @@ class BuildUpdateView(UpdateView):
         profile_id = self.kwargs['profile_id']
         build = Build.objects.filter(profile_id=profile_id).first()
         if not build:
-            # If no build exists, forward to the build creation page
             return redirect('builds:build_build', profile_id=profile_id)
         self.object = build
         return super().dispatch(request, *args, **kwargs)
     def get_object(self):
-        # self.object is already set in dispatch
         return self.object
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['profile'] = self.object.profile
-        # Attribute formset
         if self.request.method == "POST":
             formset = BuildAttributeFormSet(
                 self.request.POST,
                 instance=self.object,
-                prefix='attributes'
-            )
+                prefix='attributes')
         else:
             formset = BuildAttributeFormSet(
                 instance=self.object,
-                prefix='attributes'
-            )
-
-        # Sort existing attributes
+                prefix='attributes')
         formset.queryset = formset.queryset.order_by('attribute_type__name')
-
-        # Sort attribute_type dropdown
         for form in formset.forms:
             form.fields['attribute_type'].queryset = BuildAttributeEnum.objects.order_by('name')
-
         context['attribute_formset'] = formset
         return context
 
@@ -129,7 +119,7 @@ class BuildUpdateView(UpdateView):
             attribute_formset.save()
 
             # Manual redirect fixes both submission and POST refresh issue
-            return redirect(reverse("build_detail", kwargs={"profile_id": self.object.profile.id}))
+            return redirect(reverse("builds:build_detail", kwargs={"profile_id": self.object.profile.id}))
 
         return self.form_invalid(form)
 
