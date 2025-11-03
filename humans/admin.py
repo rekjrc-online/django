@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Human, Invitation, HumanFriend
+from .models import Human, Invitation, HumanFriend, FriendRequest
 
 class HumanAdmin(UserAdmin):
     model = Human
@@ -35,3 +35,12 @@ class HumanFriendAdmin(admin.ModelAdmin):
     list_filter = ('human',)
     ordering = ('human',)
 admin.site.register(HumanFriend, HumanFriendAdmin)
+
+class FriendRequestAdmin(admin.ModelAdmin):
+    list_display = ('id', 'human', 'friend_human')
+    search_fields = (
+        'human__displayname',
+        'friend_human__displayname',
+        'human__user__username',
+        'friend_human__user__username')
+admin.site.register(FriendRequest, FriendRequestAdmin)

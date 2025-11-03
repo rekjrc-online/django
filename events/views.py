@@ -52,7 +52,6 @@ class EventBuildView(LoginRequiredMixin, CreateView):
         profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
         form.instance.profile = profile
         form.save()
-        messages.success(self.request, 'Event created successfully!')
         return redirect('events:event_detail', profile_id=profile.id)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,7 +68,6 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         return get_object_or_404(Event, profile=profile)
     def form_valid(self, form):
         event = form.save()
-        messages.success(self.request, 'Event updated successfully!')
         return redirect('events:event_detail', profile_id=event.profile.id)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -84,7 +82,6 @@ class EventDeleteView(LoginRequiredMixin, DeleteView):
         profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
         return get_object_or_404(Event, profile=profile)
     def get_success_url(self):
-        messages.success(self.request, 'Event deleted successfully!')
         return reverse_lazy('events:event_list')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -96,7 +93,6 @@ class AddInterestView(LoginRequiredMixin, View):
     def post(self, request, profile_id, event_id):
         event = get_object_or_404(Event, id=event_id)
         EventInterest.objects.get_or_create(event=event, human=request.user)
-        messages.success(request, f"You've shown interest in {event.profile.displayname}.")
         return redirect('events:event_detail', profile_id=profile_id)
 
 class RemoveInterestView(LoginRequiredMixin, View):
@@ -104,5 +100,4 @@ class RemoveInterestView(LoginRequiredMixin, View):
     def post(self, request, profile_id, event_id):
         event = get_object_or_404(Event, id=event_id)
         EventInterest.objects.filter(event=event, human=request.user).delete()
-        messages.info(request, f"You are no longer marked as interested in {event.profile.displayname}.")
         return redirect('events:event_detail', profile_id=profile_id)

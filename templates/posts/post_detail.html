@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<script src="/static/likes.js"></script><br>
-<div class="card post" style="max-width: 800px; padding: 15px; background-color: #1b1b1d; border-radius: 8px;">
+
+<script src="/static/likes.js"></script>
+
+<div class="card post" style="padding: 15px; background-color: #1b1b1d; border-radius: 8px;">
     <!-- Post Header -->
     <div style="margin-bottom: 10px;">
         <strong>@{{ post.profile_id.displayname }}</strong>
@@ -22,6 +24,11 @@
         <div style="margin-top: 10px;">
             <a href="{{ post.video_url }}" target="_blank" style="color: #1da1f2;">Watch Video</a>
         </div>
+    {% endif %}
+
+    <!-- Join Race -->
+    {% if post.profile_id.profiletype == "RACE" %}
+        <a href="{% url 'races:race_join' post.profile_id_id %}">Join Race</a>
     {% endif %}
 
     <!-- Post Stats -->

@@ -5,6 +5,9 @@ from django.views.generic import DetailView, ListView, CreateView, UpdateView, D
 from .models import Profile
 from .forms import ProfileEditForm, ProfileCreateForm
 
+import logging
+logger = logging.getLogger(__name__)
+
 class ProfilesListView(LoginRequiredMixin, ListView):
     model = Profile
     template_name = 'profiles/profiles.html'
@@ -18,15 +21,17 @@ class ProfileBuildView(LoginRequiredMixin, CreateView):
     form_class = ProfileCreateForm
     template_name = 'profiles/profile_build.html'
     login_url = '/humans/login/'
+
     def dispatch(self, request, *args, **kwargs):
         if hasattr(request.user, 'profile'):
             return redirect('profiles:detail-profile', profile_id=request.user.profile.id)
         return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.human = self.request.user
         self.object = form.save()
-        messages.success(self.request, "Profile created successfully!")
         return redirect(self.get_success_url())
+
     def get_success_url(self):
         return reverse('profiles:detail-profile', kwargs={'profile_id': self.object.pk})
 

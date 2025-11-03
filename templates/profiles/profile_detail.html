@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+<div class="post card" style="padding: 10px;">
 
     <center>
         {% if profile.avatar %}
@@ -17,7 +17,7 @@
     </center>
 
     {% if profile.bio or profile.city or profile.state %}
-        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; text-align:left;">
             {% if profile.bio %}
                 <h3 style="margin-top:0; color:#1da1f2;">Bio</h3>
                 <p style="margin:0;">{{ profile.bio|linebreaksbr }}</p>
@@ -30,7 +30,7 @@
     {% endif %}
 
     {% if profile.website %}
-        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; text-align:left;">
             <h3 style="margin-top:0; color:#1da1f2;">Web Site</h3>
             <p><a href="{{ profile.website }}" target="_blank"
                 style="color:#1da1f2; text-decoration:none;">{{ profile.website }}</a></p>
@@ -38,7 +38,7 @@
     {% endif %}
 
     {% if profile.builds %}
-        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; text-align:left;">
             <h3 style="margin-top:0; color:#1da1f2;">{{ profile.builds.name }}</h3>
             {% if profile.builds.description %}
                 <p>{{ profile.builds.description|linebreaksbr }}</p>
@@ -47,7 +47,7 @@
             {% endif %}
 
             {% if profile.builds.attributes.all %}
-                <table style="width:100%; margin-top:10px; border-collapse: collapse;">
+                <table style="width:100%; border-collapse: collapse;">
                     {% for attr in profile.builds.attributes.all %}
                         <tr style="border-bottom:1px solid #444;">
                             <td>{{ attr.attribute_type.name }}</td>

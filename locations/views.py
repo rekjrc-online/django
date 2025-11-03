@@ -61,7 +61,6 @@ class LocationBuildView(LoginRequiredMixin, CreateView):
         form.instance.profile = profile
         if hasattr(self.request.user, 'human'):
             form.instance.human = self.request.user.human
-        messages.success(self.request, "Location created successfully.")
         self.object = form.save()
         return redirect('locations:location_detail', profile_id=profile.id)
 
@@ -80,7 +79,6 @@ class LocationUpdateView(LoginRequiredMixin, UpdateView):
         context['is_update'] = True
         return context
     def form_valid(self, form):
-        messages.success(self.request, "Location updated successfully.")
         self.object = form.save()
         return redirect('locations:location_detail', profile_id=self.kwargs['profile_id'])
 
@@ -92,7 +90,6 @@ class LocationDeleteView(LoginRequiredMixin, DeleteView):
         profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
         return get_object_or_404(Location, profile=profile)
     def get_success_url(self):
-        messages.success(self.request, "Location deleted successfully.")
         return reverse_lazy('locations:location_list')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

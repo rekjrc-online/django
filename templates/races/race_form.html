@@ -1,42 +1,30 @@
-{# templates/races/race_form.html #}
-<form method="post" enctype="multipart/form-data" style="width:100%;">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+{{ form.non_field_errors }}
 
-    <table style="width:100%; border-collapse:collapse;">
-        <tr>
-            <td style="padding:5px; width:30%;">
-                {{ form.race_type.label_tag }}
-            </td>
-            <td style="padding:5px;">{{ form.race_type }}</td>
-        </tr>
-        <tr>
-            <td style="padding:5px;">{{ form.event.label_tag }}</td>
-            <td style="padding:5px;">{{ form.event }}</td>
-        </tr>
-        <tr>
-            <td style="padding:5px;">{{ form.location.label_tag }}</td>
-            <td style="padding:5px;">{{ form.location }}</td>
-        </tr>
-        <tr>
-            <td style="padding:5px;">{{ form.track.label_tag }}</td>
-            <td style="padding:5px;">{{ form.track }}</td>
-        </tr>
-        <tr>
-            <td style="padding:5px;">{{ form.club.label_tag }}</td>
-            <td style="padding:5px;">{{ form.club }}</td>
-        </tr>
-        <tr>
-            <td style="padding:5px;">{{ form.team.label_tag }}</td>
-            <td style="padding:5px;">{{ form.team }}</td>
-        </tr>
-    </table>
-
-    <div style="text-align:right; margin-top:15px;">
-        <button type="submit"
-            style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-            Save Race
-        </button>
-    </div>
-    <br />
-</form>
+<table style="width:100%; border-collapse:collapse;">
+    <tr>
+        <td style="padding:5px; width:30%;">
+            {{ form.race_type.label_tag }}
+        </td>
+        <td style="padding:5px;">{{ form.race_type }}</td>
+    </tr>
+    <tr>
+        <td style="padding:5px;">{{ form.event.label_tag }}</td>
+        <td style="padding:5px;">{{ form.event }}</td>
+    </tr>
+    <tr>
+        <td style="padding:5px;">{{ form.location.label_tag }}</td>
+        <td style="padding:5px;">{{ form.location }}</td>
+    </tr>
+    <tr>
+        <td style="padding:5px;">{{ form.track.label_tag }}</td>
+        <td style="padding:5px;">{{ form.track }}</td>
+    </tr>
+    <tr>
+        <td style="padding:5px;">{{ form.club.label_tag }}</td>
+        <td style="padding:5px;">{{ form.club }}</td>
+    </tr>
+    <tr>
+        <td style="padding:5px;">{{ form.team.label_tag }}</td>
+        <td style="padding:5px;">{{ form.team }}</td>
+    </tr>
+</table>

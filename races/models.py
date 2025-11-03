@@ -13,37 +13,32 @@ class Race(BaseModel):
         ('Lap Race', 'Lap Race'),
         ('Drag Race', 'Drag Race'),
 		('Out and Back', 'Out and Back'),
-        ('Long Jump', 'Long Jump'),
-    ]
+        ('Long Jump', 'Long Jump')]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
     human = models.ForeignKey(
         Human,
         on_delete=models.PROTECT,
         related_name='races',
         null=True,
-        blank=True,
-    )
+        blank=True)
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,
         related_name='race',
-        default=1
-    )
+        default=1)
     event = models.ForeignKey(
         Event,
         on_delete=models.SET_NULL,
         related_name='races',
         db_index=True,
         null=True,
-        blank=True,
-    )
+        blank=True)
     location = models.ForeignKey(
         Location,
         on_delete=models.SET_NULL,
         related_name='races',
         null=True,
-        blank=True
-    )
+        blank=True)
     track = models.ForeignKey(
         Track,
         on_delete=models.SET_NULL,
@@ -55,55 +50,33 @@ class Race(BaseModel):
         on_delete=models.SET_NULL,
         related_name='races',
         null=True,
-        blank=True
-    )
+        blank=True)
     team = models.ForeignKey(
         Team,
         on_delete=models.SET_NULL,
         related_name='races',
         null=True,
-        blank=True
-    )
+        blank=True)
     def __str__(self):
-        return f"Race for {self.event or 'No Event'}"
+        return self.profile.displayname
 
 class RaceAttributeEnum(BaseModel):
-    """
-    Lookup table for race attributes.  
-    This model defines the possible attribute types that a race can have, like 'Track Surface' or 'Lap Count'.
-
-    Fields:
-        name (CharField): The name of the attribute. Must be unique.
-    """
     name = models.CharField(max_length=100, unique=True)
-
     def __str__(self):
         return self.name
 
 class RaceAttribute(BaseModel):
-    """
-    Stores specific attribute values for a race.  
-    Each entry links a race to an attribute type (from RaceAttributeEnum) and a value.
-
-    Fields:
-        race (ForeignKey): The race this attribute belongs to.
-        attribute (ForeignKey): The attribute type (from RaceAttributeEnum).
-        value (CharField): The value of the attribute for this race.
-
-    Constraints:
-        unique_together (race, attribute): Ensures that each race can only have one entry per attribute type.
-    """
     race = models.ForeignKey(
         Race,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='attributes',
-        db_index=True
-    )
+        db_index=True,
+        null=True,
+        blank=True)
     attribute = models.ForeignKey(
         RaceAttributeEnum,
-        on_delete=models.PROTECT,
-        related_name='race_attributes'
-    )
+        on_delete=models.CASCADE,
+        related_name='race_attributes')
     value = models.CharField(max_length=255)
     class Meta:
         unique_together = ('race', 'attribute')
@@ -111,6 +84,11 @@ class RaceAttribute(BaseModel):
         return f"{self.race}: {self.attribute.name} = {self.value}"
 
 class LapMonitorResult(BaseModel):
+    race = models.ForeignKey(
+        Race,
+        on_delete=models.CASCADE,
+        related_name='lapmonitor_results',
+        db_index=True)
     session_id = models.UUIDField()
     session_name = models.CharField(max_length=100)
     session_date = models.DateTimeField()
@@ -125,11 +103,39 @@ class LapMonitorResult(BaseModel):
     lap_duration = models.FloatField()
     lap_kind = models.CharField(max_length=50)
     class Meta:
-        verbose_name = "Lap Monitor Result"
-        verbose_name_plural = "Lap Monitor Results"
-        indexes = [
-            models.Index(fields=["session_id"]),
-            models.Index(fields=["driver_id"]),
-        ]
+        verbose_name = "LapMonitor Result"
+        verbose_name_plural = "LapMonitor Results"
+        indexes = [models.Index(fields=["session_id"]),models.Index(fields=["driver_id"])]
     def __str__(self):
         return f"{self.session_name} - {self.driver_name} (Lap {self.lap_index})"
+
+class RaceDriver(BaseModel):
+    race = models.ForeignKey(
+        Race,
+        on_delete=models.CASCADE,
+        related_name='race_drivers')
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.CASCADE,
+        related_name='race_humans')
+    driver = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='driver_races',
+        null=True,
+        blank=True,
+        limit_choices_to={'profiletype':'DRIVER'})
+    model = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='model_races',
+        null=True,
+        blank=True,
+        limit_choices_to={'profiletype':'MODEL'})
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['race', 'model'], name='unique_race_model')]
+    def __str__(self):
+        human_name = f"{self.human.first_name} {self.human.last_name}" if self.human else '-human-'
+        driver_name = self.driver.displayname if self.driver else '-driver-'
+        model_name = self.model.displayname if self.model else '-model-'
+        return f"Human: {human_name} | Driver: {driver_name} | Model: {model_name}"

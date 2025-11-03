@@ -160,6 +160,10 @@ nav a {
     resize: vertical;
 }
 
+.post.card select {
+    height: 2.5em;
+}
+
 /* ---------- Buttons ---------- */
 .post.card button {
     width: 100%;

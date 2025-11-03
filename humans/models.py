@@ -17,7 +17,7 @@ class Human(AbstractUser, BaseModel):
         null=True,
         unique=True)
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.username})".strip()
+        return f"{self.first_name} {self.last_name}".strip()
 
 class Invitation(BaseModel):
     from_human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='sent_invitations')

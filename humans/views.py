@@ -147,5 +147,4 @@ class VerifyInvitationView(LoginRequiredMixin, View):
             messages.error(request, "Failed to record invitation in database.")
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
-        messages.success(request, "Verification successful! You can now post.")
         return redirect(request.META.get('HTTP_REFERER', '/'))

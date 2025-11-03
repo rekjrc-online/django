@@ -27,7 +27,7 @@ class Profile(BaseModel):
 	following_count = models.PositiveIntegerField(default=0)
 
 	def __str__(self):
-		return f"{self.displayname} - {self.city} {self.state}"
+		return f"{self.displayname} - {self.profiletype}"
 
 	def save(self, *args, **kwargs):
 		try:

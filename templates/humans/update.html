@@ -1,97 +1,64 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="middle-col">
-    <div class="card" style="max-width: 800px; margin: 30px auto; padding: 25px;">
-        <h2 style="text-align:center; margin-bottom:20px;">My Account</h2>
 
+    <div class="post card" style="padding: 0px;">
+        <h2 style="text-align:center; margin-bottom:20px;">My Account</h2>
+    </div>
+
+    <div class="post card" style="padding:0px 20px;">
+        <br>
         <form method="post">
             {% csrf_token %}
-            
-            <!-- Username -->
-            <div style="margin-bottom: 15px;">
-                <table align="center">
-                    <tr>
-                        <td>{{ form.username.label_tag }}</td>
-                        <td>{{ form.username }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.first_name.label_tag }}</td>
-                        <td>{{ form.first_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.last_name.label_tag }}</td>
-                        <td>{{ form.last_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.email.label_tag }}</td>
-                        <td>{{ form.email }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.phone_number.label_tag }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td>{{ form.phone_number }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ form.is_verified.label_tag }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        <td>{{ form.is_verified }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <br />
-                            <button type="submit" style="
-                                width: 100%;
-                                padding: 10px;
-                                background-color: #1da1f2;
-                                color: white;
-                                border: none;
-                                border-radius: 5px;
-                                cursor: pointer;">
-                                Save Changes
-                            </button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <table align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>{{ form.username.label_tag }}</td>
+                    <td>{{ form.username }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.first_name.label_tag }}</td>
+                    <td>{{ form.first_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.last_name.label_tag }}</td>
+                    <td>{{ form.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.email.label_tag }}</td>
+                    <td>{{ form.email }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.phone_number.label_tag }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td>{{ form.phone_number }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.is_verified.label_tag }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td>{{ form.is_verified }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+                        <button type="submit" style="
+                            width: 100%;
+                            padding: 10px;
+                            background-color: #1da1f2;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;">
+                            Save Changes
+                        </button>
+                    </td>
+                </tr>
+            </table>
         </form>
-        <p style="text-align:center; margin-top:15px;">
+        <p style="text-align:center;">
             <a href="/" style="color:#1da1f2; text-decoration:none;">Back to Home</a>
         </p>
     </div>
     {% if not user.is_verified %}
         {% include "humans/verification.html" %}
     {% else %}
-        <div class="card" style="max-width: 800px; margin: 30px auto; padding:25px; text-align:center;">
-            <h2>Invitations</h2>
-            <p>
-                RekjRC is invitation-only. You can have one
-                invitation at a time, and once your invitation
-                has been accepted, you can request a new one
-                12 hours later.
-            </p>
-            <p>Please use your invitations responsibly.</p>
-            {% if user.is_authenticated %}
-                {% if user.invitation_code %}
-                    <p>
-                        <strong>Your Invitation Code:</strong><p>
-                        <h3>{{ user.invitation_code }}</h3>
-                    </p>
-                {% else %}
-                    {% if hours_remaining > 0 %}
-                        <p>You must wait {{ hours_remaining|floatformat:1 }} hours before generating a new invitation.</p>
-                    {% else %}
-                        <form method="post" action="{% url 'generate-invitation' %}" style="text-align:center; margin-top: 15px;">
-                            {% csrf_token %}
-                            <button type="submit"
-                                    style="padding:10px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-                                Generate Invitation Code
-                            </button>
-                        </form>
-                    {% endif %}
-                {% endif %}
-            {% else %}
-                <p>You must be logged in to generate invitations.</p>
-            {% endif %}
-        </div>
+        {% include "humans/invitationcode.html" %}
     {% endif %}
-</div>
 {% endblock %}

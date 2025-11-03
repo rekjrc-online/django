@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult
+from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult, RaceDriver
 
 # Inline for RaceAttribute to edit directly within Race
 class RaceAttributeInline(admin.TabularInline):
@@ -35,3 +35,28 @@ class RaceAttributeAdmin(admin.ModelAdmin):
     list_filter = ['attribute']
     search_fields = ['value', 'race__profile__user__username', 'race__event__name']
     autocomplete_fields = ['race', 'attribute']
+
+from django.contrib import admin
+from .models import RaceDriver
+
+@admin.register(RaceDriver)
+class RaceDriverAdmin(admin.ModelAdmin):
+    list_display = ('race', 'human_name', 'driver_name', 'model_name')
+    list_filter = ('race',)
+    search_fields = (
+        'human__first_name',
+        'human__last_name',
+        'driver__displayname',
+        'model__displayname',
+        'race__profile__displayname',)
+    @admin.display(description='Human')
+    def human_name(self, obj):
+        if obj.human:
+            return f"{obj.human.first_name} {obj.human.last_name}"
+        return "-human-"
+    @admin.display(description='Driver')
+    def driver_name(self, obj):
+        return obj.driver.displayname if obj.driver else "-driver-"
+    @admin.display(description='Model')
+    def model_name(self, obj):
+        return obj.model.displayname if obj.model else "-model-"

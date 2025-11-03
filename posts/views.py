@@ -30,29 +30,23 @@ class PostDetail(DetailView):
     def get_object(self, queryset=None):
         return get_object_or_404(
             Post.objects.select_related('human_id', 'profile_id'),
-            pk=self.kwargs['post_id']
-        )
+            pk=self.kwargs['post_id'])
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = context['post']
-        # Determine if the main post is liked by the user
         post.liked_by_user = (
             self.request.user.is_authenticated
-            and post.likes.filter(human=self.request.user).exists()
-        )
+            and post.likes.filter(human=self.request.user).exists())
         context['likes'] = post.likes.select_related('human').all()
-        # Paginate replies
         replies_qs = post.replies.select_related('human_id', 'profile_id').order_by('-insertdate')
         paginator = Paginator(replies_qs, 5)
         page_number = self.request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
-        # Add like state and counts to replies
         if self.request.user.is_authenticated:
             for reply in page_obj:
                 reply.liked_by_user = reply.likes.filter(human=self.request.user).exists()
                 reply.LikeCount = reply.likes.count()
                 reply.CommentCount = reply.replies.count()
-        # AJAX support
         if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             replies_html = render(
                 self.request,
@@ -61,8 +55,7 @@ class PostDetail(DetailView):
             ).content.decode('utf-8')
             return JsonResponse({
                 'html': replies_html,
-                'has_next': page_obj.has_next()
-            })
+                'has_next': page_obj.has_next()})
         context['replies'] = page_obj
         context['post'] = post
         return context
@@ -86,8 +79,7 @@ class PostRepliesAjax(View):
         ).content.decode('utf-8')
         return JsonResponse({
             'html': html,
-            'has_next': page_obj.has_next()
-        })
+            'has_next': page_obj.has_next()})
 
 class PostReplyView(LoginRequiredMixin, CreateView):
     login_url = '/humans/login/'
@@ -167,8 +159,7 @@ def toggle_like_ajax(request, post_id):
             liked = True
         return JsonResponse({
             'liked': liked,
-            'likes_count': post.likes.count(),
-        })
+            'likes_count': post.likes.count()})
     except Exception as e:
         import traceback
         print(traceback.format_exc())

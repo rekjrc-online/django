@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 <div class="post card" style="padding:0px; text-align:center;">
@@ -9,15 +8,23 @@
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
-<div class="post card" style="padding:10px;">
-    <div style="margin-top:15px;">
-        {% include "races/race_form.html" %}
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="post card" style="padding:10px;">
+        <div style="margin-top:15px;">
+            {% include "races/race_form.html" %}
+        </div><p>
+        <button type="submit"
+            style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Save Race
+        </button><p>
+        <div style="text-align:center;">
+            <a href="{% url 'races:race_list' %}">Cancel</a>
+        </div>
+        <br />
     </div>
-    <div style="text-align:center;">
-        <a href="{% url 'races:race_list' %}">Cancel</a>
-    </div>
-    <br />
-</div>
+</form>
 
 <br /><br /><br />
+
 {% endblock %}

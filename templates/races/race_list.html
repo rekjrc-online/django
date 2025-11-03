@@ -1,57 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center; padding: 0px;">
+<div class="post card" style="text-align:center; padding: 0px; margin-bottom: 0px;">
     <h3>My Races</h3>
 </div>
 
-{% if races %}
-    {% for race in races %}
-        <div class="post card" style="margin-bottom: 20px;">
+{% if profiles %}
+    {% for profile in profiles %}
+        <div class="post card" style="margin-top: 5px; margin-bottom: 0px;">
             <table>
                 <tr>
                     <td valign="top" align="center" nowrap>
-                        {% if race.profile.avatar %}
-                            <a target="_blank" href="{{ race.profile.avatar.url }}">
-                                <img src="{{ race.profile.avatar.url }}" alt="Avatar" class="avatar">
+                        {{ profile.get_profiletype_display }}<br />
+                        {% if profile.avatar %}
+                            <a target="_blank" href="{{ profile.avatar.url }}">
+                                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
                             </a>
                         {% else %}
-                            <img src="/static/nophoto_{{ race.profile.profiletype }}.png" alt="Avatar" class="avatar">
+                            <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                         {% endif %}
-
-                        <p>{{ race.profile.get_profiletype_display }}</p>
                         <p>
-                            <a href="{% url 'races:race_update' race.profile.id %}">Edit</a> /
-                            <a href="{% url 'races:race_detail' race.profile.id %}">View</a> /
-                            <a href="{% url 'races:race_delete' race.profile.id %}">Delete</a>
+                            {% if profile.race %}
+                                <a href="{% url 'races:race_update' profile.id %}">Edit</a> /
+                                <a href="{% url 'races:race_detail' profile.id %}">View</a> /
+                                <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
+                            {% endif %}
                         </p>
                     </td>
                     <td style="width: 15px;"></td>
                     <td valign="top">
-                        <b>{{ race.profile.displayname }}</b>
-                        <p>
-                            <strong>Race Type:</strong> {{ race.race_type }}<br>
-                            {% if race.event %}<strong>Event:</strong> {{ race.event }}<br>{% endif %}
-                            {% if race.location %}<strong>Location:</strong> {{ race.location }}<br>{% endif %}
-                            {% if race.club %}<strong>Club:</strong> {{ race.club }}<br>{% endif %}
-                            {% if race.team %}<strong>Team:</strong> {{ race.team }}<br>{% endif %}
-                        </p>
+                        <b>{{ profile.displayname }}</b>
+                        {% if profile.race %}
+                            <p>
+                                <strong>Race Type:</strong> {{ profile.race.race_type }}<br>
+                                {% if profile.race.event %}<strong>Event:</strong> {{ profile.race.event }}<br>{% endif %}
+                                {% if profile.race.location %}<strong>Location:</strong> {{ profile.race.location }}<br>{% endif %}
+                                {% if profile.race.club %}<strong>Club:</strong> {{ profile.race.club }}<br>{% endif %}
+                                {% if profile.race.team %}<strong>Team:</strong> {{ profile.race.team }}<br>{% endif %}
+                            </p>
 
-                        {% if race.attributes.exists %}
-                            <table style="border-collapse:collapse; width:100%; font-size:0.9em;">
-                                {% for attr in race.attributes.all %}
-                                    <tr>
-                                        <td style="padding:3px 5px; border-bottom:1px solid #ddd;">
-                                            {{ attr.attribute.name }}
-                                        </td>
-                                        <td style="padding:3px 5px; border-bottom:1px solid #ddd;">
-                                            {{ attr.value }}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
+                            {% if profile.race.attributes.exists %}
+                                <table style="border-collapse:collapse; width:100%; font-size:0.9em;" border="1">
+                                    {% for attr in profile.race.attributes.all %}
+                                        <tr>
+                                            <td style="padding:3px 5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                                                {{ attr.attribute.name }}
+                                            </td>
+                                            <td style="padding:3px 5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
+                                                {{ attr.value }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            {% else %}
+                                <p style="color:gray; font-size:0.9em;">No attributes yet.</p>
+                            {% endif %}
                         {% else %}
-                            <p style="color:gray; font-size:0.9em;">No attributes yet.</p>
+                            <p style="color:gray; font-size:0.9em;">No race info yet.</p>
                         {% endif %}
                     </td>
                 </tr>
@@ -64,4 +69,5 @@
         <a href="/profiles/">Back to Profiles</a>
     </div>
 {% endif %}
+
 {% endblock %}
