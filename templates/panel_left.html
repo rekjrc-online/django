@@ -4,7 +4,10 @@
         <li><a href="{% url 'homepage' %}">Home</a></li>
         {% if request.user.is_authenticated %}
             <li><a href="/humans/update/">Account</a></li>
-            <li><a href="/profiles/">Profiles</a></li>
+            <li>
+                <a href="/profiles/">Profiles</a>
+                <font size="-1">(<a href="/profiles/build/">new</a>)</font>
+            </li>
             <p>
             <li><a href="/builds/">My Builds</a></li>
             <li><a href="/clubs/">My Clubs</a></li>
