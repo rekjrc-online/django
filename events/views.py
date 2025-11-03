@@ -30,6 +30,7 @@ class EventDetailView(LoginRequiredMixin, DetailView):
         if not event:
             messages.info(request, 'No event found for this profile. Create one first.')
             return redirect('events:event_build', profile_id=profile.id)
+        self.object = event
         context = self.get_context_data(event=event, profile=profile)
         return self.render_to_response(context)
     def get_context_data(self, **kwargs):

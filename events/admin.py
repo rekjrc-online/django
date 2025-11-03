@@ -8,8 +8,8 @@ class EventInterestInline(admin.TabularInline):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('profile_displayname', 'location', 'eventdate', 'multiday')
-    list_filter = ('multiday', 'location')
+    list_display = ('profile_displayname', 'location', 'eventdate')
+    list_filter = ('location',)
     search_fields = ('profile__displayname', 'location__name')
     ordering = ('-eventdate',)
     inlines = [EventInterestInline]

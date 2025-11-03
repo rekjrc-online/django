@@ -6,7 +6,7 @@
       {% csrf_token %}
       <button type="submit" 
               style="background:#ff4d4d; color:white; padding:8px 12px; border:none; border-radius:5px;">Yes, delete</button>
-      <a href="{% url 'events:event_list' profile.id %}" style="margin-left:10px;">Cancel</a>
+      <a href="{% url 'events:event_list' %}" style="margin-left:10px;">Cancel</a>
     </form>
   </div>
 {% endblock %}

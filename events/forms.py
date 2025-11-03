@@ -4,7 +4,7 @@ from .models import Event, EventInterest
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['location', 'eventdate', 'multiday']
+        fields = ['location', 'eventdate']
         widgets = {
             'eventdate': forms.DateTimeInput(attrs={
                 'type': 'datetime-local'

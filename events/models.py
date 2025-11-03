@@ -22,8 +22,9 @@ class Event(BaseModel):
         Location,
         on_delete=models.PROTECT,
         related_name='events')
-    eventdate = models.DateTimeField(default=timezone.now)
-    multiday = models.BooleanField(default=False)
+    eventdate = models.DateField(default=timezone.now)
+    eventtime = models.TimeField(default=timezone.now)
+    eventdays = models.IntegerField(default=1)
     def __str__(self):
         return f"{self.eventdate.strftime('%a %m/%d/%y')} - {self.profile.displayname}"
 

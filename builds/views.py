@@ -49,7 +49,7 @@ class BuildBuildView(LoginRequiredMixin, CreateView):
         context['profile'] = Profile.objects.get(id=profile_id)
         return context
     def get_success_url(self):
-        return redirect('builds:build_detail', profile_id=self.object.profile.id)
+        return redirect('builds:build_detail', kwargs={'profile_id': self.object.profile.id})
 
 class BuildDetailView(LoginRequiredMixin, DetailView):
     model = Build

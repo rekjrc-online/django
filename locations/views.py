@@ -25,19 +25,20 @@ class LocationDetailView(LoginRequiredMixin, DetailView):
     login_url = '/humans/login/'
     def get_object(self):
         profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-        return Location.objects.filter(profile=profile).first()
+        location = Location.objects.filter(profile=profile).first()
+        return location
     def get(self, request, *args, **kwargs):
         profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
         location = self.get_object()
         if not location:
-            messages.info(request, "No location found for this profile. Create one first.")
+            messages.info(request, 'No location found for this profile. Create one first.')
             return redirect('locations:location_build', profile_id=profile.id)
-        context = self.get_context_data(location=location, profile=profile)
+        self.object = location  
+        context = self.get_context_data(object=self.object, profile=profile)
         return self.render_to_response(context)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-        context['profile'] = profile
+        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
         return context
 
 class LocationBuildView(LoginRequiredMixin, CreateView):
