@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="middle-col">
-    <div class="card" style="max-width: 600px; margin: 30px auto; padding: 25px;">
+    <div class="card" style="max-width: 800px; margin: 30px auto; padding: 25px;">
         <h2 style="text-align:center; margin-bottom:20px;">My Account</h2>
 
         <form method="post">
@@ -60,7 +60,7 @@
     {% if not user.is_verified %}
         {% include "humans/verification.html" %}
     {% else %}
-        <div class="card" style="max-width: 600px; margin: 30px auto; padding:25px; text-align:center;">
+        <div class="card" style="max-width: 800px; margin: 30px auto; padding:25px; text-align:center;">
             <h2>Invitations</h2>
             <p>
                 RekjRC is invitation-only. You can have one

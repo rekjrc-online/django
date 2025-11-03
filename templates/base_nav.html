@@ -6,12 +6,10 @@
         <a href="/humans/update">Account</a>
         <a href="/profiles/">Profiles</a>
         {% if request.user.is_staff %}
-            <a href="/admin/" target="_blank">Admin</a>
+            <input type="button" value="Admin" onclick="self.location.href='/admin/';">
         {% endif %}
-        <form method="post" action="{% url 'logout' %}" style="display:inline;">
-            {% csrf_token %}
-            <input type="submit" value="Logout" class="nav-logout-button" />
-        </form>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="{% url 'logout' %}">Logout</a>
     {% else %}
         <a href="/humans/login/">Login</a>
     {% endif %}

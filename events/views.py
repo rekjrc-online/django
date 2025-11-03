@@ -1,94 +1,107 @@
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from profiles.models import Profile
 from .models import Event, EventInterest
-from .forms import EventForm, EventInterestForm
+from .forms import EventForm
 
-def event_list(request, profile_id):
-    profile = get_object_or_404(Profile, id=profile_id)
-    events = Event.objects.filter(location__profile=profile).select_related('location').order_by('-eventdate')
-    return render(request, 'events/event_list.html', {
-        'profile': profile,
-        'events': events,
-    })
+class EventListView(LoginRequiredMixin, ListView):
+    model = Event
+    template_name = 'events/event_list.html'
+    context_object_name = 'events'
+    login_url = '/humans/login/'
+    def get_queryset(self):
+        return Event.objects.select_related('profile', 'location').order_by('-eventdate')
 
-def event_detail(request, profile_id):
-    """Show the details of the single event for this profile."""
-    profile = get_object_or_404(Profile, id=profile_id)
-    event = Event.objects.filter(profile=profile).first()
-    if not event:
-        messages.info(request, 'No event found for this profile. Create one first.')
-        return redirect('events:event_build', profile_id=profile.id)
-    return render(request, 'events/event_detail.html', {
-        'profile': profile,
-        'event': event,
-    })
+class EventDetailView(LoginRequiredMixin, DetailView):
+    model = Event
+    template_name = 'events/event_detail.html'
+    context_object_name = 'event'
+    login_url = '/humans/login/'
+    def get_object(self):
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        event = Event.objects.filter(profile=profile).first()
+        return event
+    def get(self, request, *args, **kwargs):
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        event = self.get_object()
+        if not event:
+            messages.info(request, 'No event found for this profile. Create one first.')
+            return redirect('events:event_build', profile_id=profile.id)
+        context = self.get_context_data(event=event, profile=profile)
+        return self.render_to_response(context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        return context
 
-@login_required
-def event_build(request, profile_id):
-    profile = get_object_or_404(Profile, id=profile_id)
-    existing_event = Event.objects.filter(profile=profile).first()
-    if existing_event:
-        return redirect('events:event_update', profile_id=profile.id)
-    if request.method == 'POST':
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.profile = profile
-            event.save()
-            messages.success(request, 'Event created successfully!')
-            return redirect('events:event_detail', profile_id=profile.id)
-    else:
-        form = EventForm()
-    return render(request, 'events/event_build.html', {
-        'form': form,
-        'profile': profile,
-    })
+class EventBuildView(LoginRequiredMixin, CreateView):
+    model = Event
+    form_class = EventForm
+    template_name = 'events/event_build.html'
+    login_url = '/humans/login/'
+    def dispatch(self, request, *args, **kwargs):
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        if Event.objects.filter(profile=profile).exists():
+            return redirect('events:event_update', profile_id=profile.id)
+        return super().dispatch(request, *args, **kwargs)
+    def form_valid(self, form):
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        form.instance.profile = profile
+        form.save()
+        messages.success(self.request, 'Event created successfully!')
+        return redirect('events:event_detail', profile_id=profile.id)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        return context
 
-@login_required
-def event_update(request, profile_id):
-    profile = get_object_or_404(Profile, id=profile_id)
-    event = get_object_or_404(Event, profile=profile)
-    if not event:
-        return redirect('events:event_build', profile_id=profile.id)
-    if request.method == 'POST':
-        form = EventForm(request.POST, instance=event)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Event updated successfully!')
-            return redirect('events:event_detail', profile_id=profile.id)
-    else:
-        form = EventForm(instance=event)
-    return render(request, 'events/event_update.html', {
-        'form': form,
-        'profile': profile,
-        'event': event,
-    })
+class EventUpdateView(LoginRequiredMixin, UpdateView):
+    model = Event
+    form_class = EventForm
+    template_name = 'events/event_update.html'
+    login_url = '/humans/login/'
+    def get_object(self):
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        return get_object_or_404(Event, profile=profile)
+    def form_valid(self, form):
+        event = form.save()
+        messages.success(self.request, 'Event updated successfully!')
+        return redirect('events:event_detail', profile_id=event.profile.id)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = self.object.profile
+        return context
 
-@login_required
-def event_delete(request, profile_id, event_id):
-    profile = get_object_or_404(Profile, id=profile_id)
-    event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        event.delete()
-        messages.success(request, 'Event deleted successfully!')
-        return redirect('events:event_list', profile_id=profile.id)
-    return render(request, 'events/event_confirm_delete.html', {
-        'event': event,
-        'profile': profile,
-    })
+class EventDeleteView(LoginRequiredMixin, DeleteView):
+    model = Event
+    template_name = 'events/event_confirm_delete.html'
+    login_url = '/humans/login/'
+    def get_object(self):
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        return get_object_or_404(Event, profile=profile)
+    def get_success_url(self):
+        messages.success(self.request, 'Event deleted successfully!')
+        return reverse_lazy('events:event_list')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        return context
 
-@login_required
-def add_interest(request, profile_id, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    EventInterest.objects.get_or_create(event=event, human=request.user)
-    messages.success(request, f"You've shown interest in {event.profile.displayname}.")
-    return redirect('events:event_list', profile_id=profile_id)
+class AddInterestView(LoginRequiredMixin, View):
+    login_url = '/humans/login/'
+    def post(self, request, profile_id, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        EventInterest.objects.get_or_create(event=event, human=request.user)
+        messages.success(request, f"You've shown interest in {event.profile.displayname}.")
+        return redirect('events:event_detail', profile_id=profile_id)
 
-@login_required
-def remove_interest(request, profile_id, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    EventInterest.objects.filter(event=event, human=request.user).delete()
-    messages.info(request, f"You are no longer marked as interested in {event.profile.displayname}.")
-    return redirect('events:event_list', profile_id=profile_id)
+class RemoveInterestView(LoginRequiredMixin, View):
+    login_url = '/humans/login/'
+    def post(self, request, profile_id, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        EventInterest.objects.filter(event=event, human=request.user).delete()
+        messages.info(request, f"You are no longer marked as interested in {event.profile.displayname}.")
+        return redirect('events:event_detail', profile_id=profile_id)

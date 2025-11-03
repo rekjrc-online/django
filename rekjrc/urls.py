@@ -17,6 +17,7 @@ urlpatterns = [
     path('races/', include('races.urls')),
     path('sponsors/', include('sponsors.urls')),
     path('stores/', include('stores.urls')),
+    path('support/', include('support.urls')),
     path('teams/', include('teams.urls')),
     path('tracks/', include('tracks.urls')),
 ]

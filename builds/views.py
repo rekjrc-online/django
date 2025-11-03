@@ -1,9 +1,26 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
 from django.shortcuts import redirect, reverse
 from django.urls import reverse_lazy
+from profiles.models import Profile
 from .models import Build, BuildAttributeEnum
 from .forms import BuildForm, BuildAttributeFormSet
+
+class BuildListView(LoginRequiredMixin, ListView):
+    model = Build
+    template_name = 'builds/build_list.html'
+    context_object_name = 'builds'
+    login_url = '/humans/login/'
+    def get_queryset(self):
+        return (
+            Build.objects.filter(human=self.request.user)
+            .select_related('profile')
+            .order_by('profile__displayname', 'name')
+        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profiles'] = Profile.objects.filter(human=self.request.user).order_by('profiletype', 'displayname')
+        return context
 
 class BuildBuildView(LoginRequiredMixin, CreateView):
     model = Build

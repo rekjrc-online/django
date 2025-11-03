@@ -5,6 +5,16 @@
         {% if request.user.is_authenticated %}
             <li><a href="/humans/update/">Account</a></li>
             <li><a href="/profiles/">Profiles</a></li>
+            <p>
+            <li><a href="/builds/">My Builds</a></li>
+            <li><a href="/clubs/">My Clubs</a></li>
+            <li><a href="/events/">My Events</a></li>
+            <li><a href="/locations/">My Locations</a></li>
+            <li><a href="/races/">My Races</a></li>
+            <li><a href="/stores/">My Stores</a></li>
+            <li><a href="/teams/">My Teams</a></li>
+            <li><a href="/tracks/">My Tracks</a></li>
+            <p>
             <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
                 {% csrf_token %}
                 <li><a href="javascript:document.getElementById('logoutform').submit()">Logout</a></li>

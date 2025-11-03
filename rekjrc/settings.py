@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "races",
     "sponsors",
     "stores",
+    "support",
     "teams",
     "tracks",
 ]

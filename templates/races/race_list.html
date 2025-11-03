@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align: center;">
-    <h3>Your Races</h3>
+<div class="post card" style="text-align:center; padding: 0px;">
+    <h3>My Races</h3>
 </div>
 
 {% if races %}
@@ -59,6 +59,9 @@
         </div>
     {% endfor %}
 {% else %}
-    <p>You haven’t added any races yet.</p>
+    <div class="post card" style="text-align:center; padding: 20px;">
+        None found<br /><br />
+        <a href="/profiles/">Back to Profiles</a>
+    </div>
 {% endif %}
 {% endblock %}

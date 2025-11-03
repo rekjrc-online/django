@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card" style="text-align:center;">
+  <h3>Delete Store</h3>
+  <p>Are you sure you want to delete <strong>{{ store.name }}</strong>?</p>
+
+  <form method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" style="padding:10px 20px; background-color:red; color:white; border:none; border-radius:5px; cursor:pointer;">
+      Confirm Delete
+    </button>
+  </form>
+
+  <a href="{% url 'store:detail' store.pk %}" style="margin-left:15px;">Cancel</a>
+</div>
+
+{% endblock %}

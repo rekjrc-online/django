@@ -19,14 +19,14 @@
 
       {% if request.user.is_authenticated and location.human == request.user.human %}
         <div class="text-end mt-3">
-          <a href="{% url 'locations:location-update' profile.id %}" class="btn btn-sm btn-primary">Edit</a>
-          <a href="{% url 'locations:location-delete' profile.id %}" class="btn btn-sm btn-danger">Delete</a>
+          <a href="{% url 'locations:location_update' profile.id %}" class="btn btn-sm btn-primary">Edit</a>
+          <a href="{% url 'locations:location_delete' profile.id %}" class="btn btn-sm btn-danger">Delete</a>
         </div>
       {% endif %}
     {% else %}
       <p>No location set for this profile.</p>
       {% if request.user.is_authenticated and profile.human == request.user.human %}
-        <a href="{% url 'locations:location-build' profile.id %}" class="btn btn-primary">Add Location</a>
+        <a href="{% url 'locations:location_build' profile.id %}" class="btn btn-primary">Add Location</a>
       {% endif %}
     {% endif %}
   </div>

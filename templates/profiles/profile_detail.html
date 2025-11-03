@@ -16,10 +16,16 @@
         </h1>
     </center>
 
-    {% if profile.bio %}
+    {% if profile.bio or profile.city or profile.state %}
         <div style="background-color:#1f1f1f; border:solid 1px #444; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
-            <h3 style="margin-top:0; color:#1da1f2;">Bio</h3>
-            <p style="margin:0;">{{ profile.bio|linebreaksbr }}</p>
+            {% if profile.bio %}
+                <h3 style="margin-top:0; color:#1da1f2;">Bio</h3>
+                <p style="margin:0;">{{ profile.bio|linebreaksbr }}</p>
+            {% endif %}
+            {% if profile.city or profile.state %}
+                <h3 style="margin-top:0; color:#1da1f2;">Location</h3>
+                <p style="margin:0;">{{ profile.city }} {{ profile.state }}</p>
+            {% endif %}
         </div>
     {% endif %}
 
@@ -64,7 +70,7 @@
     {% endif %}
 
     {% if posts_with_images %}
-        <div class="card" style="max-width:600px; border:solid 1px #444; margin:20px auto; padding:20px; background-color:#222; border-radius:12px;">
+        <div class="card" style="max-width:800px; border:solid 1px #444; margin:20px auto; padding:20px; background-color:#222; border-radius:12px;">
             <h3 style="color:#1da1f2; margin-bottom:15px; text-align:left;">Photos</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:10px;">
                 {% for post in posts_with_images %}
@@ -74,13 +80,6 @@
                     </a>
                 {% endfor %}
             </div>
-        </div>
-    {% endif %}
-    
-    {% if profile.city %}
-        <div style="background-color:#1f1f1f; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
-            <h3 style="margin-top:0; color:#1da1f2;">Location</h3>
-            <p style="margin:0;">{{ profile.city }} {{ profile.state }}</p>
         </div>
     {% endif %}
 </div>

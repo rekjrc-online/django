@@ -5,7 +5,7 @@
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
-<div class="card" style="max-width:600px; margin:auto; padding:20px;">
+<div class="card" style="max-width:800px; margin:auto; padding:20px;">
     <h2>Race Details</h2>
     <p><strong>Type:</strong> {{ race.race_type }}</p>
     {% if race.event %}<p><strong>Event:</strong> {{ race.event }}</p>{% endif %}
@@ -22,7 +22,7 @@
 </div>
 
 {% if race.attributes.all %}
-<div class="card" style="max-width:600px; margin:auto; margin-top:20px; padding:20px;">
+<div class="card" style="max-width:800px; margin:auto; margin-top:20px; padding:20px;">
     <h3>Attributes</h3>
     <table style="width:100%; border-collapse:collapse;">
         {% for attr in race.attributes.all %}

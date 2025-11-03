@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card" style="text-align:center; padding: 0px;">
+  <h3>My Locations</h3>
+</div>
+
+{% if locations %}
+    {% for location in locations %}
+        <div class="post card" style="padding:0px 10px;">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td align="center" valign="top" style="padding:10px;">
+                        {% if location.profile.avatar %}
+                            <a target="_blank" href="{{ location.profile.avatar.url }}">
+                                <img src="{{ location.profile.avatar.url }}" alt="Avatar" class="avatar">
+                            </a>
+                        {% else %}
+                            <img src="/static/nophoto_{{ location.profile.profiletype }}.png" alt="Avatar" class="avatar">
+                        {% endif %}
+                        <br>
+                        <a href="{% url 'profiles:update-profile' location.profile_id %}">Edit</a> /
+                        <a href="{% url 'profiles:detail-profile' location.profile_id %}">View</a><br>
+                        <a href="{% url 'locations:location_build' location.profile_id %}">Build</a>
+                    </td>
+                    <td style="padding-left:20px; padding-right:20px;">
+                        <h3>{{ location.profile.displayname }}</h3>
+                        {% if location.profile.bio %}
+                            <p>{{ location.profile.bio|linebreaksbr }}</p>
+                        {% endif %}
+                        {% if location.profile.city or location.profile.state %}
+                            <p>Location: {{ location.profile.city }} {{ location.profile.state }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="post card" style="text-align:center; padding: 20px;">
+        None found<br /><br />
+        <a href="/profiles/">Back to Profiles</a>
+    </div>
+{% endif %}
+
+{% endblock %}

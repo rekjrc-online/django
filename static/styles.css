@@ -34,9 +34,8 @@ nav a {
     display: flex;
     max-width: 1000px;
     margin: 0 auto;
-    padding-left: 10px;
-    gap: 10px;
     box-sizing: border-box;
+    /* gap: 10px; */
     /* No fixed height for better responsiveness */
 }
 
@@ -53,7 +52,9 @@ nav a {
     top: 45px;
     padding: 3px;
 }
-
+.right-col {
+    margin-left: 3px;
+}
 .middle-col {
     flex: 1 1 auto;
     overflow-y: auto;
