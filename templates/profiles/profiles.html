@@ -71,12 +71,4 @@
     <p>You haven’t added any profiles yet.</p>
 {% endfor %}
 
-<div class="post card" style="margin-top:20px;">
-    <h3>Create New Profile</h3>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Profile</button>
-    </form>
-</div>
 {% endblock %}
