@@ -1,10 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.shortcuts import redirect, reverse
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from .models import Profile
-from .forms import ProfileCreateForm, ProfileEditForm
+from .forms import ProfileEditForm, ProfileCreateForm
 
 class ProfilesListView(LoginRequiredMixin, ListView):
     model = Profile
@@ -14,16 +13,22 @@ class ProfilesListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Profile.objects.filter(human=self.request.user).order_by('profiletype', 'displayname')
 
-class ProfileBuildView(CreateView):
+class ProfileBuildView(LoginRequiredMixin, CreateView):
     model = Profile
     form_class = ProfileCreateForm
-    template_name = 'profiles/profile_create.html'
+    template_name = 'profiles/profile_build.html'
+    login_url = '/humans/login/'
+    def dispatch(self, request, *args, **kwargs):
+        if hasattr(request.user, 'profile'):
+            return redirect('profiles:detail-profile', profile_id=request.user.profile.id)
+        return super().dispatch(request, *args, **kwargs)
     def form_valid(self, form):
         form.instance.user = self.request.user
-        messages.success(self.request, "Your profile was created successfully!")
-        return super().form_valid(form)
+        self.object = form.save()
+        messages.success(self.request, "Profile created successfully!")
+        return redirect(self.get_success_url())
     def get_success_url(self):
-        return reverse_lazy('profiles:profile_detail', kwargs={'pk': self.object.pk})
+        return reverse('profiles:detail-profile', kwargs={'profile_id': self.object.pk})
 
 class ProfileDetailView(DetailView):
     model = Profile

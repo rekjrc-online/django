@@ -61,6 +61,7 @@ nav a {
     height: calc(100vh - 40px);
     padding: 3px;
     box-sizing: border-box;
+    margin-top: 3px;
 }
 /* ---------- Custom Scrollbar ---------- */
 

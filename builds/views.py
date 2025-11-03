@@ -25,7 +25,7 @@ class BuildListView(LoginRequiredMixin, ListView):
 class BuildBuildView(LoginRequiredMixin, CreateView):
     model = Build
     form_class = BuildForm
-    template_name = 'builds/build_form.html'
+    template_name = 'builds/build_build.html'
     def dispatch(self, request, *args, **kwargs):
         profile_id = self.kwargs.get('profile_id')
         build = Build.objects.filter(profile_id=profile_id).first()
@@ -75,7 +75,7 @@ class BuildDetailView(LoginRequiredMixin, DetailView):
 class BuildUpdateView(UpdateView):
     model = Build
     form_class = BuildForm
-    template_name = 'builds/build_form.html'
+    template_name = 'builds/build_update.html'
     def dispatch(self, request, *args, **kwargs):
         """Redirect to update page if Build already exists."""
         profile_id = self.kwargs['profile_id']

@@ -1,32 +1,33 @@
-<div class="menu">
+<div class="menu" style="text-align: center;">
     <h3>Menu</h3>
-    <ul>
-        <li><a href="{% url 'homepage' %}">Home</a></li>
-        {% if request.user.is_authenticated %}
-            <li><a href="/humans/update/">Account</a></li>
-            <li>
-                <a href="/profiles/">Profiles</a>
-                <font size="-1">(<a href="/profiles/build/">new</a>)</font>
-            </li>
-            <p>
-            <li><a href="/builds/">My Builds</a></li>
-            <li><a href="/clubs/">My Clubs</a></li>
-            <li><a href="/events/">My Events</a></li>
-            <li><a href="/locations/">My Locations</a></li>
-            <li><a href="/races/">My Races</a></li>
-            <li><a href="/stores/">My Stores</a></li>
-            <li><a href="/teams/">My Teams</a></li>
-            <li><a href="/tracks/">My Tracks</a></li>
-            <p>
-            <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
-                {% csrf_token %}
-                <li><a href="javascript:document.getElementById('logoutform').submit()">Logout</a></li>
-            </form>
-        {% else %}
-            <li><a href="/humans/login/">Login</a></li>
-        {% endif %}
-    </ul>
-
+    <div style="margin-left:10px;">
+        <table cellpadding="0" cellspacing="0" align="center"><tr><td align="left">
+            <li><a href="{% url 'homepage' %}">Home</a></li>
+            {% if request.user.is_authenticated %}
+                <li><a href="/humans/update/">Account</a></li>
+                <li>
+                    <a href="/profiles/">Profiles</a>
+                    <font size="-1">(<a href="/profiles/build/">new</a>)</font>
+                </li>
+                <p>
+                <li><a href="/builds/">My Builds</a></li>
+                <li><a href="/clubs/">My Clubs</a></li>
+                <li><a href="/events/">My Events</a></li>
+                <li><a href="/locations/">My Locations</a></li>
+                <li><a href="/races/">My Races</a></li>
+                <li><a href="/stores/">My Stores</a></li>
+                <li><a href="/teams/">My Teams</a></li>
+                <li><a href="/tracks/">My Tracks</a></li>
+                <p>
+                <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <li><a href="javascript:document.getElementById('logoutform').submit()">Logout</a></li>
+                </form>
+            {% else %}
+                <li><a href="/humans/login/">Login</a></li>
+            {% endif %}
+        </td></tr></table>
+    </div>
     {% if request.user.is_authenticated %}
         <p>
             <input type="button"
@@ -35,5 +36,4 @@
                 style="width:10em;height:2em;">
         </p>
     {% endif %}
-
 </div>

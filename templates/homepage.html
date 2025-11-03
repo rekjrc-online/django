@@ -6,20 +6,12 @@
 <script src="static/likes.js"></script>
 
 <div class="post card" style="max-width: 800px; padding: 15px; margin-top:3px;">
-  <table cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="padding-right:10px;">
-        <h2>RekjRC Feed</h2>
-      </td>
-      <td style="padding-left:10px;">
-        {% if request.user.is_authenticated %}
-          <input type="button" value="New Post"
-              onclick="self.location.href='/posts/create/'"
-              style="width:10em; height:2em; font-size:large;">
-        {% endif %}
-      </td>
-    </tr>
-  </table>
+  <h2>RekjRC Feed</h2>
+  {% if request.user.is_authenticated %}
+    <input type="button" value="New Post"
+        onclick="self.location.href='/posts/create/'"
+        style="width:10em; height:2em; font-size:large;">
+  {% endif %}
 </div>
 
 {% include 'posts/post_list.html' %}

@@ -15,28 +15,25 @@ class TrackListView(ListView):
 # Show details for a track
 class TrackDetailView(View):
     template_name = 'tracks/track_detail.html'
-
     def get(self, request, profile_id):
+        profile = get_object_or_404(Profile, id=profile_id)
         track = get_object_or_404(Track, profile__id=profile_id)
-        return render(request, self.template_name, {'track': track})
+        return render(request, self.template_name, {
+            'profile': profile,
+            'track': track,})
 
 # Build (create) a new track
 class TrackBuildView(View):
     template_name = 'tracks/track_build.html'
-
     def get(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
-
-        # If track exists, redirect to update page
         track = Track.objects.filter(profile=profile).first()
         if track:
             return redirect('tracks:track_update', profile_id=profile_id)
-
         form = TrackForm()
         return render(request, self.template_name, {
             'profile': profile,
-            'form': form,
-        })
+            'form': form,})
 
     def post(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
@@ -50,8 +47,7 @@ class TrackBuildView(View):
 
         return render(request, self.template_name, {
             'profile': profile,
-            'form': form,
-        })
+            'form': form,})
 
 # Update an existing track (with attributes)
 class TrackUpdateView(View):
@@ -65,8 +61,7 @@ class TrackUpdateView(View):
         return render(request, self.template_name, {
             'profile': profile,
             'form': form,
-            'attribute_formset': attribute_formset,
-        })
+            'attribute_formset': attribute_formset,})
 
     def post(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
@@ -78,21 +73,17 @@ class TrackUpdateView(View):
             form.save()
             attribute_formset.save()
             return redirect('tracks:track_list')
-
         return render(request, self.template_name, {
             'profile': profile,
             'form': form,
-            'attribute_formset': attribute_formset,
-        })
+            'attribute_formset': attribute_formset,})
 
 # Delete a track
 class TrackDeleteView(DeleteView):
     model = Track
     template_name = 'tracks/track_confirm_delete.html'
-
     def get_object(self):
         profile_id = self.kwargs['profile_id']
         return get_object_or_404(Track, profile__id=profile_id)
-
     def get_success_url(self):
         return reverse('tracks:track_list')

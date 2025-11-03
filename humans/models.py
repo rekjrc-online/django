@@ -32,3 +32,11 @@ class HumanFriend(BaseModel):
         unique_together = ('human', 'friend_human')
     def __str__(self):
         return f"{self.human} ↔ {self.friend_human}"
+
+class FriendRequest(BaseModel):
+    human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friend_requestee')
+    friend_human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friend_requestor')
+    class Meta:
+        unique_together = ('human', 'friend_human')
+    def __str__(self):
+        return f"{self.human} ↔ {self.friend_human}"
