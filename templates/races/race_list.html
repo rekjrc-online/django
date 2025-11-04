@@ -22,8 +22,10 @@
                         <p>
                             {% if profile.race %}
                                 <a href="{% url 'races:race_update' profile.id %}">Edit</a> /
-                                <a href="{% url 'races:race_detail' profile.id %}">View</a> /
+                                <a href="{% url 'races:race_detail' profile.id %}">View</a><br />
                                 <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
+                            {% else %}
+                                <a href="">Build</a>
                             {% endif %}
                         </p>
                     </td>
@@ -66,7 +68,8 @@
 {% else %}
     <div class="post card" style="text-align:center; padding: 20px;">
         None found<br /><br />
-        <a href="/profiles/">Back to Profiles</a>
+        <a href="/profiles/">Back to Profiles</a> /
+        <a href="/profiles/build/">Create Profile</a>
     </div>
 {% endif %}
 
