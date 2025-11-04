@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Profile summary section -->
-{% include "profiles/profile_header.html" %}
-
 <div class="post card" style="padding:0px; text-align:center;">
     <h3>Update Build</h3>
 </div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
 
 <div class="post card" style="padding:20px;">
     <form method="POST" enctype="multipart/form-data">
@@ -14,6 +14,9 @@
         {{ form.as_p }}
         <button type="submit">Save Changes</button>
     </form>
+    <br />
 </div>
+
+<br /><br /><br />
 
 {% endblock %}

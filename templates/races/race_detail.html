@@ -40,25 +40,22 @@
 </div>
 
 {% if attributes.exists %}
-    <div class="post card" style="padding:0px 20px 20px 20px; margin-top:3px;">
+    <div class="post card" style="padding:0px 20px 20px 20px; margin-top:10px;">
         <h3>Attributes</h3>
         <table style="width:100%; border-collapse:collapse;">
             {% for attr in attributes.all %}
-                {% if attr.value %}
-                    <tr>
-                        <td style="padding:5px;">{{ attr.attribute.name }}</td>
-                        <td style="padding:5px;">{{ attr.value }}</td>
-                    </tr>
-                {% endif %}
+                <tr>
+                    <td style="padding:5px;">{{ attr.attribute.name }}</td>
+                    <td style="padding:5px;">{{ attr.value }}</td>
+                </tr>
             {% endfor %}
         </table>
     </div>
 {% endif %}
 
 <!-- 🏁 Race Entries Section -->
-<div class="post card" style="padding:20px; margin-top:5px;">
+<div class="post card" style="padding:0px 20px 20px 20px; margin-top:3px;">
     <h3>Race Entries</h3>
-
     {% if race.race_drivers.exists %}
         <table style="width:100%; border-collapse:collapse;">
             <thead>
@@ -105,7 +102,10 @@
     {% else %}
         <p>No drivers have joined this race yet.</p>
     {% endif %}
+    <br />
 </div>
+
+<br />
 
 <div style="text-align:center; margin-top:10px;">
     <a href="{% url 'races:race_list' %}">Back To Race List</a>

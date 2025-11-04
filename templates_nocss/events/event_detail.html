@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<div class="card">
+
+    <h3>Event Details</h3>
+
+    {% if event %}
+        <h4>{{ event.name }}</h4>
+        <p><strong>Date:</strong> {{ event.eventdate|date:"D, M d, Y" }} at {{ event.eventdate|date:"h:m" }}</p>
+        <p><strong>Location:</strong> {{ event.location.name }}</p>
+        <p><strong>Profile:</strong> {{ profile.displayname }}</p>
+        {% if event.description %}
+            <p><strong>Description:</strong> {{ event.description }}</p>
+        {% endif %}
+        {% if request.user.is_authenticated and request.user == profile.user %}
+            <a href="{% url 'events:event_update' profile.id %}">Edit</a>
+        {% endif %}
+    {% else %}
+        <p>No event found for this profile.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

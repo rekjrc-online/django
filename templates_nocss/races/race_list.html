@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card">
+    <h3>My Races</h3>
+</div>
+
+{% if profiles %}
+    {% for profile in profiles %}
+        <div class="post card">
+            <table>
+                <tr>
+                    <td valign="top" align="center" nowrap>
+                        {{ profile.get_profiletype_display }}<br />
+                        {% if profile.avatar %}
+                            <a target="_blank" href="{{ profile.avatar.url }}">
+                                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+                            </a>
+                        {% else %}
+                            <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
+                        {% endif %}
+                        <p>
+                            {% if profile.race %}
+                                <a href="{% url 'races:race_update' profile.id %}">Update</a> /
+                                <a href="{% url 'races:race_detail' profile.id %}">View</a><br />
+                                <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
+                            {% else %}
+                                <a href="{% url 'races:race_build' profile.id %}">Build</a>
+                            {% endif %}
+                        </p>
+                    </td>
+                    <td></td>
+                    <td valign="top">
+                        <b>{{ profile.displayname }}</b>
+                        {% if profile.race %}
+                            <p>
+                                <strong>Race Type:</strong> {{ profile.race.race_type }}<br>
+                                {% if profile.race.event %}<strong>Event:</strong> {{ profile.race.event }}<br>{% endif %}
+                                {% if profile.race.location %}<strong>Location:</strong> {{ profile.race.location }}<br>{% endif %}
+                                {% if profile.race.club %}<strong>Club:</strong> {{ profile.race.club }}<br>{% endif %}
+                                {% if profile.race.team %}<strong>Team:</strong> {{ profile.race.team }}<br>{% endif %}
+                            </p>
+                        {% else %}
+                            <p>No race info yet.</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="post card">
+        None found<br /><br />
+        <a href="/profiles/">Back to Profiles</a> /
+        <a href="/profiles/build/">Create Profile</a>
+    </div>
+{% endif %}
+
+<br /><br /><br />
+
+{% endblock %}

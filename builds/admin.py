@@ -3,7 +3,7 @@ from .models import Build, BuildAttribute, BuildAttributeEnum
 
 @admin.register(Build)
 class BuildAdmin(admin.ModelAdmin):
-    list_display = ('human', 'profile', 'description')
+    list_display = ('human', 'profile')
     search_fields = ('human__username',)
 
 @admin.register(BuildAttribute)

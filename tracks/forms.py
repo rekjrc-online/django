@@ -5,14 +5,20 @@ from .models import Track, TrackAttribute, TrackAttributeEnum, TrackType
 class TrackForm(forms.ModelForm):
     class Meta:
         model = Track
-        fields = ['name', 'track_type', 'location']
-
+        fields = [
+            'human',
+            'profile',
+            'location'
+        ]
+        widgets = {
+            'human': forms.HiddenInput(),
+            'profile': forms.HiddenInput(),
+        }
 
 class TrackAttributeForm(forms.ModelForm):
     class Meta:
         model = TrackAttribute
         fields = ['attribute_type', 'value']
-
 
 TrackAttributeFormSet = inlineformset_factory(
     Track,

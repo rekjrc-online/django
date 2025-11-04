@@ -40,23 +40,6 @@
                                 {% if profile.race.club %}<strong>Club:</strong> {{ profile.race.club }}<br>{% endif %}
                                 {% if profile.race.team %}<strong>Team:</strong> {{ profile.race.team }}<br>{% endif %}
                             </p>
-
-                            {% if profile.race.attributes.exists %}
-                                <table style="border-collapse:collapse; width:100%; font-size:0.9em;" border="1">
-                                    {% for attr in profile.race.attributes.all %}
-                                        <tr>
-                                            <td style="padding:3px 5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
-                                                {{ attr.attribute.name }}
-                                            </td>
-                                            <td style="padding:3px 5px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;">
-                                                {{ attr.value }}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </table>
-                            {% else %}
-                                <p style="color:gray; font-size:0.9em;">No attributes yet.</p>
-                            {% endif %}
                         {% else %}
                             <p style="color:gray; font-size:0.9em;">No race info yet.</p>
                         {% endif %}

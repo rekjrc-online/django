@@ -8,20 +8,20 @@ class ClubMemberInline(admin.TabularInline):
 
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('name', 'profile')
-    search_fields = ('name', 'profile__username')
-    ordering = ('name',)
+    list_display = ('profile', 'human')
+    search_fields = ('profile__displayname', 'human__username', 'human__first_name', 'human__last_name')
+    ordering = ('profile__displayname',)
     inlines = [ClubMemberInline]
 
 @admin.register(ClubLocation)
 class ClubLocationAdmin(admin.ModelAdmin):
     list_display = ('club', 'location')
-    search_fields = ('club__name', 'location__name')
-    ordering = ('club__name', 'location__name')
+    search_fields = ('club__profile__displayname', 'location__name')
+    ordering = ('club__profile__displayname', 'location__name')
 
 @admin.register(ClubMember)
 class ClubMemberAdmin(admin.ModelAdmin):
     list_display = ('club', 'human', 'role')
-    search_fields = ('club__name', 'human__name', 'role')
+    search_fields = ('club__profile__displayname', 'human__username', 'human__first_name', 'human__last_name', 'role')
     list_filter = ('club', 'role')
-    ordering = ('club__name', 'human__name')
+    ordering = ('club__profile__displayname', 'human__username')

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card">
+    <h2>Join: {{ race.profile.displayname }}</h2>
+</div>
+
+<form method="post" class="post card">
+    {% csrf_token %}
+
+    <p><strong>Select your driver:</strong></p>
+    <table>
+        <tbody>
+            {% for profile in driver_profiles %}
+            <tr>
+                <td>
+                    <input type="radio" name="driver_id" value="{{ profile.id }}" required>
+                </td>
+                <td>
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}" class="avatar">
+                    {% endif %} &nbsp;
+                    {{ profile.displayname }}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <input type="radio" name="driver_id" value="">
+                </td>
+                <td>
+                    - none -
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Select your model:</strong></p>
+    <table>
+        <tbody>
+            {% for profile in model_profiles %}
+            <tr>
+                <td>
+                    <input type="radio" name="model_id" value="{{ profile.id }}" required>
+                </td>
+                <td>
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}" class="avatar">
+                    {% endif %} &nbsp;
+                    {{ profile.displayname }}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <input type="radio" name="model_id" value="">
+                </td>
+                <td>- none -</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <button type="submit">
+            Join Race
+        </button>
+    </div>
+    <br />
+</form>
+
+<br /><br /><br />
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Profile summary -->
+{% include "profiles/profile_header.html" %}
+
+<div class="post card">
+  <h1>{{ team.name }}</h1>
+  {% if team.website %}
+    <p>Website: <a href="{{ team.website }}" target="_blank">{{ team.website }}</a></p>
+  {% endif %}
+  <p>Profile: <a href="{% url 'profiles:detail-profile' profile_id=team.profile.id %}">{{ team.profile }}</a></p>
+  <h3>Members ({{ members.count }})</h3>
+  <ul>
+    {% for member in members %}
+      <li>{{ member.human }}{% if member.role %} ({{ member.role }}){% endif %}</li>
+    {% empty %}
+      <li>No members yet.</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'teams:team_update' profile_id=team.profile.id %}" class="btn">Edit Team</a>
+  <a href="{% url 'teams:team_delete' profile_id=team.profile.id %}" class="btn">Delete Team</a>
+</div>
+
+{% endblock %}

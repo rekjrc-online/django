@@ -9,14 +9,14 @@ class StoreListView(ListView):
     model = Store
     template_name = 'stores/store_list.html'
     context_object_name = 'stores'
-    ordering = ['name']
+    #ordering = ['name']
     def get_queryset(self):
         """Return stores for the user's profile if logged in, else all stores."""
         if self.request.user.is_authenticated:
             profile = getattr(self.request.user, 'profile', None)
             if profile:
-                return Store.objects.filter(profile=profile).order_by('name')
-        return Store.objects.all().order_by('name')
+                return Store.objects.filter(profile=profile)  #.order_by('name')
+        return Store.objects.all()  #.order_by('name')
 
 class StoreDetailView(DetailView):
     model = Store

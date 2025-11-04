@@ -5,7 +5,14 @@ from .models import Club, ClubMember, ClubLocation
 class ClubForm(forms.ModelForm):
     class Meta:
         model = Club
-        fields = ['name']
+        fields = [
+            'human',
+            'profile'
+        ]
+        widgets = {
+            'human': forms.HiddenInput(),
+            'profile': forms.HiddenInput(),
+        }
 
 class ClubMemberForm(forms.ModelForm):
     class Meta:

@@ -15,9 +15,8 @@ class Club(BaseModel):
         Profile,
         on_delete=models.PROTECT,
         related_name='clubs')
-    name = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.name}"
+        return self.profile.displayname
 
 class ClubLocation(BaseModel):
     club = models.ForeignKey(
@@ -29,7 +28,7 @@ class ClubLocation(BaseModel):
         on_delete=models.PROTECT,
         related_name='clubs')
     def __str__(self):
-        return f"{self.club.name}"
+        return self.club.profile.displayname
 
 class ClubMember(BaseModel):
     club = models.ForeignKey(

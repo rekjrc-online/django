@@ -15,12 +15,20 @@ class Track(BaseModel):
         on_delete=models.PROTECT,
         related_name='tracks',
         default=1)
-    profile = models.OneToOneField(Profile, on_delete=models.PROTECT, related_name='track', default=1)
-    name = models.CharField(max_length=100, unique=True)
-    track_type = models.ForeignKey(TrackType, on_delete=models.PROTECT, related_name='tracks')
-    location = models.ForeignKey(Location, on_delete=models.PROTECT, related_name='tracks')
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='track')
+    track_type = models.ForeignKey(
+        TrackType,
+        on_delete=models.PROTECT,
+        related_name='tracks')
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.PROTECT,
+        related_name='tracks')
     def __str__(self):
-        return self.name
+        return self.profile.displayname
 
 class TrackAttributeEnum(BaseModel):
     name = models.CharField(max_length=100, unique=True)

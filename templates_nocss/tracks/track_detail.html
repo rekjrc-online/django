@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card">
+    Track Detail
+</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<div class="post card">
+    <h2>{{ track.name }}</h2>
+
+    {% if track.profile %}
+        <p><strong>Owner:</strong> <a href="{% url 'profiles:detail-profile' track.profile.id %}">{{ track.profile.displayname }}</a></p>
+    {% endif %}
+
+    {% if track.location %}
+        <p><strong>Location:</strong> {{ track.location.city }} {{ track.location.state }}</p>
+    {% endif %}
+
+    {% if track.description %}
+        <p><strong>Description:</strong></p>
+        <p>{{ track.description|linebreaksbr }}</p>
+    {% endif %}
+
+    <hr>
+    <p>
+        <a href="{% url 'tracks:track_update' track.id %}">Edit Track</a> |
+        <a href="{% url 'tracks:track_delete' track.id %}">Delete Track</a>
+    </p>
+
+</div>
+{% endblock %}

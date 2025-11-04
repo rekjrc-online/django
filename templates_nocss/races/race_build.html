@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card">
+    <h3>Build Race</h3>
+</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="post card">
+        <div>
+            {% include "races/race_form.html" %}
+        </div><p>
+        <button type="submit"
+           >
+            Save Race
+        </button><p>
+        <div>
+            <a href="{% url 'races:race_list' %}">Cancel</a>
+        </div>
+        <br />
+    </div>
+</form>
+
+<br /><br /><br />
+
+{% endblock %}

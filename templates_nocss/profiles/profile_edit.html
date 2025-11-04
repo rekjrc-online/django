@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+    <h4>{{ profile.profiletype }} PROFILE</h4>
+    {% if profile.avatar %}
+        <a target="_blank" href="{{ profile.avatar.url }}">
+            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+        </a>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Save
+        </button>
+    </form>
+
+    {% if profile.profiletype  == "MODEL" %}
+        <a href="/builds/{{ profile.id }}/build">Build Model</a>
+    {% elif profile.profiletype == "LOCATION" %}
+        <a href="/locations/{{ profile.id }}/build">Build Location</a>
+    {% elif profile.profiletype == "STORE" %}
+        <a href="/stores/{{ profile.id }}/build">Build Store</a>
+    {% elif profile.profiletype == "TRACK" %}
+        <a href="/tracks/{{ profile.id }}/build">Build Track</a>
+    {% elif profile.profiletype == "CLUB" %}
+        <a href="/clubs/{{ profile.id }}/build">Build Club</a>
+    {% elif profile.profiletype == "TEAM" %}
+        <a href="/teams/{{ profile.id }}/build">Build Team</a>
+    {% elif profile.profiletype == "EVENT" %}
+        <a href="/events/{{ profile.id }}/build">Build Event</a>
+    {% elif profile.profiletype == "RACE" %}
+        <a href="/races/{{ profile.id }}/build">Build Race</a>
+    {% endif %}
+</div>
+<br /><br /><br />
+{% endblock %}

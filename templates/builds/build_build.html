@@ -1,16 +1,37 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 
-<div class="post card" style="padding:0px; text-align:center;">
-    <h3>Model Builder</h3>
+<div class="post card" style="text-align:center; padding: 0px;">
+    <h3>Create Build for {{ profile.displayname }}</h3>
 </div>
 
-<div class="post card" style="padding:0px 20px;">
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Base Build</button>
-    </form><br />
+<form method="post" class="post card" style="padding:20px;">
+    {% csrf_token %}
+
+    <table style="width:100%;">
+        <tr>
+            <td style="padding:5px;"><label for="id_name">Build Name:</label></td>
+            <td style="padding:5px;">{{ form.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding:5px;"><label for="id_description">Description:</label></td>
+            <td style="padding:5px;">{{ form.description }}</td>
+        </tr>
+    </table>
+
+    <input type="hidden" name="profile" value="{{ profile.id }}">
+
+    <div style="text-align:center; margin-top:20px;">
+        <button type="submit" style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Save Build
+        </button>
+    </div>
+</form>
+
+<br />
+<div style="text-align:center;">
+    <a href="{% url 'builds:build_list' %}">Back to My Builds</a>
 </div>
 
 {% endblock %}

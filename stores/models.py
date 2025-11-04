@@ -12,6 +12,5 @@ class Store(BaseModel):
         Profile,
         on_delete=models.PROTECT,
         related_name='store')
-    name = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.name}"
+        return self.profile.displayname

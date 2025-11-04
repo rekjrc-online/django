@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card">
+    <h3>{% if form.instance.pk %}Edit Team{% else %}Build Team{% endif %}</h3>
+</div>
+
+<!-- Profile summary -->
+{% include "profiles/profile_header.html" %}
+
+<div class="post card">
+  <form method="post">
+    {% csrf_token %}
+    <h2>Team Info</h2>
+    {{ form.as_p }}
+
+    <button type="submit">
+      Save
+    </button>
+  </form>
+  <br />
+</div>
+<br /><br /><br />
+{% endblock %}

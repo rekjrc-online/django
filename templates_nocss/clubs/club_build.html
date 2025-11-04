@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="post card">
+    <h3>Build Club</h3>
+</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<div class="post card">
+    <h2>Create Club</h2>
+    <form method="post">
+        {% csrf_token %}
+        <table>
+            {% for field in form %}
+            <tr>
+                <th>{{ field.label_tag }}</th>
+                <td>{{ field|add_class:"fixed-width-field" }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <button type="submit"
+           >
+            Save Club
+        </button>
+    </form>
+</div>
+
+<style>
+.fixed-width-field {
+    width: 100%;
+    max-width: 250px;
+    box-sizing: border-box;
+}
+</style>
+<br /><br /><br />
+{% endblock %}

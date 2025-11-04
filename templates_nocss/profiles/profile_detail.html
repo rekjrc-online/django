@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card">
+
+    <center>
+        {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}'s avatar"
+               >
+        {% else %}
+            <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="{{ profile.displayname }}'s avatar"
+               >
+        {% endif %}
+        <h1>
+            {{ profile.displayname }}
+        </h1>
+    </center>
+
+    {% if profile.bio or profile.city or profile.state %}
+        <div>
+            {% if profile.bio %}
+                <h3>Bio</h3>
+                <p>{{ profile.bio|linebreaksbr }}</p>
+            {% endif %}
+            {% if profile.city or profile.state %}
+                <h3>Location</h3>
+                <p>{{ profile.city }} {{ profile.state }}</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if profile.website %}
+        <div>
+            <h3>Web Site</h3>
+            <p><a href="{{ profile.website }}" target="_blank"
+               >{{ profile.website }}</a></p>
+        </div>
+    {% endif %}
+
+    {% if profile.builds %}
+        <div>
+            <h3>{{ profile.builds.name }}</h3>
+            {% if profile.builds.description %}
+                <p>{{ profile.builds.description|linebreaksbr }}</p>
+            {% else %}
+                <p><em>No description provided.</em></p>
+            {% endif %}
+
+            {% if profile.builds.attributes.all %}
+                <table>
+                    {% for attr in profile.builds.attributes.all %}
+                        <tr>
+                            <td>{{ attr.attribute_type.name }}</td>
+                            <td>{{ attr.value }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="2"><em>No attributes added yet.</em></td></tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                {% comment %}<p><em>No attributes added yet.</em></p>{% endcomment %}
+            {% endif %}
+
+            {% if race.human == request.user %}
+                <div>
+                    <a href="/builds/{{profile.id}}/update/">Update Build</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if posts_with_images %}
+        <div class="card">
+            <h3>Photos</h3>
+            <div>
+                {% for post in posts_with_images %}
+                    <a href="{{ post.image.url }}" target="_blank">
+                        <img src="{{ post.image.url }}" alt="Post image"
+                           >
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

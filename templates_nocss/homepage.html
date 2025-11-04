@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script src="static/scroll.js"></script>
+<script src="static/likes.js"></script>
+
+<div class="post card">
+  <h2>RekjRC Feed</h2>
+  {% if request.user.is_authenticated %}
+    <input type="button" value="New Post"
+        onclick="self.location.href='/posts/create/'"
+       >
+  {% endif %}
+</div>
+
+{% include 'posts/post_list.html' %}
+
+<div id="loading">Loading more posts...</div>
+
+<div class="post" id="end-message">
+  You have run out of posts
+</div>
+
+{% endblock %}

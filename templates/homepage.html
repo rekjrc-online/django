@@ -2,24 +2,25 @@
 
 {% block content %}
 
-<script src="static/scroll.js"></script>
-<script src="static/likes.js"></script>
+  <script src="static/scroll.js"></script>
+  <script src="static/likes.js"></script>
 
-<div class="post card" style="max-width: 800px; padding: 15px; margin-top:3px;">
-  <h2>RekjRC Feed</h2>
-  {% if request.user.is_authenticated %}
-    <input type="button" value="New Post"
-        onclick="self.location.href='/posts/create/'"
-        style="width:10em; height:2em; font-size:large;">
-  {% endif %}
-</div>
+  <div id="feed" style="padding-top:10px;">
+    <div class="post">
+      <h2>
+        RekjRC Feed
+        {% if request.user.is_authenticated %}
+          <br><input type="button" value="New Post" onclick="self.location.href='/posts/create/'" style="width:10em;height:2em;font-size:large;">
+        {% endif %}
+      </h2>
+    </div>
+    {% include 'posts/post_list.html' %}
+  </div>
 
-{% include 'posts/post_list.html' %}
+  <div id="loading" style="display:block;">Loading more posts...</div>
 
-<div id="loading" style="display:block;">Loading more posts...</div>
-
-<div class="post" id="end-message" style="display:none; text-align:center; font-weight:bold;">
-  You have run out of posts
-</div>
+  <div class="post" id="end-message" style="display:none; text-align:center; font-weight:bold;">
+    You have run out of posts
+  </div>
 
 {% endblock %}

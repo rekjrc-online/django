@@ -9,12 +9,26 @@ class TeamMemberInline(admin.TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'profile', 'website')
-    search_fields = ('name', 'profile__user__username')
+    list_display = ('profile', 'human')
+    search_fields = (
+        'profile__displayname',
+        'profile__state',
+        'human__username',
+        'human__first_name',
+        'human__last_name',
+    )
+    ordering = ('profile__displayname',)
     inlines = [TeamMemberInline]
 
 @admin.register(TeamMember)
 class TeamMemberAdmin(admin.ModelAdmin):
-    list_display = ('human', 'team', 'role')
-    search_fields = ('human__name', 'team__name', 'role')
+    list_display = ('team', 'human', 'role')
+    search_fields = (
+        'team__profile__displayname',
+        'human__username',
+        'human__first_name',
+        'human__last_name',
+        'role',
+    )
     list_filter = ('team', 'role')
+    ordering = ('team__profile__displayname', 'human__username')

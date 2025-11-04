@@ -22,7 +22,7 @@
                         <p>{{ track.profile.get_profiletype_display }}</p>
                         <p>
                             <a href="{% url 'tracks:track_update' track.profile.id %}">Edit</a> /
-                            <a href="{% url 'tracks:track_detail' track.profile.id %}">View</a> /
+                            <a href="{% url 'tracks:track_detail' track.profile.id %}">View</a><br />
                             <a href="{% url 'tracks:track_delete' track.profile.id %}">Delete</a>
                         </p>
                     </td>

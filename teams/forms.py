@@ -5,7 +5,14 @@ from .models import Team, TeamMember
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ['name', 'website']
+        fields = [
+            'human',
+            'profile'
+        ]
+        widgets = {
+            'human': forms.HiddenInput(),
+            'profile': forms.HiddenInput(),
+        }
 
 class TeamMemberForm(forms.ModelForm):
     class Meta:

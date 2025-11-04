@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="post card">
+    <h3>Create Build for {{ profile.displayname }}</h3>
+</div>
+
+<form method="post" class="post card">
+    {% csrf_token %}
+
+    <table>
+        <tr>
+            <td><label for="id_name">Build Name:</label></td>
+            <td>{{ form.name }}</td>
+        </tr>
+        <tr>
+            <td><label for="id_description">Description:</label></td>
+            <td>{{ form.description }}</td>
+        </tr>
+    </table>
+
+    <input type="hidden" name="profile" value="{{ profile.id }}">
+
+    <div>
+        <button type="submit">
+            Save Build
+        </button>
+    </div>
+</form>
+
+<br />
+<div>
+    <a href="{% url 'builds:build_list' %}">Back to My Builds</a>
+</div>
+
+{% endblock %}

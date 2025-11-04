@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/likes.js"></script>
+
+<div class="card post">
+    <!-- Post Header -->
+    <div>
+        <strong>@{{ post.profile_id.displayname }}</strong>
+        <font size="-1">
+            - {{ post.profile_id.get_profiletype_display }}
+            - {{ post.insertdate|date:"m/d/y h:iA" }}
+        </font>
+    </div>
+
+    <!-- Post Content -->
+    <p>{{ post.content }}</p>
+
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post image">
+    {% endif %}
+
+    {% if post.video_url %}
+        <div>
+            <a href="{{ post.video_url }}" target="_blank">Watch Video</a>
+        </div>
+    {% endif %}
+
+    <!-- Join Race -->
+    {% if post.profile_id.profiletype == "RACE" %}
+        <a href="{% url 'races:race_join' post.profile_id_id %}">Join Race</a>
+    {% endif %}
+
+    <!-- Post Stats -->
+    <div>
+        {% include "posts/post_metrics.html" %}
+    </div>
+
+    <!-- Reply Button -->
+    <div>
+        <a href="{% url 'posts:post_reply' post.id %}">Reply</a>
+    </div>
+</div>
+
+{% if replies %}
+    {% include "posts/post_replies.html" %}
+{% endif %}
+
+{% endblock %}

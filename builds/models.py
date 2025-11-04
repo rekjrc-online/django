@@ -12,10 +12,8 @@ class Build(BaseModel):
         Profile,
         on_delete=models.PROTECT,
         related_name='builds')
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
     def __str__(self):
-        return f"{self.name} ({self.profile.displayname})"
+        return self.profile.displayname
 
 class BuildAttributeEnum(BaseModel):
     name = models.CharField(max_length=100, unique=True)
