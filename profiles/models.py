@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from rekjrc.base_models import BaseModel
+from humans.models import Human
 from PIL import Image
 
 class Profile(BaseModel):
@@ -40,3 +41,19 @@ class Profile(BaseModel):
 				img.save(img_path, optimize=True, quality=85)
 		except Exception as e:
 			print("Upload failed:", e)
+
+class ProfileFollows(BaseModel):
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.PROTECT,
+        related_name='profile_follows')
+    profile = models.ForeignKey(
+        Profile,
+        on_delete=models.PROTECT,
+        related_name='followers')
+
+    class Meta:
+        unique_together = ('human', 'profile')
+
+    def __str__(self):
+        return f"{self.human.username} → {self.profile.displayname}"

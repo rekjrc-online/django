@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, ProfileFollows
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('human', 'displayname', 'profiletype', 'city', 'state', 'followers_count', 'following_count')
@@ -7,3 +7,9 @@ class ProfileAdmin(admin.ModelAdmin):
     list_filter = ('human', 'profiletype', 'state', 'displayname')
 
 admin.site.register(Profile, ProfileAdmin)
+
+@admin.register(ProfileFollows)
+class ProfileFollowsAdmin(admin.ModelAdmin):
+    list_display = ('human', 'profile')
+    list_filter = ('human', 'profile')
+    search_fields = ('human__username', 'profile__displayname')
