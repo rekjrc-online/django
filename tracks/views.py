@@ -27,27 +27,35 @@ class TrackBuildView(View):
     template_name = 'tracks/track_build.html'
     def get(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
-        track = Track.objects.filter(profile=profile).first()
-        if track:
+        # Redirect if this profile already has a track
+        if Track.objects.filter(profile=profile).exists():
             return redirect('tracks:track_update', profile_id=profile_id)
-        form = TrackForm()
+        # Prepopulate hidden fields
+        form = TrackForm(initial={
+            'human': profile.human,
+            'profile': profile
+        })
         return render(request, self.template_name, {
             'profile': profile,
-            'form': form,})
-
+            'form': form,
+        })
     def post(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
-        form = TrackForm(request.POST)
-
+        # Ensure hidden fields stay set correctly
+        form = TrackForm(request.POST, initial={
+            'human': profile.human,
+            'profile': profile
+        })
         if form.is_valid():
             track = form.save(commit=False)
+            track.human = profile.human
             track.profile = profile
             track.save()
             return redirect('tracks:track_update', profile_id=profile_id)
-
         return render(request, self.template_name, {
             'profile': profile,
-            'form': form,})
+            'form': form,
+        })
 
 # Update an existing track (with attributes)
 class TrackUpdateView(View):

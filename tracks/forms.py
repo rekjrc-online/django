@@ -8,7 +8,8 @@ class TrackForm(forms.ModelForm):
         fields = [
             'human',
             'profile',
-            'location'
+            'track_type',
+            'location',
         ]
         widgets = {
             'human': forms.HiddenInput(),
