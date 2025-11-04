@@ -25,7 +25,7 @@
                                 <a href="{% url 'races:race_detail' profile.id %}">View</a><br />
                                 <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
                             {% else %}
-                                <a href="{% url 'races:race_update' profile.id %}">Build</a>
+                                <a href="{% url 'races:race_build' profile.id %}">Build</a>
                             {% endif %}
                         </p>
                     </td>
