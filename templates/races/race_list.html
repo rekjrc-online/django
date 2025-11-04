@@ -33,13 +33,43 @@
                     <td valign="top">
                         <b>{{ profile.displayname }}</b>
                         {% if profile.race %}
-                            <p>
-                                <strong>Race Type:</strong> {{ profile.race.race_type }}<br>
-                                {% if profile.race.event %}<strong>Event:</strong> {{ profile.race.event }}<br>{% endif %}
-                                {% if profile.race.location %}<strong>Location:</strong> {{ profile.race.location }}<br>{% endif %}
-                                {% if profile.race.club %}<strong>Club:</strong> {{ profile.race.club }}<br>{% endif %}
-                                {% if profile.race.team %}<strong>Team:</strong> {{ profile.race.team }}<br>{% endif %}
-                            </p>
+                            <table>
+                                <tr>
+                                    <td>Race Type:</td>
+                                    <td>{{ profile.race.race_type }}</td>
+                                </tr>
+                                {% if profile.race.event %}<tr>
+                                    <td>Event:</td>
+                                    <td>{{ profile.race.event }}</td>
+                                </tr>{% endif %}
+                                {% if profile.race.location %}<tr>
+                                    <td>Location:</td>
+                                    <td>{{ profile.race.location }}</td>
+                                </tr>{% endif %}
+                                {% if profile.race.club %}<tr>
+                                    <td>Club:</td>
+                                    <td>{{ profile.race.club }}</td>
+                                </tr>{% endif %}
+                                {% if profile.race.team %}<tr>
+                                    <td>Team:</td>
+                                    <td>{{ profile.race.team }}</td>
+                                </tr>{% endif %}
+                                <tr>
+                                    <td>Entries:</td>
+                                    <td>{{ profile.driver_count }}</td>
+                                </tr>
+                                <tr>
+                                    <td valign="top"><u>Results:</u>&nbsp;&nbsp;&nbsp;</td>
+                                    <td>
+                                        {% if profile.race.race_type == "Lap Race" %}
+                                            <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br>
+                                            <a href="">Upload MyLaps</a><br>
+                                        {% elif profile.race.race_type == "Out and Back" %}
+                                        {% endif  %}
+                                        <a href="">Run Race</a><br>
+                                    </td>
+                                </tr>
+                            </table>
                         {% else %}
                             <p style="color:gray; font-size:0.9em;">No race info yet.</p>
                         {% endif %}

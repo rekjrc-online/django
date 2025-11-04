@@ -5,14 +5,15 @@ from .models import Club, ClubMember, ClubLocation
 class ClubForm(forms.ModelForm):
     class Meta:
         model = Club
-        fields = [
-            'human',
-            'profile'
-        ]
+        fields = ['human', 'profile']
         widgets = {
             'human': forms.HiddenInput(),
             'profile': forms.HiddenInput(),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['human'].required = False
+        self.fields['profile'].required = False
 
 class ClubMemberForm(forms.ModelForm):
     class Meta:

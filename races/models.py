@@ -105,7 +105,11 @@ class LapMonitorResult(BaseModel):
     class Meta:
         verbose_name = "LapMonitor Result"
         verbose_name_plural = "LapMonitor Results"
-        indexes = [models.Index(fields=["session_id"]),models.Index(fields=["driver_id"])]
+        indexes = [
+            models.Index(fields=["session_id"]),
+            models.Index(fields=["driver_id"]),
+            models.Index(fields=["race", "session_id", "driver_id", "lap_index"]),
+        ]
     def __str__(self):
         return f"{self.session_name} - {self.driver_name} (Lap {self.lap_index})"
 

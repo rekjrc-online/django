@@ -2,6 +2,10 @@ from django import forms
 from django.forms import inlineformset_factory
 from .models import Race, RaceAttribute, Track
 
+class LapMonitorUploadForm(forms.Form):
+    race = forms.IntegerField(widget=forms.HiddenInput())
+    csv_file = forms.FileField(label="LapMonitor CSV File")
+
 class RaceForm(forms.ModelForm):
     track = forms.ModelChoiceField(
         queryset=Track.objects.all(),
