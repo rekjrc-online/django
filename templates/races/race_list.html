@@ -21,11 +21,11 @@
                         {% endif %}
                         <p>
                             {% if profile.race %}
-                                <a href="{% url 'races:race_update' profile.id %}">Edit</a> /
+                                <a href="{% url 'races:race_update' profile.id %}">Update</a> /
                                 <a href="{% url 'races:race_detail' profile.id %}">View</a><br />
                                 <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
                             {% else %}
-                                <a href="">Build</a>
+                                <a href="{% url 'races:race_update' profile.id %}">Build</a>
                             {% endif %}
                         </p>
                     </td>
