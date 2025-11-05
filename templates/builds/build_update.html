@@ -1,22 +1,74 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="padding:0px; text-align:center;">
-    <h3>Update Build</h3>
+<div class="post card" style="text-align:center; padding:10px;">
+    <h3>Update Build for {{ profile.displayname }}</h3>
 </div>
 
-<!-- Profile summary section -->
-{% include "profiles/profile_header.html" %}
+<form method="post" class="post card" style="padding:20px;">
+    {% csrf_token %}
 
-<div class="post card" style="padding:20px;">
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Changes</button>
-    </form>
-    <br />
+    <!-- Profile Info -->
+    <div style="margin-bottom:20px;">
+        <label for="id_displayname" style="display:block; font-weight:bold;">Display Name:</label>
+        <input type="text" name="displayname" id="id_displayname" value="{{ profile.displayname }}" style="width:100%; padding:5px;">
+
+        <label for="id_bio" style="display:block; font-weight:bold; margin-top:10px;">Bio:</label>
+        <textarea name="bio" id="id_bio" rows="3" style="width:100%; padding:5px;">{{ profile.bio }}</textarea>
+    </div>
+
+    <!-- Build Attributes -->
+    <div style="margin-bottom:20px;">
+        <label style="font-weight:bold;">Build Attributes:</label>
+        {{ formset.management_form }}
+        <div id="attributes-container" style="display:flex; flex-wrap:wrap; gap:10px;">
+            {% for form in formset.forms %}
+                <div class="attribute-row" style="display:flex; gap:5px; align-items:center;">
+                    {{ form.attribute_type }}
+                    {{ form.value }}
+                    {% if form.DELETE %}
+                        {{ form.DELETE }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-attribute" style="margin-top:10px; padding:5px 10px;">Add Attribute</button>
+    </div>
+
+    <!-- Hidden Build fields -->
+    {{ form.human }}
+    {{ form.profile }}
+
+    <div style="text-align:center;">
+        <button type="submit" style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Save Build
+        </button>
+    </div>
+</form>
+
+<br>
+<div style="text-align:center;">
+    <a href="{% url 'builds:build_list' %}">Back to My Builds</a>
 </div>
 
-<br /><br /><br />
+<script>
+    // JS to dynamically add new attribute forms
+    const addBtn = document.getElementById('add-attribute');
+    const container = document.getElementById('attributes-container');
+    const totalForms = document.getElementById('id_attributes-TOTAL_FORMS');
+
+    addBtn.addEventListener('click', () => {
+        const formIdx = parseInt(totalForms.value);
+        const emptyFormHtml = `{{ formset.empty_form.as_p|escapejs }}`.replace(/__prefix__/g, formIdx);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'attribute-row';
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '5px';
+        wrapper.style.alignItems = 'center';
+        wrapper.innerHTML = emptyFormHtml;
+        container.appendChild(wrapper);
+        totalForms.value = formIdx + 1;
+    });
+</script>
 
 {% endblock %}

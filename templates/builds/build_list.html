@@ -65,7 +65,7 @@
                         <a href="{% url 'profiles:detail-profile' profile.id %}">View</a><br>
                         <a href="{% url 'builds:build_build' profile.id %}">Build</a>
                     </td>
-                    <td style="padding-left:20px; padding-right:20px;">
+                    <td valign="top" style="padding-left:20px; padding-right:20px;">
                         <h3>{{ profile.displayname }}</h3>
                         {% if profile.bio %}
                             <p>{{ profile.bio|linebreaksbr }}</p>

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 {% block content %}
 
 <div class="post card" style="text-align:center; padding: 0px;">
@@ -9,18 +8,41 @@
 <form method="post" class="post card" style="padding:20px;">
     {% csrf_token %}
 
+    <!-- Display Profile info -->
     <table style="width:100%;">
         <tr>
-            <td style="padding:5px;"><label for="id_name">Build Name:</label></td>
-            <td style="padding:5px;">{{ form.name }}</td>
+            <td style="padding:5px;">Display Name:</td>
+            <td style="padding:5px;">{{ profile.displayname }}</td>
         </tr>
         <tr>
-            <td style="padding:5px;"><label for="id_description">Description:</label></td>
-            <td style="padding:5px;">{{ form.description }}</td>
+            <td style="padding:5px;">Bio:</td>
+            <td style="padding:5px;">{{ profile.bio|linebreaksbr }}</td>
         </tr>
     </table>
 
-    <input type="hidden" name="profile" value="{{ profile.id }}">
+    <!-- Hidden Build fields -->
+    {{ form.human }}
+    {{ form.profile }}
+
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border-bottom:1px solid #ccc; padding:5px;">Attribute Type</th>
+                <th style="border-bottom:1px solid #ccc; padding:5px;">Value</th>
+                <th style="border-bottom:1px solid #ccc; padding:5px;">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in formset %}
+            <tr>
+                <td style="padding:5px;">{{ form.attribute_type }}</td>
+                <td style="padding:5px;">{{ form.value }}</td>
+                <td style="padding:5px;">{{ form.DELETE }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {{ formset.management_form }}
 
     <div style="text-align:center; margin-top:20px;">
         <button type="submit" style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
@@ -33,5 +55,4 @@
 <div style="text-align:center;">
     <a href="{% url 'builds:build_list' %}">Back to My Builds</a>
 </div>
-
 {% endblock %}
