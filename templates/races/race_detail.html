@@ -24,6 +24,9 @@
     {% if race.team %}
         <p><strong>Team:</strong> {{ race.team }}</p>
     {% endif %}
+    {% if race.transponder %}
+        <p><strong>Transponder:</strong> {{ race.transponder }}</p>
+    {% endif %}
     {% if not user_is_in_race %}
         <br />
         <div style="text-align:center; margin-top:20px;">
@@ -63,6 +66,9 @@
                     <th style="text-align:left; padding:5px;">Human</th>
                     <th style="text-align:left; padding:5px;">Driver</th>
                     <th style="text-align:left; padding:5px;">Model</th>
+                    {% if race.transponder %}
+                        <th style="text-align:left; padding:5px;">Transponder</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -95,6 +101,15 @@
                             <em>-</em>
                         {% endif %}
                     </td>
+                    {% if race.transponder %}
+                        <td style="padding:5px;" align="center">
+                            {% if rd.transponder %}
+                                {{ rd.transponder }}
+                            {% else %}
+                                <em>-</em>
+                            {% endif %}
+                        </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

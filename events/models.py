@@ -17,7 +17,6 @@ class Event(BaseModel):
         on_delete=models.PROTECT,
         related_name='events',
         default=1)
-    published = models.BooleanField(default=False)
     location = models.ForeignKey(
         Location,
         on_delete=models.PROTECT,

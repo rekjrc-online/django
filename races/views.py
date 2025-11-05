@@ -199,14 +199,21 @@ class RaceJoinView(LoginRequiredMixin, View):
         race = get_object_or_404(Race, profile_id=profile_id)
         driver_id = request.POST.get("driver_id")
         model_id = request.POST.get("model_id")
+        transponder = request.POST.get("transponder")
         driver_profile = Profile.objects.filter(id=driver_id, human=request.user, profiletype="DRIVER").first() if driver_id else None
         model_profile = Profile.objects.filter(id=model_id, human=request.user, profiletype="MODEL").first() if model_id else None
-        race_driver, created = RaceDriver.objects.update_or_create(
+        existing = RaceDriver.objects.filter(
             race=race,
             human=request.user,
-            defaults={
-                "driver": driver_profile,
-                "model": model_profile,
-            }
-        )
+            driver=driver_profile,
+            model=model_profile
+        ).exists()
+        if not existing:
+            RaceDriver.objects.create(
+                race=race,
+                human=request.user,
+                driver=driver_profile,
+                model=model_profile,
+                transponder=transponder,
+            )
         return redirect("races:race_detail", profile_id=race.profile.id)

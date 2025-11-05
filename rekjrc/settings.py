@@ -15,7 +15,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # SECURITY
 # ------------------------------
 SECRET_KEY = env('SECRET_KEY')
-DEBUG = False
+DEBUG = env('DEBUG')
 ALLOWED_HOSTS = ['localhost','rekjrc.com','www.rekjrc.com','10.1.1.63']
 
 # ------------------------------

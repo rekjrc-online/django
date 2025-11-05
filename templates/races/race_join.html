@@ -24,14 +24,6 @@
                 </td>
             </tr>
             {% endfor %}
-            <tr>
-                <td style="padding:5px;">
-                    <input type="radio" name="driver_id" value="">
-                </td>
-                <td style="padding:5px;">
-                    - none -
-                </td>
-            </tr>
         </tbody>
     </table>
 
@@ -51,14 +43,21 @@
                 </td>
             </tr>
             {% endfor %}
-            <tr>
-                <td style="text-align:center;">
-                    <input type="radio" name="model_id" value="">
-                </td>
-                <td>- none -</td>
-            </tr>
         </tbody>
     </table>
+
+    {% if race.transponder %}
+        <p><strong>Transponder Number:</strong></p>
+        <input
+            type="text"
+            name="transponder"
+            maxlength="10"
+            placeholder="{{ race.transponder }} ID Required"
+            style="width: 100%; padding: 6px; border-radius: 5px; border: 1px solid #ccc;"
+            required
+        >
+    {% endif %}
+
 
     <div style="text-align:center; margin-top:20px;">
         <button type="submit" style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">

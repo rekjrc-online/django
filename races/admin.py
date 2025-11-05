@@ -18,7 +18,7 @@ class LapMonitorResultAdmin(admin.ModelAdmin):
 @admin.register(Race)
 class RaceAdmin(admin.ModelAdmin):
     list_display = ['id', 'profile', 'human', 'event', 'race_type',
-                    'location', 'track', 'club', 'team']
+                    'location', 'track', 'club', 'team', 'transponder']
     list_filter = ['event', 'race_type', 'location', 'track', 'club', 'team']
     search_fields = ['profile__user__username', 'human__username', 'event__name']
     autocomplete_fields = ['profile', 'human', 'event', 'location', 'track', 'club', 'team']
@@ -35,9 +35,6 @@ class RaceAttributeAdmin(admin.ModelAdmin):
     list_filter = ['attribute']
     search_fields = ['value', 'race__profile__user__username', 'race__event__name']
     autocomplete_fields = ['race', 'attribute']
-
-from django.contrib import admin
-from .models import RaceDriver
 
 @admin.register(RaceDriver)
 class RaceDriverAdmin(admin.ModelAdmin):

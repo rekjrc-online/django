@@ -57,6 +57,10 @@ class Race(BaseModel):
         related_name='races',
         null=True,
         blank=True)
+    TRANSPONDER_CHOICES = [
+        ('LapMonitor','LapMonitor'),
+        ('MyLaps','MyLaps')]
+    transponder = models.CharField(max_length=10, choices=TRANSPONDER_CHOICES, blank=True)
     def __str__(self):
         return self.profile.displayname
 
@@ -136,6 +140,7 @@ class RaceDriver(BaseModel):
         null=True,
         blank=True,
         limit_choices_to={'profiletype':'MODEL'})
+    transponder = models.CharField(max_length=10, blank=True)
     class Meta:
         constraints = [models.UniqueConstraint(fields=['race', 'model'], name='unique_race_model')]
     def __str__(self):

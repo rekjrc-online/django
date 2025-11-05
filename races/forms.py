@@ -22,6 +22,7 @@ class RaceForm(forms.ModelForm):
             "track",
             "club",
             "team",
+            "transponder",
         ]
         widgets = {
             field: forms.Select(attrs={"class": "form-control"})
