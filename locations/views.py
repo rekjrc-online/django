@@ -13,13 +13,8 @@ class LocationListView(LoginRequiredMixin, ListView):
     template_name = 'locations/location_list.html'
     context_object_name = 'locations'
     login_url = '/humans/login/'
-
     def get_queryset(self):
-        return Location.objects.select_related('profile').order_by('profile__displayname')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return Location.objects.filter(profile__human=self.request.user).select_related('profile').order_by('profile__displayname')
 
 
 class LocationDetailView(LoginRequiredMixin, DetailView):

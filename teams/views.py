@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.views.generic import ListView, DetailView, DeleteView
 from profiles.models import Profile
@@ -7,10 +8,14 @@ from .models import Team
 from .forms import TeamForm, TeamMemberFormSet
 
 
-class TeamListView(ListView):
+class TeamListView(LoginRequiredMixin, ListView):
     model = Team
     template_name = 'teams/team_list.html'
     context_object_name = 'teams'
+
+    def get_queryset(self):
+        # Only teams owned by this user
+        return Team.objects.filter(profile__human=self.request.user).select_related('profile').order_by('profile__displayname')
 
 
 class TeamDetailView(DetailView):

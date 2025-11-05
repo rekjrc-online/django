@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.views.generic import ListView, DeleteView
 from profiles.models import Profile
@@ -7,11 +8,13 @@ from .models import Track
 from .forms import TrackForm, TrackAttributeFormSet
 
 # List all tracks
-class TrackListView(ListView):
+class TrackListView(LoginRequiredMixin, ListView):
     model = Track
     template_name = 'tracks/track_list.html'
     context_object_name = 'tracks'
-
+    def get_queryset(self):
+        # Only tracks owned by this user
+        return Track.objects.filter(profile__human=self.request.user).select_related('profile').order_by('profile__displayname')
 
 # Show details for a track
 class TrackDetailView(View):

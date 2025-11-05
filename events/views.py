@@ -13,9 +13,8 @@ class EventListView(LoginRequiredMixin, ListView):
     template_name = 'events/event_list.html'
     context_object_name = 'events'
     login_url = '/humans/login/'
-
     def get_queryset(self):
-        return Event.objects.select_related('profile', 'location').order_by('-eventdate')
+        return Event.objects.filter(profile__human=self.request.user).select_related('profile', 'location').order_by('-eventdate')
 
 
 class EventDetailView(LoginRequiredMixin, DetailView):

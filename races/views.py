@@ -170,7 +170,6 @@ class RaceListView(LoginRequiredMixin, ListView):
     model = Profile
     template_name = "races/race_list.html"
     context_object_name = "profiles"
-
     def get_queryset(self):
         return (
             Profile.objects

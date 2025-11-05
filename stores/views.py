@@ -10,9 +10,7 @@ class StoreListView(LoginRequiredMixin, ListView):
     model = Store
     template_name = 'stores/store_list.html'
     context_object_name = 'stores'
-
     def get_queryset(self):
-        """Return stores belonging to the logged-in user's profile."""
         profile = getattr(self.request.user, 'profile', None)
         if profile:
             return Store.objects.filter(profile=profile)
