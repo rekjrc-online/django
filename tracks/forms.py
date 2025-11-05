@@ -26,5 +26,5 @@ TrackAttributeFormSet = inlineformset_factory(
     TrackAttribute,
     form=TrackAttributeForm,
     extra=1,
-    can_delete=True
+    can_delete=False
 )

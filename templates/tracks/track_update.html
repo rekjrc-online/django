@@ -5,29 +5,54 @@
     <h3>Edit Track</h3>
 </div>
 
-<!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
-<!-- Track form -->
-<div class="post card" style="max-width: 800px; padding-left: 15px; padding-right: 15px;">
+<div class="post card" style="max-width: 900px; padding-left: 15px; padding-right: 15px;">
     <h2 style="text-align:center;">
-        {% if form.instance.pk %}
-            Update Track
-        {% else %}
-            Create Track
-        {% endif %}
+        {% if form.instance.pk %}Update Track{% else %}Create Track{% endif %}
     </h2>
     <form method="post" style="text-align:left;">
         {% csrf_token %}
+        {{ form.human }} {{ form.profile }}
 
-        <!-- Track fields as table -->
+        <!-- Track fields -->
         <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
             {% for field in form %}
-            <tr>
-                <th style="text-align:left; padding:5px; width:35%;">{{ field.label_tag }}</th>
-                <td style="padding:5px; width:65%;">{{ field }}</td>
-            </tr>
+                {% if field.name not in "human profile" %}
+                <tr>
+                    <th style="text-align:left; padding:5px; width:35%;">{{ field.label_tag }}</th>
+                    <td style="padding:5px; width:65%;">{{ field }}</td>
+                </tr>
+                {% endif %}
             {% endfor %}
+        </table>
+
+        <!-- Attributes section -->
+        <h3>Attributes</h3>
+        {{ attribute_formset.management_form }}
+        <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
+            <tr>
+                {% for form in attribute_formset.forms %}
+                    <td style="padding:5px; text-align:center; vertical-align:top;">
+                        {% for field in form.visible_fields %}
+                            {{ field }}
+                        {% endfor %}
+                        {% if form.instance.pk %}
+                            <!-- Existing attribute: remove button -->
+                            <button type="button" class="remove-attribute"
+                                    style="background-color:#1da1f2; color:white; border:none; border-radius:5px; padding:2px 5px; margin-top:3px;">
+                                -
+                            </button>
+                        {% else %}
+                            <!-- New attribute row: add button -->
+                            <button type="button" class="add-attribute"
+                                    style="background-color:#1da1f2; color:white; border:none; border-radius:5px; padding:2px 5px; margin-top:3px;">
+                                +
+                            </button>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
         </table>
 
         <button type="submit"
@@ -36,5 +61,37 @@
         </button>
     </form>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Add attribute dynamically
+    document.querySelectorAll(".add-attribute").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            let formsetTable = this.closest("table");
+            let totalForms = document.querySelector("#id_trackattribute_set-TOTAL_FORMS");
+            let formIdx = parseInt(totalForms.value);
+            let emptyRow = document.querySelector(".empty-form").cloneNode(true);
+            emptyRow.style.display = "";
+            emptyRow.querySelectorAll("input, select").forEach(function(input) {
+                let name = input.name.replace("__prefix__", formIdx);
+                let id = "id_" + name;
+                input.name = name;
+                input.id = id;
+                if(input.type!="hidden") input.value = "";
+            });
+            formsetTable.appendChild(emptyRow);
+            totalForms.value = formIdx + 1;
+        });
+    });
+
+    // Remove attribute dynamically
+    document.addEventListener("click", function(e) {
+        if(e.target.classList.contains("remove-attribute")) {
+            let td = e.target.closest("td");
+            td.remove();
+        }
+    });
+});
+</script>
 
 {% endblock %}

@@ -1,9 +1,10 @@
+from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db import models
+from rekjrc.base_models import BaseModel
 from humans.models import Human
 from profiles.models import Profile
-from rekjrc.base_models import BaseModel
 
 class Build(BaseModel):
     human = models.ForeignKey(
@@ -16,6 +17,14 @@ class Build(BaseModel):
         related_name='builds')
     def __str__(self):
         return self.profile.displayname
+    def clean(self):
+        if self.profile.human != self.human:
+            raise ValidationError("You can only build models you own.")
+        if self.profile.profiletype != 'MODEL':
+            raise ValidationError("Only profiles of type MODEL can have builds.")
+    def save(self, *args, **kwargs):
+            self.full_clean()
+            super().save(*args, **kwargs)
 
 @receiver(post_save, sender=Profile)
 def create_build_for_profile(sender, instance, created, **kwargs):

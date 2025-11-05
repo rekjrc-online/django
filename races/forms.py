@@ -10,7 +10,6 @@ class RaceForm(forms.ModelForm):
     track = forms.ModelChoiceField(
         queryset=Track.objects.all(),
         required=True,
-        empty_label="Select Track",
         widget=forms.Select(attrs={'class': 'form-select'})
     )
     class Meta:

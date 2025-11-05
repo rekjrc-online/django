@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult, RaceDriver
+from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult, RaceDriver, RaceDragRace
 
 # Inline for RaceAttribute to edit directly within Race
 class RaceAttributeInline(admin.TabularInline):
@@ -38,7 +38,7 @@ class RaceAttributeAdmin(admin.ModelAdmin):
 
 @admin.register(RaceDriver)
 class RaceDriverAdmin(admin.ModelAdmin):
-    list_display = ('race', 'human_name', 'driver_name', 'model_name')
+    list_display = ('race', 'human_name', 'driver_name', 'model_name', 'transponder')
     list_filter = ('race',)
     search_fields = (
         'human__first_name',
@@ -57,3 +57,22 @@ class RaceDriverAdmin(admin.ModelAdmin):
     @admin.display(description='Model')
     def model_name(self, obj):
         return obj.model.displayname if obj.model else "-model-"
+
+@admin.register(RaceDragRace)
+class RaceDragRaceAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'race',
+        'round_number',
+        'model1',
+        'model2',
+        'winner',
+    ]
+    list_filter = ['race', 'round_number']
+    search_fields = [
+        'race__profile__displayname',
+        'model1__displayname',
+        'model2__displayname',
+        'winner__displayname',
+    ]
+    autocomplete_fields = ['race', 'model1', 'model2', 'winner']

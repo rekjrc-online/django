@@ -11,4 +11,5 @@ urlpatterns = [
     path("<int:profile_id>/delete/", views.RaceDeleteView.as_view(), name="race_delete"),
     path("<int:profile_id>/join/", views.RaceJoinView.as_view(), name="race_join"),
     path("<int:race_id>/upload-lapmonitor/", views.LapMonitorUploadView.as_view(), name="lapmonitor_upload"),
+    path("<int:profile_id>/drag-race/<int:race_id>/", views.RaceDragRaceView.as_view(), name="race_drag_race"),
 ]

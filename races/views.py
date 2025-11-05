@@ -4,50 +4,133 @@ from django.views.generic import ListView, DetailView, View, DeleteView
 from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.db import IntegrityError
 from profiles.models import Profile
-from .models import Race, RaceDriver, LapMonitorResult
+from .models import Race, RaceDriver, LapMonitorResult, RaceDragRace
 from .forms import RaceForm, RaceAttributeFormSet
 from io import TextIOWrapper
+import random
+import math
 import csv
 
-class LapMonitorUploadView(View):
+
+class RaceDragRaceView(LoginRequiredMixin, View):
+    template_name = "races/race_drag_race.html"
+
+    def get(self, request, profile_id, race_id):
+        race = get_object_or_404(Race, pk=race_id)
+        if race.human != request.user:
+            return redirect("races:race_detail", profile_id=race.profile.id)
+
+        drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
+
+        if not drag_rounds.exists():
+            drivers = list(RaceDriver.objects.filter(race=race).exclude(model=None))
+            drivers = [d for d in drivers if d.human == request.user]
+            random.shuffle(drivers)
+            num_entrants = len(drivers)
+
+            if num_entrants < 2:
+                return render(request, self.template_name, {
+                    "race": race,
+                    "rounds": [],
+                    "message": "Not enough drivers to start drag race."
+                })
+
+            next_power_of_2 = 2 ** math.ceil(math.log2(num_entrants))
+            total_matches = next_power_of_2 // 2
+            num_byes = next_power_of_2 - num_entrants
+            i = 0
+            for match in range(total_matches):
+                if match < num_byes:
+                    model1 = drivers[i]
+                    model2 = None
+                    i += 1
+                else:
+                    model1 = drivers[i]
+                    model2 = drivers[i + 1] if i + 1 < num_entrants else None
+                    i += 2
+                RaceDragRace.objects.create(
+                    race=race,
+                    model1=model1,
+                    model2=model2,
+                    winner=None,
+                    round_number=1
+                )
+            drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
+        else:
+            max_round = drag_rounds.aggregate(max_round_number=Max("round_number"))["max_round_number"]
+            last_round_records = drag_rounds.filter(round_number=max_round)
+            if all(r.winner for r in last_round_records):
+                winners = [r.winner for r in last_round_records]
+                random.shuffle(winners)
+                if len(winners) == 1:
+                    return render(request, self.template_name, {
+                        "race": race,
+                        "rounds": drag_rounds,
+                        "final_winner": winners[0],
+                    })
+                for i in range(0, len(winners), 2):
+                    model1 = winners[i]
+                    model2 = winners[i + 1] if i + 1 < len(winners) else None
+                    RaceDragRace.objects.create(
+                        race=race,
+                        model1=model1,
+                        model2=model2,
+                        winner=None,
+                        round_number=max_round + 1
+                    )
+                drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
+
+        return render(request, self.template_name, {"race": race, "rounds": drag_rounds})
+
+    def post(self, request, profile_id, race_id):
+        race = get_object_or_404(Race, pk=race_id)
+        if race.human != request.user:
+            return redirect("races:race_detail", profile_id=race.profile.id)
+
+        for drag_round in RaceDragRace.objects.filter(race=race):
+            winner_id = request.POST.get(f"winner_{drag_round.id}")
+            if winner_id:
+                winner_profile = Profile.objects.filter(id=winner_id, profiletype="MODEL").first()
+                if winner_profile and winner_profile.human == request.user:
+                    drag_round.winner = winner_profile
+                    drag_round.save()
+        return redirect("races:race_drag_race", profile_id=profile_id, race_id=race_id)
+
+
+class LapMonitorUploadView(LoginRequiredMixin, View):
     template_name = "races/lapmonitor_upload.html"
 
     def get(self, request, race_id):
         race = get_object_or_404(Race, pk=race_id)
+        if race.human != request.user:
+            return redirect("races:race_detail", profile_id=race.profile.id)
         return render(request, self.template_name, {"race": race})
 
     def post(self, request, race_id):
         race = get_object_or_404(Race, pk=race_id)
-        file = request.FILES.get("file")
+        if race.human != request.user:
+            return redirect("races:race_detail", profile_id=race.profile.id)
 
+        file = request.FILES.get("file")
         if not file:
             messages.error(request, "❌ No file selected.")
             return redirect("races:upload_lapmonitor", race_id=race.id)
 
         try:
-            # Decode file
             data = TextIOWrapper(file.file, encoding="utf-8")
             reader = csv.DictReader(data)
-
-            # ✅ Normalize headers (handle "Session Id" → "session_id")
-            reader.fieldnames = [
-                name.strip().lower().replace(" ", "_") for name in reader.fieldnames
-            ]
-
+            reader.fieldnames = [n.strip().lower().replace(" ", "_") for n in reader.fieldnames]
             created_count = 0
             skipped_count = 0
 
             for row in reader:
                 try:
-                    # Skip empty rows
                     if not row.get("driver_id") or not row.get("lap_index"):
                         skipped_count += 1
                         continue
-
-                    # Avoid duplicates (same race + driver_id + lap_index)
                     if LapMonitorResult.objects.filter(
                         race=race,
                         driver_id=row.get("driver_id"),
@@ -55,7 +138,6 @@ class LapMonitorUploadView(View):
                     ).exists():
                         skipped_count += 1
                         continue
-
                     LapMonitorResult.objects.create(
                         race=race,
                         session_id=row.get("session_id"),
@@ -73,48 +155,43 @@ class LapMonitorUploadView(View):
                         lap_kind=row.get("lap_kind"),
                     )
                     created_count += 1
-
-                except IntegrityError:
-                    skipped_count += 1
-                except Exception as e:
-                    print(f"Error processing row: {e}")
+                except Exception:
                     skipped_count += 1
 
-            messages.success(
-                request,
-                f"✅ Imported {created_count} new results, skipped {skipped_count} duplicates or invalid rows."
-            )
+            messages.success(request, f"✅ Imported {created_count} new results, skipped {skipped_count} rows.")
 
         except Exception as e:
             messages.error(request, f"❌ Error processing CSV: {e}")
 
-        # ✅ Correct redirect (URL expects profile_id)
         return redirect("races:race_detail", profile_id=race.profile.id)
+
 
 class RaceListView(LoginRequiredMixin, ListView):
     model = Profile
     template_name = "races/race_list.html"
     context_object_name = "profiles"
+
     def get_queryset(self):
         return (
             Profile.objects
-            .filter(profiletype='RACE')
-            .select_related('human')
-            .annotate(driver_count=Count('race__race_drivers'))
-            .order_by('displayname')
-        )
+            .filter(profiletype="RACE", human=self.request.user)
+            .select_related("human")
+            .annotate(driver_count=Count("race__race_drivers"))
+            .order_by("displayname"))
+
 
 class RaceDetailView(LoginRequiredMixin, DetailView):
     model = Race
     template_name = "races/race_detail.html"
     context_object_name = "race"
     pk_url_kwarg = "profile_id"
+
     def get_object(self, queryset=None):
         profile = get_object_or_404(Profile, pk=self.kwargs["profile_id"])
-        race = getattr(profile, "race", None)
-        if not race:
-            return redirect("races:race_build", profile_id=self.profile.id)
-        return race
+        if profile.human != self.request.user:
+            return redirect("races:race_list")
+        return getattr(profile, "race", None)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         race = self.object
@@ -122,9 +199,10 @@ class RaceDetailView(LoginRequiredMixin, DetailView):
         context["event"] = getattr(race, "event", None)
         context["location"] = getattr(race, "location", None)
         context["attributes"] = getattr(race, "attributes", None)
-        context['race_drivers'] = race.race_drivers.select_related('human', 'driver', 'model')
+        context["race_drivers"] = race.race_drivers.select_related("human", "driver", "model")
         context["user_is_in_race"] = race.race_drivers.filter(human=self.request.user).exists()
         return context
+
 
 class RaceBuildView(View):
     template_name = "races/race_build.html"

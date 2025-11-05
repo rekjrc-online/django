@@ -1,104 +1,111 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, DeleteView, ListView
-from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, View, DetailView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from profiles.models import Profile
 from .models import Build
-from .forms import BuildForm, BuildAttributeFormSet
+from profiles.models import Profile
+from .forms import BuildForm
 
+
+# ========================================
+# 1️⃣ List all builds belonging to the user
+# ========================================
 class BuildListView(LoginRequiredMixin, ListView):
     model = Build
     template_name = 'builds/build_list.html'
     context_object_name = 'builds'
-    login_url = '/humans/login/'
 
     def get_queryset(self):
-        return (
-            Build.objects.filter(human=self.request.user)
-            .select_related('profile')
-            .order_by('profile__displayname')
-        )
+        return Build.objects.filter(human=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profiles'] = Profile.objects.filter(human=self.request.user).order_by('profiletype', 'displayname')
-
-        context['unbuilt_models'] = Profile.objects.filter(
-            human=self.request.user,
-            profiletype='MODEL'
-        ).filter(builds__isnull=True).order_by('displayname')
-
+        context['profiles'] = Profile.objects.filter(human=self.request.user, profiletype='MODEL')
+        context['unbuilt_models'] = Profile.objects.filter(human=self.request.user, profiletype='MODEL').exclude(id__in=Build.objects.values_list('profile_id', flat=True))
         return context
 
+
+# ========================================
+# 2️⃣ Create a new build for a profile
+# ========================================
 class BuildBuildView(LoginRequiredMixin, View):
     template_name = 'builds/build_build.html'
 
-    def get(self, request, profile_id):
+    def get_profile(self, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
+        if profile.human != self.request.user:
+            return None
+        return profile
+
+    def get(self, request, profile_id):
+        profile = self.get_profile(profile_id)
+        if not profile:
+            return redirect('profiles:detail-profile', profile_id)
+
         existing_build = Build.objects.filter(profile=profile).first()
         if existing_build:
-            return redirect('builds:build_update', profile_id=profile_id)
+            return redirect('builds:build_update', profile_id=profile.id)
 
-        form = BuildForm(initial={'human': request.user.id, 'profile': profile.id})
-        formset = BuildAttributeFormSet()
-        return render(request, self.template_name, {'form': form, 'formset': formset, 'profile': profile})
+        form = BuildForm()
+        return render(request, self.template_name, {'form': form, 'profile': profile})
 
     def post(self, request, profile_id):
-        profile = get_object_or_404(Profile, id=profile_id)
+        profile = self.get_profile(profile_id)
+        if not profile:
+            return redirect('profiles:detail-profile', profile_id)
+
+        existing_build = Build.objects.filter(profile=profile).first()
+        if existing_build:
+            return redirect('builds:build_update', profile_id=profile.id)
+
         form = BuildForm(request.POST)
-        formset = BuildAttributeFormSet(request.POST)
-
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             build = form.save(commit=False)
-            build.human = request.user
             build.profile = profile
+            build.human = request.user
             build.save()
-            formset.instance = build
-            formset.save()
-            return redirect('builds:build_detail', profile_id=profile_id)
+            return redirect('profiles:detail-profile', profile.id)
+        return render(request, self.template_name, {'form': form, 'profile': profile})
 
-        return render(request, self.template_name, {'form': form, 'formset': formset, 'profile': profile})
 
+# ========================================
+# 3️⃣ Update an existing build
+# ========================================
 class BuildUpdateView(LoginRequiredMixin, View):
     template_name = 'builds/build_update.html'
 
     def get_build(self, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
-        return get_object_or_404(Build, profile=profile)
+        if profile.human != self.request.user:
+            return None, None
+        build = get_object_or_404(Build, profile=profile)
+        if build.human != self.request.user:
+            return profile, None
+        return profile, build
 
     def get(self, request, profile_id):
-        build = self.get_build(profile_id)
+        profile, build = self.get_build(profile_id)
+        if not profile or not build:
+            return redirect('profiles:detail-profile', profile_id)
+
         form = BuildForm(instance=build)
-        formset = BuildAttributeFormSet(instance=build)
-        return render(request, self.template_name, {
-            'form': form,
-            'formset': formset,
-            'profile': build.profile
-        })
+        return render(request, self.template_name, {'form': form, 'profile': profile, 'build': build})
 
     def post(self, request, profile_id):
-        build = self.get_build(profile_id)
+        profile, build = self.get_build(profile_id)
+        if not profile or not build:
+            return redirect('profiles:detail-profile', profile_id)
+
         form = BuildForm(request.POST, instance=build)
-        formset = BuildAttributeFormSet(request.POST, instance=build)
+        if form.is_valid():
+            form.save()
+            return redirect('profiles:detail-profile', profile.id)
+        return render(request, self.template_name, {'form': form, 'profile': profile, 'build': build})
 
-        # Update Profile fields from the POST data
-        profile = build.profile
-        profile.displayname = request.POST.get('displayname', profile.displayname)
-        profile.bio = request.POST.get('bio', profile.bio)
 
-        if form.is_valid() and formset.is_valid():
-            build = form.save()
-            formset.save()
-            profile.save()  # save changes to Profile
-            return redirect('builds:build_detail', profile_id=profile_id)
-
-        return render(request, self.template_name, {
-            'form': form,
-            'formset': formset,
-            'profile': profile
-        })
-
+# ========================================
+# 4️⃣ Build details (view only)
+# ========================================
 class BuildDetailView(LoginRequiredMixin, DetailView):
     model = Build
     template_name = 'builds/build_detail.html'
@@ -106,23 +113,23 @@ class BuildDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         profile_id = self.kwargs['profile_id']
-        try:
-            return Build.objects.get(profile_id=profile_id)
-        except Build.DoesNotExist:
-            return None
+        build = get_object_or_404(Build, profile_id=profile_id)
+        if build.human != self.request.user:
+            # Redirect instead of raising 404
+            return redirect('profiles:detail-profile', profile_id)
+        return build
 
     def get(self, request, *args, **kwargs):
-        build = self.get_object()
-        if build is None:
-            return redirect('builds:build_build', profile_id=self.kwargs['profile_id'])
-        self.object = build
-        return self.render_to_response(self.get_context_data(object=build))
+        obj = self.get_object()
+        # if redirect returned above
+        if isinstance(obj, redirect):
+            return obj
+        return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['profile'] = self.object.profile
-        return context
 
+# ========================================
+# 5️⃣ Delete build (safe via queryset)
+# ========================================
 class BuildDeleteView(LoginRequiredMixin, DeleteView):
     model = Build
     template_name = 'builds/build_confirm_delete.html'
@@ -130,3 +137,8 @@ class BuildDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Build.objects.filter(human=self.request.user)
+
+    def get_success_url(self):
+        # after delete, redirect to the related profile
+        profile_id = self.object.profile.id
+        return reverse_lazy('profiles:detail-profile', kwargs={'profile_id': profile_id})

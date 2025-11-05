@@ -60,7 +60,7 @@ class Race(BaseModel):
     TRANSPONDER_CHOICES = [
         ('LapMonitor','LapMonitor'),
         ('MyLaps','MyLaps')]
-    transponder = models.CharField(max_length=10, choices=TRANSPONDER_CHOICES, blank=True)
+    transponder = models.CharField(max_length=10, choices=TRANSPONDER_CHOICES, blank=True, null=True)
     def __str__(self):
         return self.profile.displayname
 
@@ -140,7 +140,7 @@ class RaceDriver(BaseModel):
         null=True,
         blank=True,
         limit_choices_to={'profiletype':'MODEL'})
-    transponder = models.CharField(max_length=10, blank=True)
+    transponder = models.CharField(max_length=10, blank=True, null=True)
     class Meta:
         constraints = [models.UniqueConstraint(fields=['race', 'model'], name='unique_race_model')]
     def __str__(self):
@@ -148,3 +148,29 @@ class RaceDriver(BaseModel):
         driver_name = self.driver.displayname if self.driver else '-driver-'
         model_name = self.model.displayname if self.model else '-model-'
         return f"Human: {human_name} | Driver: {driver_name} | Model: {model_name}"
+
+class RaceDragRace(BaseModel):
+    round_number = models.PositiveSmallIntegerField()
+    race = models.ForeignKey(
+        Race,
+        on_delete=models.CASCADE,
+        related_name='race_rounds',
+        db_index=True)
+    model1 = models.ForeignKey(
+        'RaceDriver',
+        on_delete=models.CASCADE,
+        related_name='lane1_races')
+    model2 = models.ForeignKey(
+        'RaceDriver',
+        on_delete=models.CASCADE,
+        related_name='lane2_races',
+        null=True,
+        blank=True)
+    winner = models.ForeignKey(
+        'RaceDriver',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='won_rounds')
+    def __str__(self):
+        return f"Round {self.round_number}: {self.model1} vs {self.model2 or 'BYE'}"

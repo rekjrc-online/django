@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="post card" style="padding:0px; text-align: center;">
+    <h2>Run Drag Race</h2>
+</div>
+
+<div class="post card" style="padding:0px 20px; margin:0px;">
+    <form method="post" id="drag-race-form">
+        {% csrf_token %}
+        <table style="width:100%; border-collapse: collapse; text-align:center;">
+            <thead>
+                <tr>
+                    <th style="border-bottom:1px solid #ccc; padding:8px;">Round</th>
+                    <th style="border-bottom:1px solid #ccc; padding:8px;">Model 1</th>
+                    <th style="border-bottom:1px solid #ccc; padding:8px;">Model 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for round in rounds %}
+                <tr>
+                    <td style="padding:8px;">{{ round.round_number }}</td>
+
+                    <td style="padding:8px;">
+                        {% if round.model1 %}
+                        <div class="btn-wrapper">
+                            <button type="button" class="winner-btn {% if round.winner == round.model1 %}active{% endif %}"
+                                    data-round-id="{{ round.id }}" 
+                                    data-model-id="{{ round.model1.id }}">
+                                {{ round.model1.displayname }}
+                            </button>
+                        </div>
+                        {% else %}
+                            -bye-
+                        {% endif %}
+                    </td>
+
+                    <td style="padding:8px;">
+                        {% if round.model2 %}
+                        <div class="btn-wrapper">
+                            <button type="button" class="winner-btn {% if round.winner == round.model2 %}active{% endif %}"
+                                    data-round-id="{{ round.id }}" 
+                                    data-model-id="{{ round.model2.id }}">
+                                {{ round.model2.displayname }}
+                            </button>
+                        </div>
+                        {% else %}
+                            -bye-
+                        {% endif %}
+                    </td>
+
+                    <!-- Hidden input to store winner -->
+                    <input type="hidden" name="winner_{{ round.id }}" id="winner_{{ round.id }}"
+                           value="{% if round.winner %}{{ round.winner.id }}{% endif %}">
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align:center; margin-top:20px;">
+            <button type="submit" class="submit-btn">
+                Save Winners
+            </button>
+        </div>
+    </form>
+    <br />
+</div>
+
+<style>
+.winner-btn {
+    padding: 8px 18px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background-color: #f4f4f4;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s ease-in-out;
+}
+
+.winner-btn:hover {
+    background-color: #e8f0fe;
+    border-color: #999;
+}
+
+/* Force active (selected) style to take priority */
+.winner-btn.active {
+    background-color: #28a745 !important;  /* green */
+    color: white !important;
+    border-color: #1e7e34 !important;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.25);
+    transform: scale(0.97);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.winner-btn');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const roundId = btn.dataset.roundId;
+            const modelId = btn.dataset.modelId;
+
+            // Update hidden input for this round
+            const hiddenInput = document.getElementById(`winner_${roundId}`);
+            hiddenInput.value = modelId;
+
+            // Clear active state for that round
+            document.querySelectorAll(`.winner-btn[data-round-id='${roundId}']`)
+                .forEach(b => b.classList.remove('active'));
+
+            // Set active state
+            btn.classList.add('active');
+        });
+    });
+});
+</script>
+
+{% endblock %}
