@@ -93,7 +93,9 @@ TEMPLATES = [
 CSRF_TRUSTED_ORIGINS = [
     "https://www.rekjrc.com",
     "https://rekjrc.com",
-    "http://10.1.1.63"
+    "http://10.1.1.63",
+    "http://127.0.0.1",
+    "http://localhost",
 ]
 
 # ------------------------------
