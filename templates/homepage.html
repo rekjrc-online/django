@@ -6,14 +6,6 @@
   <script src="static/likes.js"></script>
 
   <div id="feed">
-    <div class="post">
-      <h2>
-        RekjRC Feed
-        {% if request.user.is_authenticated %}
-          <br><input type="button" value="New Post" onclick="self.location.href='/posts/create/'" style="width:10em;height:2em;font-size:large;">
-        {% endif %}
-      </h2>
-    </div>
     {% include 'posts/post_list.html' %}
   </div>
 

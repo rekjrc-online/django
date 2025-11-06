@@ -10,8 +10,7 @@
         <div class="post card" style="margin-top: 5px; margin-bottom: 0px;">
             <table>
                 <tr>
-                    <td valign="top" align="center" nowrap>
-                        {{ profile.get_profiletype_display }}<br />
+                    <td valign="top" align="center" nowrap style="padding-right:10px;">
                         {% if profile.avatar %}
                             <a target="_blank" href="{{ profile.avatar.url }}">
                                 <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
@@ -21,57 +20,48 @@
                         {% endif %}
                         <p>
                             {% if profile.race %}
-                                <a href="{% url 'races:race_update' profile.id %}">Update</a> /
                                 <a href="{% url 'races:race_detail' profile.id %}">View</a><br />
+                                <a href="{% url 'races:race_update' profile.id %}">Update</a><br />
                                 <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
                             {% else %}
                                 <a href="{% url 'races:race_build' profile.id %}">Build</a>
                             {% endif %}
                         </p>
                     </td>
-                    <td style="width: 15px;"></td>
                     <td valign="top">
-                        <b>{{ profile.displayname }}</b>
-                        {% if profile.race %}
-                            <table>
-                                <tr>
-                                    <td>Race Type:</td>
-                                    <td>{{ profile.race.race_type }}</td>
-                                </tr>
-                                {% if profile.race.event %}<tr>
-                                    <td>Event:</td>
-                                    <td>{{ profile.race.event }}</td>
-                                </tr>{% endif %}
-                                {% if profile.race.location %}<tr>
-                                    <td>Location:</td>
-                                    <td>{{ profile.race.location }}</td>
-                                </tr>{% endif %}
-                                {% if profile.race.club %}<tr>
-                                    <td>Club:</td>
-                                    <td>{{ profile.race.club }}</td>
-                                </tr>{% endif %}
-                                {% if profile.race.team %}<tr>
-                                    <td>Team:</td>
-                                    <td>{{ profile.race.team }}</td>
-                                </tr>{% endif %}
-                                <tr>
-                                    <td>Entries:</td>
-                                    <td>{{ profile.driver_count }}</td>
-                                </tr>
-                                <tr>
-                                    <td valign="top"><u>Results:</u>&nbsp;&nbsp;&nbsp;</td>
-                                    <td>
-                                        {% if profile.race.race_type == "Lap Race" %}
-                                            <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br>
-                                            <a href="">Upload MyLaps</a><br>
-                                        {% elif profile.race.race_type == "Out and Back" %}
-                                        {% endif  %}
-                                        <a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a><br>
-                                    </td>
-                                </tr>
-                            </table>
-                        {% else %}
+                        {% if not profile.race %}
                             <p style="color:gray; font-size:0.9em;">No race info yet.</p>
+                        {% else %}
+                            <ul style="list-style-type:none; padding-left:0; padding:0px; margin:0px;">
+                                <li><u>Profile:</u> {{ profile.displayname }}</li>
+                                <li><u>Race Type:</u> {{ profile.race.race_type }}</li>
+                                {% if profile.race.event %}
+                                    <li><u>Event:</u> {{ profile.race.event }}</li>
+                                {% endif %}
+                                {% if profile.race.location %}
+                                    <li><u>Location:</u> {{ profile.race.location }}</li>
+                                {% endif %}
+                                {% if profile.race.club %}
+                                    <li><u>Club:</u> {{ profile.race.club }}</li>
+                                {% endif %}
+                                {% if profile.race.team %}
+                                    <li><u>Team:</u> {{ profile.race.team }}</li>
+                                {% endif %}
+                                <li><u>Entries:</u> {{ profile.driver_count }}</li>
+                                <p>
+                                <li>
+                                    <u>Results:</u>
+                                    <div>
+                                        {% if profile.race.race_type == "Lap Race" %}
+                                            &nbsp;&nbsp;&nbsp;<a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br>
+                                            &nbsp;&nbsp;&nbsp;<a href="">Upload MyLaps</a><br>
+                                        {% elif profile.race.race_type == "Out and Back" %}
+                                            <!-- Add Out and Back links if needed -->
+                                        {% endif %}
+                                        &nbsp;&nbsp;&nbsp;<a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
+                                    </div>
+                                </li>
+                            </ul>
                         {% endif %}
                     </td>
                 </tr>

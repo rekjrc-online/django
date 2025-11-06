@@ -21,10 +21,8 @@ class PostCreateView(CreateView):
         return kwargs
 
     def form_valid(self, form):
-        # Ensure the post is always linked to the logged-in user
-        form.instance.human = self.request.user
+        form.instance.human_id = self.request.user
         return super().form_valid(form)
-
 
 class PostDetail(DetailView):
     model = Post

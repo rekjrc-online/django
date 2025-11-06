@@ -4,30 +4,9 @@
 <div class="post card" style="margin:0px; padding:0px;">
     <center>
         <h2>
-            Your Profiles
-            <font size="-1">(<a href="/profiles/build/">new</a>)</font>
+            Your Profiles (<a href="/profiles/build/">New</a>)
         </h2>
     </center>
-    <table cellpadding="0" cellspacing="0" align="center">
-        <tr>
-            <td align="center">
-                Jump to:&nbsp;&nbsp;
-            </td>
-            <td align="center">
-                <select onchange="self.location.href=this.value">
-                    <option>---------</option>
-                    <option value="/builds/">My Builds</option>
-                    <option value="/clubs/">My Clubs</option>
-                    <option value="/events/">My Events</option>
-                    <option value="/locations/">My Locations &nbsp;&nbsp;&nbsp;</option>
-                    <option value="/races/">My Races</option>
-                    <option value="/stores/">My Stores</option>
-                    <option value="/teams/">My Teams</option>
-                    <option value="/tracks/">My Tracks</option>
-                </select>
-            </td>
-        </tr>
-    </table>
 </div>
 
 {% for profile in profiles %}
