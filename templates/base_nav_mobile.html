@@ -1,6 +1,6 @@
 <style>
     .this_select {
-        width: 200px;
+        width: 220px;
         box-sizing: border-box;
         padding: 8px;
         margin-top: 5px;
@@ -9,11 +9,12 @@
         border: 1px solid #555;
         background-color: #3a3a3a;
         color: #e0e0e0;
+        font-size: large;
     }
 </style>
 <nav style="padding:0px;">
     <select onchange="if(this.value!=''){self.location.href=this.value}" class="this_select">
-        <option value="">Rekj RC Menu</option>
+        <option value="">Rekj RC Main Menu</option>
         <option value="">----</option>
         <option value="/">Home Page</option>
         <option value="/humans/update/">Account</option>
@@ -31,6 +32,6 @@
         <option value="/humans/logout/">Log Out</option>
     </select>
     {% if request.user.is_staff %}
-        | <a href="/admin/" target="_blank">Admin</a>
+        | <a href="/admin/" target="_blank"><span style="font-size: large;">Admin</span></a>
     {% endif %}
 </nav>
