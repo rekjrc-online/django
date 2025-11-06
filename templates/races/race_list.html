@@ -51,15 +51,13 @@
                                 <p>
                                 <li>
                                     <u>Results:</u>
-                                    <div>
+                                    <ul style="padding:0px; margin-left:15px;">
                                         {% if profile.race.race_type == "Lap Race" %}
-                                            &nbsp;&nbsp;&nbsp;<a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br>
-                                            &nbsp;&nbsp;&nbsp;<a href="">Upload MyLaps</a><br>
-                                        {% elif profile.race.race_type == "Out and Back" %}
-                                            <!-- Add Out and Back links if needed -->
+                                            <li type="disc"><a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br>
+                                            <li type="disc"><a href="">Upload MyLaps</a><br>
                                         {% endif %}
-                                        &nbsp;&nbsp;&nbsp;<a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
-                                    </div>
+                                        <li type="disc"><a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
+                                    </ul>
                                 </li>
                             </ul>
                         {% endif %}
