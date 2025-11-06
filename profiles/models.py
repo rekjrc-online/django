@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count
 from django.conf import settings
 from rekjrc.base_models import BaseModel
 from humans.models import Human
@@ -24,8 +25,6 @@ class Profile(BaseModel):
 	city = models.CharField(max_length=100, blank=True)
 	state = models.CharField(max_length=100, blank=True)
 	website = models.URLField(blank=True)
-	followers_count = models.PositiveIntegerField(default=0)
-	following_count = models.PositiveIntegerField(default=0)
 
 	def __str__(self):
 		return f"{self.displayname} - {self.profiletype}"
@@ -41,6 +40,11 @@ class Profile(BaseModel):
 				img.save(img_path, optimize=True, quality=85)
 		except Exception as e:
 			print("Upload failed:", e)
+
+	@property
+	def follower_count(self):
+		from profiles.models import ProfileFollows  # import inside to avoid circular import
+		return ProfileFollows.objects.filter(profile=self).count()
 
 class ProfileFollows(BaseModel):
     human = models.ForeignKey(

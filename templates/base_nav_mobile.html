@@ -1,0 +1,36 @@
+<style>
+    .this_select {
+        width: 200px;
+        box-sizing: border-box;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #555;
+        background-color: #3a3a3a;
+        color: #e0e0e0;
+    }
+</style>
+<nav style="padding:0px;">
+    <select onchange="if(this.value!=''){self.location.href=this.value}" class="this_select">
+        <option value="">Rekj RC Menu</option>
+        <option value="">----</option>
+        <option value="/">Home Page</option>
+        <option value="/humans/update/">Account</option>
+        <option value="/profiles/">Profiles</option>
+        <option value="">----</option>
+        <option value="/builds/">Builds</option>
+        <option value="/clubs/">Clubs</option>
+        <option value="/events/">Events</option>
+        <option value="/locations/">Locations</option>
+        <option value="/races/">Races</option>
+        <option value="/stores/">Stores</option>
+        <option value="/teams/">Teams</option>
+        <option value="/tracks/">Tracks</option>
+        <option value="">----</option>
+        <option value="/humans/logout/">Log Out</option>
+    </select>
+    {% if request.user.is_staff %}
+        | <a href="/admin/" target="_blank">Admin</a>
+    {% endif %}
+</nav>
