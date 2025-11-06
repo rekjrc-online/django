@@ -14,7 +14,6 @@ import random
 import math
 import csv
 
-
 class RaceDragRaceView(LoginRequiredMixin, View):
     template_name = "races/race_drag_race.html"
 
@@ -22,24 +21,20 @@ class RaceDragRaceView(LoginRequiredMixin, View):
         race = get_object_or_404(Race, pk=race_id)
         if race.human != request.user:
             return redirect("races:race_detail", profile_id=race.profile.id)
-
         drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
-
         if not drag_rounds.exists():
-            drivers = list(RaceDriver.objects.filter(race=race).exclude(model=None))
-            drivers = [d for d in drivers if d.human == request.user]
-            random.shuffle(drivers)
+            drivers = list(RaceDriver.objects.filter(race=race))
+            #random.shuffle(drivers)
             num_entrants = len(drivers)
-
             if num_entrants < 2:
                 return render(request, self.template_name, {
                     "race": race,
                     "rounds": [],
                     "message": "Not enough drivers to start drag race."
                 })
-
             next_power_of_2 = 2 ** math.ceil(math.log2(num_entrants))
             total_matches = next_power_of_2 // 2
+
             num_byes = next_power_of_2 - num_entrants
             i = 0
             for match in range(total_matches):
@@ -82,21 +77,25 @@ class RaceDragRaceView(LoginRequiredMixin, View):
                         round_number=max_round + 1
                     )
                 drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
-
         return render(request, self.template_name, {"race": race, "rounds": drag_rounds})
 
     def post(self, request, profile_id, race_id):
         race = get_object_or_404(Race, pk=race_id)
+
+        # Only the race owner can submit winners
         if race.human != request.user:
             return redirect("races:race_detail", profile_id=race.profile.id)
 
+        # Loop over each drag round and save winner if provided
         for drag_round in RaceDragRace.objects.filter(race=race):
             winner_id = request.POST.get(f"winner_{drag_round.id}")
             if winner_id:
-                winner_profile = Profile.objects.filter(id=winner_id, profiletype="MODEL").first()
-                if winner_profile and winner_profile.human == request.user:
-                    drag_round.winner = winner_profile
+                print("WINNER_ID", winner_id)
+                winner_driver = RaceDriver.objects.filter(id=winner_id).first()
+                if winner_driver:
+                    drag_round.winner = winner_driver
                     drag_round.save()
+
         return redirect("races:race_drag_race", profile_id=profile_id, race_id=race_id)
 
 

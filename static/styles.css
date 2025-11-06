@@ -5,7 +5,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #1e1e1e;
+    background-color: #17191e;
     color: #e0e0e0;
     box-sizing: border-box;
     overflow: hidden; /* prevent page-level scrolling */
@@ -14,7 +14,6 @@ html, body {
 /* ---------- Navigation ---------- */
 nav {
     text-align: center;
-    background-color: #2c2c2c;
     border-bottom: 1px solid #444;
     padding: 10px 10px;
     position: sticky;
@@ -25,7 +24,7 @@ nav {
 nav a {
     margin-right: 15px;
     text-decoration: none;
-    color: #1da1f2;
+    color: #1f82f3;
     font-weight: bold;
 }
 
@@ -43,14 +42,11 @@ nav a {
 .left-col,
 .right-col {
     flex: 0 0 200px; /* desktop width */
-    background-color: #1b1b1d;
-    border: 1px solid #444;
-    border-radius: 8px;
     height: calc(100vh - 100px);
     overflow: hidden;
     position: sticky;
     top: 45px;
-    padding: 3px;
+    padding: 10px;
 }
 .right-col {
     margin-left: 3px;
@@ -63,37 +59,47 @@ nav a {
     box-sizing: border-box;
     margin-top: 3px;
 }
+
 /* ---------- Custom Scrollbar ---------- */
 
-/* For Chrome, Edge, Brave, etc. */
-.middle-col::-webkit-scrollbar {
-    width: 16px; /* increase from 10px to 16px */
+/* Apply scrollbar to all three columns */
+.left-col::-webkit-scrollbar,
+.middle-col::-webkit-scrollbar,
+.right-col::-webkit-scrollbar {
+    width: 16px;
 }
 
-.middle-col::-webkit-scrollbar-track {
+.left-col::-webkit-scrollbar-track,
+.middle-col::-webkit-scrollbar-track,
+.right-col::-webkit-scrollbar-track {
     background: #2a2a2a;
     border-radius: 10px;
 }
 
-.middle-col::-webkit-scrollbar-thumb {
+.left-col::-webkit-scrollbar-thumb,
+.middle-col::-webkit-scrollbar-thumb,
+.right-col::-webkit-scrollbar-thumb {
     background-color: #444;
     border-radius: 10px;
-    border: 3px solid #2a2a2a; /* slightly thicker border to match wider scrollbar */
+    border: 3px solid #2a2a2a;
 }
 
-.middle-col::-webkit-scrollbar-thumb:hover {
+.left-col::-webkit-scrollbar-thumb:hover,
+.middle-col::-webkit-scrollbar-thumb:hover,
+.right-col::-webkit-scrollbar-thumb:hover {
     background-color: #1da1f2;
 }
 
-/* For Firefox */
-.middle-col {
-    scrollbar-width: auto; /* 'auto' makes it wider than 'thin' */
+/* Firefox */
+.left-col,
+.middle-col,
+.right-col {
+    scrollbar-width: auto;
     scrollbar-color: #444 #2a2a2a;
 }
 
 /* ---------- Cards and Posts ---------- */
 .post, .card {
-    background-color: #1b1b1d;
     border: 1px solid #444;
     border-radius: 8px;
     padding: 15px;
@@ -154,7 +160,6 @@ nav a {
     margin-bottom: 10px;
     border-radius: 5px;
     border: 1px solid #555;
-    background-color: #3a3a3a;
     color: #e0e0e0;
     resize: vertical;
 }
