@@ -4,30 +4,31 @@
     <a href="{% url 'homepage' %}">Home</a><br />
     {% if request.user.is_authenticated %}
         <a href="/humans/update/">Account</a><br />
-        <a href="/profiles/">Profiles</a>
-        <p>
-        <img src="/static/nophoto_MODEL.png" alt="Avatar" class="avatar-small">
-        <a href="/builds/">My Builds</a><br />
-        <img src="/static/nophoto_CLUB.png" alt="Avatar" class="avatar-small">
-        <a href="/clubs/">My Clubs</a><br />
-        <img src="/static/nophoto_EVENT.png" alt="Avatar" class="avatar-small">
-        <a href="/events/">My Events</a><br />
-        <img src="/static/nophoto_LOCATION.png" alt="Avatar" class="avatar-small">
-        <a href="/locations/">My Locations</a><br />
-        <img src="/static/nophoto_RACE.png" alt="Avatar" class="avatar-small">
-        <a href="/races/">My Races</a><br />
-        <img src="/static/nophoto_STORE.png" alt="Avatar" class="avatar-small">
-        <a href="/stores/">My Stores</a><br />
-        <img src="/static/nophoto_TEAM.png" alt="Avatar" class="avatar-small">
-        <a href="/teams/">My Teams</a><br />
-        <img src="/static/nophoto_TRACK.png" alt="Avatar" class="avatar-small">
-        <a href="/tracks/">My Tracks</a><br />
-        <p>
+        <a href="/profiles/">Profiles</a><br />
         <a href="/support/">Support</a><br />
         <form id="logoutform" method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <a href="javascript:document.getElementById('logoutform').submit()">Logout</a><br />
         </form>
+        <p>
+        My Database<br />
+        <img src="/static/nophoto_MODEL.png" alt="Avatar" class="avatar-small">
+        <a href="/builds/">Builds</a><br />
+        <img src="/static/nophoto_CLUB.png" alt="Avatar" class="avatar-small">
+        <a href="/clubs/">Clubs</a><br />
+        <img src="/static/nophoto_EVENT.png" alt="Avatar" class="avatar-small">
+        <a href="/events/">Events</a><br />
+        <img src="/static/nophoto_LOCATION.png" alt="Avatar" class="avatar-small">
+        <a href="/locations/">Locations</a><br />
+        <img src="/static/nophoto_RACE.png" alt="Avatar" class="avatar-small">
+        <a href="/races/">Races</a><br />
+        <img src="/static/nophoto_STORE.png" alt="Avatar" class="avatar-small">
+        <a href="/stores/">Stores</a><br />
+        <img src="/static/nophoto_TEAM.png" alt="Avatar" class="avatar-small">
+        <a href="/teams/">Teams</a><br />
+        <img src="/static/nophoto_TRACK.png" alt="Avatar" class="avatar-small">
+        <a href="/tracks/">Tracks</a><br />
+        <p>
     {% else %}
         <a href="/support/">Support</a><br />
         <a href="/humans/login/">Login</a><br />
