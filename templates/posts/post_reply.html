@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="post card" style="max-width: 800px;">
+    <div class="post card">
         <h3>Reply to Post</h3>
 
         <!-- Original Post Preview -->
-        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin-bottom: 15px; background-color: #3a3a3a;">
+        <div>
             <strong>@{{ parent_post.profile_id.displayname }}</strong>
             - <font size="-1">{{ parent_post.profile_id.get_profiletype_display }}
-            - {{ parent_post.insertdate|date:"m/d/y h:iA" }}</font><br>
+            - {{ parent_post.insertdate|date:"m/d/y h:iA" }}</font><br />
             <small class="text-muted">{{ parent_post.insertdate|date:"M d, Y H:i" }}</small>
-            <p style="margin-top: 8px;">{{ parent_post.content }}</p>
+            <p>{{ parent_post.content }}</p>
             {% if parent_post.image %}
-                <img src="{{ parent_post.image.url }}" alt="Post image" style="max-width: 100%; border-radius: 6px; margin-top: 5px;">
+                <img src="{{ parent_post.image.url }}" alt="Post image">
             {% endif %}
         </div>
 
@@ -23,15 +23,15 @@
             <a href="/humans/update/">Verify your account</a>
 
         {% elif user.profile_set.all %}
-            <form method="post" enctype="multipart/form-data" style="width: 100%;">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div style="margin-bottom: 10px; width: 100%;">
+                <div>
                     {{ form.profile_id.label_tag }}
                     {{ form.profile_id }}
                 </div>
-                <div style="margin-bottom: 10px; width: 100%; text-align:right;">
+                <div>
                     {{ form.content }}
-                    <span id="char-count" style="font-size:0.9em; color:gray;">200</span> characters remaining
+                    <span id="char-count">200</span> characters remaining
                 </div>
                 <script>
                     const textarea = document.getElementById('{{ form.content.id_for_label }}');
@@ -43,13 +43,13 @@
                         charCount.textContent = remaining;
                     });
                 </script>
-                <div style="margin-bottom: 10px; width: 100%;">
+                <div>
                     Image: {{ form.image }}
                 </div>
-                <div style="margin-bottom: 10px; width: 100%;">
+                <div>
                     Video URL: {{ form.video_url }}
                 </div>
-                <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                <button type="submit">
                     Reply
                 </button>
             </form>

@@ -3,9 +3,9 @@
 
 <script src="/static/likes.js"></script>
 
-<div class="card post" style="padding: 15px; background-color: #1b1b1d; border-radius: 8px;">
+<div class="card post">
     <!-- Post Header -->
-    <div style="margin-bottom: 10px;">
+    <div>
         <strong>@{{ post.profile_id.displayname }}</strong>
         <font size="-1">
             - {{ post.profile_id.get_profiletype_display }}
@@ -14,15 +14,15 @@
     </div>
 
     <!-- Post Content -->
-    <p style="margin-top: 8px;">{{ post.content }}</p>
+    <p>{{ post.content }}</p>
 
     {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post image" style="max-width: 100%; border-radius: 6px; margin-top: 5px;">
+        <img src="{{ post.image.url }}" alt="Post image">
     {% endif %}
 
     {% if post.video_url %}
-        <div style="margin-top: 10px;">
-            <a href="{{ post.video_url }}" target="_blank" style="color: #1da1f2;">Watch Video</a>
+        <div>
+            <a href="{{ post.video_url }}" target="_blank">Watch Video</a>
         </div>
     {% endif %}
 
@@ -32,13 +32,13 @@
     {% endif %}
 
     <!-- Post Stats -->
-    <div style="margin-top: 10px; font-size: 0.9em; color: gray;">
+    <div>
         {% include "posts/post_metrics.html" %}
     </div>
 
     <!-- Reply Button -->
-    <div style="margin-top: 15px; text-align: right;">
-        <a href="{% url 'posts:post_reply' post.id %}" style="background-color: #1da1f2; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none;">Reply</a>
+    <div>
+        <a href="{% url 'posts:post_reply' post.id %}">Reply</a>
     </div>
 </div>
 

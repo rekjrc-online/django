@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="post card" style="padding:0px 10px 20px 10px;">
+    <div class="post card">
         <h3>Create New Post</h3>
         {% if not user.is_verified %}
             <p class="text-danger">
@@ -9,15 +9,15 @@
             </p>
             <a href="/humans/update/">Verify your account</a>
         {% elif user.profile_set.all %}
-            <form method="post" enctype="multipart/form-data" style="width: 100%;">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div style="margin-bottom: 10px; width: 100%;">
+                <div>
                     {{ form.profile_id.label_tag }}
                     {{ form.profile_id }}
                 </div>
-                <div style="margin-bottom: 10px; width: 100%; text-align:right;">
+                <div>
                     {{ form.content }}
-                    <span id="char-count" style="font-size:0.9em; color:gray;">200</span> characters remaining
+                    <span id="char-count">200</span> characters remaining
                 </div>
                 <script>
                     const textarea = document.getElementById('{{ form.content.id_for_label }}');
@@ -29,13 +29,13 @@
                         charCount.textContent = remaining;
                     });
                 </script>
-                <div style="margin-bottom: 10px; width: 100%;">
+                <div>
                     Image: {{ form.image }}
                 </div>
-                <div style="margin-bottom: 10px; width: 100%;">
+                <div>
                     Video URL: {{ form.video_url }}
                 </div>
-                <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+                <button type="submit">
                     Post
                 </button>
             </form>

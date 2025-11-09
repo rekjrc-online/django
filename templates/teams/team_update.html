@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center;">
-    <h3>{% if form.instance.pk %}Edit Team{% else %}Build Team{% endif %}</h3>
-</div>
+<div class="page_header">{% if form.instance.pk %}Edit Team{% else %}Build Team{% endif %}</div>
 
 <!-- Profile summary -->
 {% include "profiles/profile_header.html" %}
 
-<div class="post card" style="max-width:800px; margin:0 auto; padding:15px;">
+<div class="post card">
   <form method="post">
     {% csrf_token %}
     <h2>Team Info</h2>
     {{ form.as_p }}
 
-    <button type="submit" style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+    <button type="submit">
       Save
     </button>
   </form>

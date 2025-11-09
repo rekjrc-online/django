@@ -2,14 +2,12 @@
 {% load widget_tweaks %}
 {% block content %}
 
-<div class="post card" style="padding:0px; text-align:center;">
-    <h3>Build Club</h3>
-</div>
+<div class="page_header">Build Club</div>
 
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
-<div class="post card" style="padding:10px;">
+<div class="post card">
     <h2>Create Club</h2>
     <form method="post">
         {% csrf_token %}
@@ -22,7 +20,7 @@
             {% endfor %}
         </table>
         <button type="submit"
-            style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+           >
             Save Club
         </button>
     </form>

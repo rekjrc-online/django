@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="padding: 0px; text-align: center;">
-    <h2>Create New Profile</h2>
-</div>
+<div class="page_header">Create New Profile</div>
 
-<div class="post card" style="padding:20px;">
+<div class="post card">
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}

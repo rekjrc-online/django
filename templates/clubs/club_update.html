@@ -2,14 +2,12 @@
 {% load widget_tweaks %}
 {% block content %}
 
-<div class="post card" style="padding:0px; text-align:center;">
-    <h3>Build Club</h3>
-</div>
+<div class="page_header">Build Club</div>
 
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
 
-<div class="post card" style="padding: 10px; max-width: 800px; margin-left:auto; margin-right:auto;">
+<div class="post card">
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
@@ -17,41 +15,41 @@
         <h4>Locations</h4>
         {{ location_formset.management_form }}
 
-        <table id="locations-table" style="width:100%; border-collapse:collapse;">
+        <table id="locations-table">
             <thead>
                 <tr>
-                    <th style="text-align:left; padding:5px;">Location</th>
-                    <th style="text-align:center; padding:5px;">Action</th>
+                    <th>Location</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for form in location_formset.forms %}
                 <tr>
-                    <td style="padding:5px; width:100%;">{{ form.location }}</td>
-                    <td style="text-align:center; padding:5px;">
-                        <button type="button" class="remove-location-btn" style="padding:4px 8px;">-</button>
+                    <td>{{ form.location }}</td>
+                    <td>
+                        <button type="button" class="remove-location-btn">-</button>
                     </td>
                 </tr>
                 {% endfor %}
 
                 <!-- Empty form template (hidden) -->
-                <tr class="empty-form" style="display:none;">
-                    <td style="padding:5px; width:100%;">
+                <tr class="empty-form">
+                    <td>
                         {{ location_formset.empty_form.location }}
                     </td>
-                    <td style="text-align:center; padding:5px;">
-                        <button type="button" id="pending" style="padding:4px 8px;">+</button>
+                    <td>
+                        <button type="button" id="pending">+</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
         <button type="submit"
-            style="width: 100%; margin-top: 15px; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+           >
             Save Club
         </button>
     </form>
-    <br>
+    <br />
 </div>
 
 <style>

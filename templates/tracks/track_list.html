@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center; padding: 0px;">
-    <h3>My Tracks</h3>
-</div>
+<div class="page_header">My Tracks</div>
 
 {% if tracks %}
     {% for track in tracks %}
-        <div class="post card" style="margin-bottom: 20px;">
+        <div class="post card">
             <table>
                 <tr>
                     <td valign="top" align="center" nowrap>
@@ -21,37 +19,37 @@
 
                         <p>{{ track.profile.get_profiletype_display }}</p>
                         <p>
-                            <a href="{% url 'tracks:track_update' track.profile.id %}">Edit</a> /
-                            <a href="{% url 'tracks:track_detail' track.profile.id %}">View</a><br />
+                            <a href="{% url 'profiles:update-profile' track.profile.id %}">Edit</a> /
+                            <a href="{% url 'profiles:detail-profile' track.profile.id %}">View</a><br />
                             <a href="{% url 'tracks:track_delete' track.profile.id %}">Delete</a>
                         </p>
                     </td>
-                    <td style="width: 15px;"></td>
+                    <td></td>
                     <td valign="top">
                         <b>{{ track.profile.displayname }}</b>
                         <p>
-                            <strong>Track Type:</strong> {{ track.track_type }}<br>
-                            {% if track.event %}<strong>Event:</strong> {{ track.event }}<br>{% endif %}
-                            {% if track.location %}<strong>Location:</strong> {{ track.location }}<br>{% endif %}
-                            {% if track.club %}<strong>Club:</strong> {{ track.club }}<br>{% endif %}
-                            {% if track.team %}<strong>Team:</strong> {{ track.team }}<br>{% endif %}
+                            <strong>Track Type:</strong> {{ track.track_type }}<br />
+                            {% if track.event %}<strong>Event:</strong> {{ track.event }}<br />{% endif %}
+                            {% if track.location %}<strong>Location:</strong> {{ track.location }}<br />{% endif %}
+                            {% if track.club %}<strong>Club:</strong> {{ track.club }}<br />{% endif %}
+                            {% if track.team %}<strong>Team:</strong> {{ track.team }}<br />{% endif %}
                         </p>
 
                         {% if track.attributes.exists %}
-                            <table style="border-collapse:collapse; width:100%; font-size:0.9em;">
+                            <table>
                                 {% for attr in track.attributes.all %}
                                     <tr>
-                                        <td style="padding:3px 5px; border-bottom:1px solid #ddd;">
+                                        <td>
                                             {{ attr.attribute.name }}
                                         </td>
-                                        <td style="padding:3px 5px; border-bottom:1px solid #ddd;">
+                                        <td>
                                             {{ attr.value }}
                                         </td>
                                     </tr>
                                 {% endfor %}
                             </table>
                         {% else %}
-                            <p style="color:gray; font-size:0.9em;">No attributes yet.</p>
+                            <p>No attributes yet.</p>
                         {% endif %}
                     </td>
                 </tr>
@@ -59,7 +57,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card" style="text-align:center; padding: 20px;">
+    <div class="post card">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a>
     </div>

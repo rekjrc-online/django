@@ -1,47 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="margin:0px; padding:0px;">
-    <center>
-        <h2>
-            Your Profiles (<a href="/profiles/build/">New</a>)
-        </h2>
-    </center>
-</div>
+<div class="page_header">Your Profiles (<a href="/profiles/build/">New</a>)</div>
 
 {% for profile in profiles %}
-    <div class="post card" style="margin:5px 0px;">
+    <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ profile.id }}/';">
         <table>
             <tr>
                 <td valign="top" align="center" nowrap>
+                    {{ profile.get_profiletype_display }}<br />
                     {% if profile.avatar %}
                         <a target="_blank" href="{{ profile.avatar.url }}">
                             <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
                         </a>
                     {% else %}
                         <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
-                    {% endif %}
-                    <p>{{ profile.get_profiletype_display }}
-                    <br><a href="{% url 'profiles:update-profile' profile.pk %}">Edit</a> /
-                    <a href="{% url 'profiles:detail-profile' profile.pk %}">View</a><br>
-
-                    {% if profile.profiletype == "MODEL" %}
-                        <a href="/builds/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "CLUB" %}
-                        <a href="/clubs/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "LOCATION" %}
-                        <a href="/locations/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "EVENT" %}
-                        <a href="/events/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "RACE" %}
-                        <a href="/races/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "STORE" %}
-                        <a href="/stores/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "TEAM" %}
-                        <a href="/teams/{{ profile.id }}/build">Build</a>
-                    {% elif profile.profiletype == "TRACK" %}
-                        <a href="/tracks/{{ profile.id }}/build">Build</a>
-                    {% endif %}
+                    {% endif %}<br />
+                    <a href="{% url 'profiles:update-profile' profile.pk %}">Edit</a>
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td valign="top">
@@ -52,7 +27,7 @@
         </table>
     </div>
 {% empty %}
-    <p>You haven’t added any profiles yet.</p>
+    <p>You haven't added any profiles yet.</p>
 {% endfor %}
 
 {% endblock %}

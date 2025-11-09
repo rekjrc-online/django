@@ -6,20 +6,20 @@
 <form method="post" novalidate>
     {% csrf_token %}
 
-    <div class="post card" style="padding:10px;">
+    <div class="post card">
         {% include "races/race_form.html" %}
         <button type="submit"
-            style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+           >
             Save Race
         </button>
     </div>
 
-    <div class="post card" style="padding:10px;">
+    <div class="post card">
         {% if attribute_formset %}
             <center><h3>Race Attributes</h3></center>
             {{ attribute_formset.management_form }}
 
-            <table id="attributes-table" style="width:100%; border-collapse:collapse;">
+            <table id="attributes-table">
                 <thead>
                     <tr>
                         <th>Attribute</th>
@@ -31,9 +31,9 @@
                     {% for form in attribute_formset.forms %}
                         {{ form.id }}
                         <tr>
-                            <td style="padding-right:5px;">{{ form.attribute }}</td>
+                            <td>{{ form.attribute }}</td>
                             <td>{{ form.value }}</td>
-                            <td style="text-align:center;">
+                            <td>
                                 {{ form.DELETE }}
                             </td>
                         </tr>
@@ -41,15 +41,15 @@
                 </tbody>
             </table>
             <button type="submit"
-                style="padding:8px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+               >
                 Save Race
             </button>
         {% endif %}
     </div>
 </form>
 
-<div style="text-align:center; margin-top:10px;">
-    <a href="{% url 'races:race_detail' profile.id %}">Back To Race Detail</a>
+<div>
+    <a href="{% url 'profiles:detail-profile' profile.id %}">Back To Race Detail</a>
 </div>
 
 <br /><br /><br />

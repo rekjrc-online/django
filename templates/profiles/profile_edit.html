@@ -1,41 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="card" style="max-width: 800px; padding: 15px; text-align: center;">
-    <h4>{{ profile.profiletype }} PROFILE</h4>
-    {% if profile.avatar %}
-        <a target="_blank" href="{{ profile.avatar.url }}">
-            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px;">
-        </a>
+<h2>Edit Profile</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- ===== Profile Form ===== -->
+    <fieldset>
+        <legend>Profile Information</legend>
+        {{ profile_form.as_p }}
+    </fieldset>
+
+    <!-- ===== Related Object Form ===== -->
+    {% if related_form %}
+    <fieldset>
+        <legend>{{ related_type|capfirst }} Details</legend>
+        {{ related_form.as_p }}
+    </fieldset>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data" style="text-align: left;">
-        {% csrf_token %}
+    <!-- ===== Subform Formsets as Accordions ===== -->
+    <div class="accordion" id="subformsAccordion">
+        {% for key, formset in view.context_data.items %}
+            {% if key.endswith("_formset") %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ key }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ key }}" aria-expanded="false" aria-controls="collapse{{ key }}">
+                        {{ key|replace:"_formset"|capfirst }}
+                    </button>
+                </h2>
+                <div id="collapse{{ key }}" class="accordion-collapse collapse" aria-labelledby="heading{{ key }}" data-bs-parent="#subformsAccordion">
+                    <div class="accordion-body">
+                        {{ formset.management_form }}
+                        {% for form in formset %}
+                            <div class="subform-row mb-2 p-2 border rounded">
+                                {{ form.as_p }}
+                                {% if form.DELETE %}
+                                    <div class="form-check">
+                                        {{ form.DELETE }} <label class="form-check-label">Delete</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 
-        {{ form.as_p }}
-
-        <button type="submit" style="width: 100%; padding: 10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-            Save
-        </button>
-    </form>
-
-    {% if profile.profiletype  == "MODEL" %}
-        <a href="/builds/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Model</a>
-    {% elif profile.profiletype == "LOCATION" %}
-        <a href="/locations/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Location</a>
-    {% elif profile.profiletype == "STORE" %}
-        <a href="/stores/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Store</a>
-    {% elif profile.profiletype == "TRACK" %}
-        <a href="/tracks/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Track</a>
-    {% elif profile.profiletype == "CLUB" %}
-        <a href="/clubs/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Club</a>
-    {% elif profile.profiletype == "TEAM" %}
-        <a href="/teams/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Team</a>
-    {% elif profile.profiletype == "EVENT" %}
-        <a href="/events/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Event</a>
-    {% elif profile.profiletype == "RACE" %}
-        <a href="/races/{{ profile.id }}/build" style="display:block; margin-top:15px; padding:10px; background-color:green; color:white; text-align:center; border-radius:5px; text-decoration:none;">Build Race</a>
-    {% endif %}
-</div>
-<br /><br /><br />
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>
 {% endblock %}

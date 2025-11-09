@@ -1,10 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<div class="post card" style="padding:0px; text-align:center;">
-    <h3>Model Build</h3>
-</div>
+<div class="page_header">Model Build</div>
 
 <!-- Profile summary section -->
 {% include "profiles/profile_header.html" %}
@@ -17,21 +14,21 @@
     </p>
     <a href="/humans/update/">Verify your account</a>
 {% elif user.profile_set.exists %}
-    <form method="post" enctype="multipart/form-data" style="width: 100%; margin-top: 15px;">
-        <div class="post card" style="margin-top: 20px; padding: 10px;">
+    <form method="post" enctype="multipart/form-data">
+        <div class="post card">
             {% csrf_token %}
             {{ form.non_field_errors }}
             {{ form.profile }}
-            <div style="margin-bottom: 10px;">
-                {{ form.name.label_tag }}<br>
+            <div>
+                {{ form.name.label_tag }}<br />
                 {{ form.name }}
                 {{ form.name.errors }}
             </div>
-            <div style="margin-bottom: 10px;">
-                {{ form.description.label_tag }}<br>
+            <div>
+                {{ form.description.label_tag }}<br />
                 {{ form.description }}
                 {{ form.description.errors }}
-                <div style="text-align: right; font-size: 0.9em; color: gray;">
+                <div>
                     <span id="char-count">500</span> characters remaining
                 </div>
             </div>
@@ -45,45 +42,45 @@
                     charCount.textContent = remaining;
                 });
             </script>
-            <button type="submit" style="padding: 10px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+            <button type="submit">
                 {% if build %}Save Build{% else %}Create Build{% endif %}
             </button>
 
         </div>
-        <div class="post card" style="padding: 10px;">
-            <div style="margin-top: 20px;">
+        <div class="post card">
+            <div>
                 {% if attribute_formset %}
                     {{ attribute_formset.management_form }}
-                    <table id="attributes-table" style="width:100%; border-collapse: collapse;">
+                    <table id="attributes-table">
                         <thead>
                             <tr>
-                                <th style="text-align:left; padding:5px;">Attribute</th>
-                                <th style="text-align:left; padding:5px;">Value</th>
-                                <th style="padding:5px;">Delete</th>
+                                <th>Attribute</th>
+                                <th>Value</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for form in attribute_formset.forms %}
                                 {{ form.id }}
                                 <tr>
-                                    <td style="padding:5px;">{{ form.attribute_type }}</td>
-                                    <td style="padding:5px;">{{ form.value }}</td>
-                                    <td style="text-align:center; padding:5px;">
+                                    <td>{{ form.attribute_type }}</td>
+                                    <td>{{ form.value }}</td>
+                                    <td>
                                         {% if form.instance.pk %}
                                             {{ form.DELETE }}
                                         {% else %}
-                                            <button type="button" id="add-attribute" style="padding: 2px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer; width:30px;">
+                                            <button type="button" id="add-attribute">
                                                 +
                                             </button>
                                         {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
-                            <tr class="empty-form" style="display:none;">
-                                <td style="padding:5px;">{{ attribute_formset.empty_form.attribute_type }}</td>
-                                <td style="padding:5px;">{{ attribute_formset.empty_form.value }}</td>
-                                <td style="text-align:center; padding:5px;">
-                                    <button type="button" id="pending" style="padding: 2px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer; width:30px;">
+                            <tr class="empty-form">
+                                <td>{{ attribute_formset.empty_form.attribute_type }}</td>
+                                <td>{{ attribute_formset.empty_form.value }}</td>
+                                <td>
+                                    <button type="button" id="pending">
                                         +
                                     </button>
                                 </td>

@@ -28,9 +28,19 @@ class RaceForm(forms.ModelForm):
             for field in fields
         }
 
+class RaceAttributeForm(forms.ModelForm):
+    class Meta:
+        model = RaceAttribute
+        fields = ("attribute", "value")
+        widgets = {
+            "attribute": forms.TextInput(attrs={"class": "form-control", "placeholder": "Attribute name"}),
+            "value": forms.TextInput(attrs={"class": "form-control", "placeholder": "Value"}),
+        }
+
 RaceAttributeFormSet = inlineformset_factory(
     Race,
     RaceAttribute,
+    form=RaceAttributeForm,  # explicitly use the custom form above
     fields=("attribute", "value"),
     extra=1,
     can_delete=True,

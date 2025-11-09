@@ -1,29 +1,29 @@
-<div class="post card" style="max-width: 800px; padding: 15px; text-align: left;">
+<div class="post card">
     <table>
         <tr>
-            <td align="center" valign="top" style="padding-right:10px;">
+            <td align="center" valign="top">
                 {% if profile.avatar %}
                     <a target="_blank" href="{{ profile.avatar.url }}">
-                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar" style="width:100px;height:100px;">
+                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
                     </a>
                 {% else %}
                     <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                 {% endif %}
             </td>
             <td valign="top">
-                <h3 style="margin-bottom: 5px;">
+                <h3>
                     <a href="/profiles/{{profile.id}}/update/">
                         <u>{{ profile.displayname }}</u>
                     </a>
                 </h3>
                 {% if profile.city %}
-                    <p style="color: #555; font-size: 14px; margin-top: 0;">{{ profile.city }} {{ profile.state }}</p>
+                    <p>{{ profile.city }} {{ profile.state }}</p>
                 {% endif %}
                 {% if profile.website %}
-                    <p style="color: #555; font-size: 14px; margin-top: 0;"><a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a>
+                    <p><a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a>
                 {% endif %}
                 {% if profile.bio %}
-                    <p style="color: #555; font-size: 14px; margin-top: 0;">{{ profile.bio|linebreaksbr }}</p>
+                    <p>{{ profile.bio|linebreaksbr }}</p>
                 {% endif %}
             </td>
         </tr>

@@ -1,30 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center; padding: 0px;">
-  <h3>My Builds</h3>
-</div>
+<div class="page_header">My Builds</div>
 
 {% if builds %}
     {% for build in builds %}
-        <div class="post card" style="padding:10px;">
-            <table cellpadding="0" cellspacing="0">
+        <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ build.profile.id }}/';">
+            <table cellpadding="5" cellspacing="0">
                 <tr>
-                    <td align="center" valign="top" style="padding:10px;">
+                    <td align="center" valign="top">
                         {% if build.profile.avatar %}
                             <a target="_blank" href="{{ build.profile.avatar.url }}">
                                 <img src="{{ build.profile.avatar.url }}" alt="Avatar" class="avatar">
                             </a>
                         {% else %}
                             <img src="/static/nophoto_{{ build.profile.profiletype }}.png" alt="Avatar" class="avatar">
-                        {% endif %}
-                        <br>
-                        <a href="{% url 'profiles:update-profile' build.profile_id %}">Edit</a> /
-                        <a href="{% url 'profiles:detail-profile' build.profile_id %}">View</a><br>
-                        <a href="{% url 'builds:build_build' build.profile_id %}">Build</a>
+                        {% endif %}<br />
+                        <a href="{% url 'profiles:update-profile' build.profile_id %}">Edit</a>
                     </td>
-                    <td style="padding-left:20px; padding-right:20px;">
-                        <h3>{{ build.profile.displayname }}</h3>
+                    <td valign="top">
+                        <strong>{{ build.profile.displayname }}</strong>
                         {% if build.profile.bio %}
                             <p>{{ build.profile.bio|linebreaksbr }}</p>
                         {% endif %}
@@ -37,22 +32,22 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card" style="text-align:center; padding: 20px;">
+    <div class="post card">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a>
     </div>
 {% endif %}
 
 {% if unbuilt_models %}
-    <div class="post card" style="text-align:center; padding: 0px; margin-top:20px;">
+    <div class="post card">
         <h3>Unfinished Model Builds</h3>
     </div>
 
     {% for profile in unbuilt_models %}
-        <div class="post card" style="padding:10px;">
+        <div class="post card">
             <table cellpadding="0" cellspacing="0">
                 <tr>
-                    <td align="center" valign="top" style="padding:10px;">
+                    <td align="center" valign="top">
                         {% if profile.avatar %}
                             <a target="_blank" href="{{ profile.avatar.url }}">
                                 <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
@@ -60,12 +55,12 @@
                         {% else %}
                             <img src="/static/nophoto_MODEL.png" alt="Avatar" class="avatar">
                         {% endif %}
-                        <br>
+                        <br />
                         <a href="{% url 'profiles:update-profile' profile.id %}">Edit</a> / 
-                        <a href="{% url 'profiles:detail-profile' profile.id %}">View</a><br>
+                        <a href="{% url 'profiles:detail-profile' profile.id %}">View</a><br />
                         <a href="{% url 'builds:build_build' profile.id %}">Build</a>
                     </td>
-                    <td valign="top" style="padding-left:20px; padding-right:20px;">
+                    <td valign="top">
                         <h3>{{ profile.displayname }}</h3>
                         {% if profile.bio %}
                             <p>{{ profile.bio|linebreaksbr }}</p>

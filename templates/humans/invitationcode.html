@@ -1,34 +1,34 @@
-<div class="post card" style="margin-top:0px; padding:20px; text-align:center;">
-
-    <h2>Invitations</h2>
-    <p>
-        RekjRC is invitation-only. You can have one
-        invitation at a time, and once your invitation
-        has been accepted, you can request a new one
-        12 hours later.
-    </p>
-    <p>Please use your invitations responsibly.</p>
-    {% if user.is_authenticated %}
-        {% if user.invitation_code %}
-            <p>
-                <strong>Your Invitation Code:</strong><p>
-                <h3>{{ user.invitation_code }}</h3>
-            </p>
-        {% else %}
-            {% if hours_remaining > 0 %}
-                <p>You must wait {{ hours_remaining|floatformat:1 }} hours before generating a new invitation.</p>
+<div class="post card">
+    <center>
+        <h2>Invitations</h2>
+        <p>
+            RekjRC is invitation-only. You can<br />
+            have one invitation at a time, and<br />
+            once your invitation has been accepted,<br />
+            you can request a new one 12 hours later.
+        </p>
+        {% if user.is_authenticated %}
+            {% if user.invitation_code %}
+                <p>
+                    <strong>Your Invitation Code:</strong><p>
+                    <h3>{{ user.invitation_code }}</h3>
+                </p>
             {% else %}
-                <form method="post" action="{% url 'generate-invitation' %}" style="text-align:center; margin-top: 15px;">
-                    {% csrf_token %}
-                    <button type="submit"
-                            style="padding:10px 20px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
-                        Generate Invitation Code
-                    </button>
-                </form>
+                {% if hours_remaining > 0 %}
+                    <p>You must wait {{ hours_remaining|floatformat:1 }} hours before generating a new invitation.</p>
+                {% else %}
+                    <form method="post" action="{% url 'generate-invitation' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            >
+                            Generate Invitation Code
+                        </button>
+                    </form>
+                {% endif %}
             {% endif %}
+        {% else %}
+            <p>You must be logged in to generate invitations</p>
         {% endif %}
-    {% else %}
-        <p>You must be logged in to generate invitations.</p>
-    {% endif %}
-
+        <p>Please use your invitations responsibly</p>
+    </center>
 </div>

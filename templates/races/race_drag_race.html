@@ -1,108 +1,83 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="padding:0px; text-align: center;">
-    <h2>Run Drag Race</h2>
-</div>
+<div class="page_header">Run Drag Race</div>
 
-<div class="post card" style="padding:0px 20px; margin:0px;">
-    <form method="post" id="drag-race-form">
-        {% csrf_token %}
-        <table style="width:100%; border-collapse: collapse; text-align:center;" cellpadding="0" cellspacing="0">
-            <thead>
-                <tr>
-                    <th style="border-bottom:1px solid #ccc; padding:8px;">Round</th>
-                    <th style="border-bottom:1px solid #ccc; padding:8px;">Racers</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for round in rounds %}
+<div class="post card">
+    <center>
+        <form method="post" id="drag-race-form">
+            {% csrf_token %}
+            <table cellpadding="0" cellspacing="0" width="100%" class="drag-race-table">
+                <thead>
                     <tr>
-                        <td style="padding:8px; border-bottom:solid 1px white;">{{ round.round_number }}</td>
-                        <td style="padding:8px; border-bottom:solid 1px white;">
-                            {% if round.winner %}
-                                <div class="btn-wrapper">
-                                    <button type="button" class="winner-btn active">
-                                        {% if round.winner == round.model1 %}
-                                            {{ round.model1.driver.displayname }} -
-                                            {{ round.model1.model.displayname }}
-                                        {% else %}
-                                            {{ round.model2.driver.displayname }} -
-                                            {{ round.model2.model.displayname }}
-                                        {% endif %}
-                                    </button>
-                                </div>
-                            {% else %}
-                                {% if round.model1 %}
-                                    <div class="btn-wrapper">
-                                        <button type="button" class="winner-btn {% if round.winner == round.model1 %}active{% endif %}"
-                                                data-round-id="{{ round.id }}" 
-                                                data-model-id="{{ round.model1.id }}">
-                                            {{ round.model1.driver.displayname }} -
-                                            {{ round.model1.model.displayname }}
-                                        </button>
-                                    </div>
-                                {% else %}
-                                    -bye-
-                                {% endif %}
-                                <p>
-                                {% if round.model2 %}
-                                    <div class="btn-wrapper">
-                                        <button type="button" class="winner-btn {% if round.winner == round.model2 %}active{% endif %}"
-                                                data-round-id="{{ round.id }}" 
-                                                data-model-id="{{ round.model2.id }}">
-                                            {{ round.model2.driver.displayname }} -
-                                            {{ round.model2.model.displayname }}
-                                        </button>
-                                    </div>
-                                {% else %}
-                                    -bye-
-                                {% endif %}
-                            {% endif %}
-                        </td>
-                        <!-- Hidden input to store winner -->
-                        <input type="hidden" name="winner_{{ round.id }}" id="winner_{{ round.id }}"
-                            value="{% if round.winner %}{{ round.winner.id }}{% endif %}">
+                        <th>Round</th>
+                        <th>Racers</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div style="text-align:center; margin-top:20px;">
-            <button type="submit" class="submit-btn">
-                Save Winners
-            </button>
-        </div>
-    </form>
-    <br />
+                    <tr><td><br /></td></tr>
+                </thead>
+                <tbody>
+                    {% for round in rounds %}
+                        <tr>
+                            <td align="center">{{ round.round_number }}</td>
+                            <td>
+                                {% if round.winner %}
+                                    <div class="btn-wrapper">
+                                        <button type="button" class="winner-btn active">
+                                            {% if round.winner == round.model1 %}
+                                                {{ round.model1.driver.displayname }} -
+                                                {{ round.model1.model.displayname }}
+                                            {% else %}
+                                                {{ round.model2.driver.displayname }} -
+                                                {{ round.model2.model.displayname }}
+                                            {% endif %}
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    {% if round.model1 %}
+                                        <div class="btn-wrapper">
+                                            <button type="button" class="winner-btn {% if round.winner == round.model1 %}active{% endif %}"
+                                                    data-round-id="{{ round.id }}" 
+                                                    data-model-id="{{ round.model1.id }}">
+                                                {{ round.model1.driver.displayname }} -
+                                                {{ round.model1.model.displayname }}
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        -bye-
+                                    {% endif %}
+                                    <p>
+                                    {% if round.model2 %}
+                                        <div class="btn-wrapper">
+                                            <button type="button" class="winner-btn {% if round.winner == round.model2 %}active{% endif %}"
+                                                    data-round-id="{{ round.id }}" 
+                                                    data-model-id="{{ round.model2.id }}">
+                                                {{ round.model2.driver.displayname }} -
+                                                {{ round.model2.model.displayname }}
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        -bye-
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <!-- Hidden input to store winner -->
+                            <input type="hidden" name="winner_{{ round.id }}" id="winner_{{ round.id }}"
+                                value="{% if round.winner %}{{ round.winner.id }}{% endif %}">
+                        </tr>
+                        <tr><td><br /></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>
+            <div>
+                <button type="submit" class="submit-btn">
+                    Save Winners
+                </button>
+            </div>
+        </form>
+        <br />
+    </center>
 </div>
-
-<style>
-    .winner-btn {
-        padding: 8px 18px;
-        border: 1px solid #bbb;
-        border-radius: 6px;
-        background-color: #f4f4f4;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.15s ease-in-out;
-    }
-    .winner-btn:hover {
-        background-color: #e8f0fe;
-        border-color: #999;
-    }
-    .winner-btn.active {
-        background-color: #28a745 !important;  /* green */
-        color: white !important;
-        border-color: #1e7e34 !important;
-        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.25);
-        transform: scale(0.97);
-    }
-    .winner-btn.disabled {
-        background-color: #ccc !important;
-        color: #666 !important;
-        cursor: not-allowed;
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

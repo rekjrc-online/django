@@ -24,6 +24,9 @@ class ClubLocationForm(forms.ModelForm):
     class Meta:
         model = ClubLocation
         fields = ['location']
+        widgets = {
+            'location': forms.Select(attrs={'class': 'styled-dropdown'})
+        }
 
 # Formsets
 ClubMemberFormSet = inlineformset_factory(

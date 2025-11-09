@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center;">
-  <h3>{% if form.instance.pk %}Edit Store{% else %}Create Store{% endif %}</h3>
-</div>
+<div class="page_header">{% if form.instance.pk %}Edit Store{% else %}Create Store{% endif %}</div>
 
-<div class="post card" style="max-width:600px; padding:15px;">
+<div class="post card">
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit"
-      style="width:100%; padding:10px; background-color:#1da1f2; color:white; border:none; border-radius:5px; cursor:pointer;">
+     >
       Save
     </button>
   </form>

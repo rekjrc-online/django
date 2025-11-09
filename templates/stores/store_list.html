@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center; padding: 0px;">
-    <h3>My Stores</h3>
-</div>
+<div class="page_header">My Stores</div>
 
 {% if stores %}
     {% for store in stores %}
-        <div class="post card" style="margin-bottom: 20px;">
+        <div class="post card">
             <table>
                 <tr>
                     <td valign="top" align="center" nowrap>
@@ -26,32 +24,32 @@
                             <a href="{% url 'stores:store_delete' store.profile.id %}">Delete</a>
                         </p>
                     </td>
-                    <td style="width: 15px;"></td>
+                    <td></td>
                     <td valign="top">
                         <b>{{ store.profile.displayname }}</b>
                         <p>
-                            <strong>Store Type:</strong> {{ store.store_type }}<br>
-                            {% if store.event %}<strong>Event:</strong> {{ store.event }}<br>{% endif %}
-                            {% if store.location %}<strong>Location:</strong> {{ store.location }}<br>{% endif %}
-                            {% if store.club %}<strong>Club:</strong> {{ store.club }}<br>{% endif %}
-                            {% if store.team %}<strong>Team:</strong> {{ store.team }}<br>{% endif %}
+                            <strong>Store Type:</strong> {{ store.store_type }}<br />
+                            {% if store.event %}<strong>Event:</strong> {{ store.event }}<br />{% endif %}
+                            {% if store.location %}<strong>Location:</strong> {{ store.location }}<br />{% endif %}
+                            {% if store.club %}<strong>Club:</strong> {{ store.club }}<br />{% endif %}
+                            {% if store.team %}<strong>Team:</strong> {{ store.team }}<br />{% endif %}
                         </p>
 
                         {% if store.attributes.exists %}
-                            <table style="border-collapse:collapse; width:100%; font-size:0.9em;">
+                            <table>
                                 {% for attr in store.attributes.all %}
                                     <tr>
-                                        <td style="padding:3px 5px; border-bottom:1px solid #ddd;">
+                                        <td>
                                             {{ attr.attribute.name }}
                                         </td>
-                                        <td style="padding:3px 5px; border-bottom:1px solid #ddd;">
+                                        <td>
                                             {{ attr.value }}
                                         </td>
                                     </tr>
                                 {% endfor %}
                             </table>
                         {% else %}
-                            <p style="color:gray; font-size:0.9em;">No attributes yet.</p>
+                            <p>No attributes yet.</p>
                         {% endif %}
                     </td>
                 </tr>
@@ -59,7 +57,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card" style="text-align:center; padding: 20px;">
+    <div class="post card">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a>
     </div>

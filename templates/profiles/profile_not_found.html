@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="middle-col" style="text-align:center; padding:60px;">
-    <h1 style="color:#1da1f2;">Profile not found</h1>
-    <p style="color:#ccc;">That profile may have been deleted or moved.</p>
-    <a href="{% url 'homepage' %}" style="color:#1da1f2;">Go back home</a>
+<div class="middle-col">
+    <h1>Profile not found</h1>
+    <p>That profile may have been deleted or moved.</p>
+    <a href="{% url 'homepage' %}">Go back home</a>
 </div>
 {% endblock %}

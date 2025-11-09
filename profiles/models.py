@@ -9,13 +9,13 @@ class Profile(BaseModel):
 	PROFILE_TYPE_CHOICES = [
         ('DRIVER', 'Driver'),
         ('MODEL', 'Model'),
-		('LOCATION', 'Location'),
-        ('STORE', 'Store'),
-		('TRACK', 'Track'),
 		('CLUB', 'Club'),
-		('TEAM', 'Team'),
 		('EVENT', 'Event'),
+		('LOCATION', 'Location'),
 		('RACE', 'Race'),
+        ('STORE', 'Store'),
+		('TEAM', 'Team'),
+		('TRACK', 'Track'),
     ]
 	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 	profiletype = models.CharField(max_length=30, choices=PROFILE_TYPE_CHOICES)

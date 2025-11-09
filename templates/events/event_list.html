@@ -1,30 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center; padding: 0px;">
-  <h3>My Events</h3>
-</div>
+<div class="page_header">My Events</div>
 
 {% if events %}
     {% for event in events %}
-        <div class="post card" style="padding:10px;">
-            <table cellpadding="0" cellspacing="0">
+        <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ event.profile.id }}/';">
+            <table cellpadding="5" cellspacing="0">
                 <tr>
-                    <td align="center" valign="top" style="padding:10px;">
+                    <td align="center" valign="top">
                         {% if event.profile.avatar %}
                             <a target="_blank" href="{{ event.profile.avatar.url }}">
                                 <img src="{{ event.profile.avatar.url }}" alt="Avatar" class="avatar">
                             </a>
                         {% else %}
                             <img src="/static/nophoto_{{ event.profile.profiletype }}.png" alt="Avatar" class="avatar">
-                        {% endif %}
-                        <br>
-                        <a href="{% url 'profiles:update-profile' event.profile_id %}">Edit</a> /
-                        <a href="{% url 'profiles:detail-profile' event.profile_id %}">View</a><br>
-                        <a href="{% url 'events:event_build' event.profile_id %}">Build</a>
+                        {% endif %}<br />
+                        <a href="{% url 'profiles:update-profile' event.profile_id %}">Edit</a>
                     </td>
-                    <td style="padding-left:20px; padding-right:20px;">
-                        <h3>{{ event.profile.displayname }}</h3>
+                    <td>
+                        <strong><u>{{ event.profile.displayname }}</u></strong>
                         {% if event.profile.bio %}
                             <p>{{ event.profile.bio|linebreaksbr }}</p>
                         {% endif %}
@@ -37,7 +32,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card" style="text-align:center; padding: 20px;">
+    <div class="post card">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a>
     </div>

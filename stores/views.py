@@ -1,10 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, DeleteView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from .models import Store
 from .forms import StoreForm
-
 
 class StoreListView(LoginRequiredMixin, ListView):
     model = Store
@@ -15,20 +14,6 @@ class StoreListView(LoginRequiredMixin, ListView):
         if profile:
             return Store.objects.filter(profile=profile)
         return Store.objects.none()
-
-
-class StoreDetailView(LoginRequiredMixin, DetailView):
-    model = Store
-    template_name = 'stores/store_detail.html'
-    context_object_name = 'store'
-
-    def get_queryset(self):
-        """Return only stores belonging to the logged-in user's profile."""
-        profile = getattr(self.request.user, 'profile', None)
-        if profile:
-            return Store.objects.filter(profile=profile)
-        return Store.objects.none()
-
 
 class StoreBuildView(LoginRequiredMixin, CreateView):
     model = Store
@@ -53,23 +38,6 @@ class StoreBuildView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('store:detail', kwargs={'pk': self.object.pk})
-
-
-class StoreUpdateView(LoginRequiredMixin, UpdateView):
-    model = Store
-    form_class = StoreForm
-    template_name = 'stores/store_form.html'
-
-    def get_queryset(self):
-        """Only allow updates to stores belonging to the logged-in user."""
-        profile = getattr(self.request.user, 'profile', None)
-        if profile:
-            return Store.objects.filter(profile=profile)
-        return Store.objects.none()
-
-    def get_success_url(self):
-        return reverse_lazy('store:detail', kwargs={'pk': self.object.pk})
-
 
 class StoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Store

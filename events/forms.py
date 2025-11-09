@@ -6,9 +6,8 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['location', 'eventdate']
         widgets = {
-            'eventdate': forms.DateTimeInput(attrs={
-                'type': 'datetime-local'
-            }, format='%Y-%m-%dT%H:%M'),
+            'location': forms.Select(attrs={'class': 'styled-dropdown'}),
+            'eventdate': forms.DateInput(attrs={'type': 'date', 'class': 'styled-date'}, format='%Y-%m-%d'),
         }
 
 class EventInterestForm(forms.ModelForm):

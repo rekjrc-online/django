@@ -1,41 +1,39 @@
-<div class="menu" style="text-align: center;">
-    <div style="margin-left:10px;">
-        <br />
-        <table cellpadding="0" cellspacing="0" align="center"><tr><td align="left">
-            <a href="{% url 'homepage' %}">Home</a><br />
-            {% if request.user.is_authenticated %}
-                <a href="/humans/update/">Account</a><br />
-                
-                    <a href="/profiles/">Profiles</a>
-                    <font size="-1">(<a href="/profiles/build/">new</a>)</font>
-                <br />
-                <p>
-                <a href="/builds/">My Builds</a><br />
-                <a href="/clubs/">My Clubs</a><br />
-                <a href="/events/">My Events</a><br />
-                <a href="/locations/">My Locations</a><br />
-                <a href="/races/">My Races</a><br />
-                <a href="/stores/">My Stores</a><br />
-                <a href="/teams/">My Teams</a><br />
-                <a href="/tracks/">My Tracks</a><br />
-                <p>
-                <a href="/support/">Support</a><br />
-                <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <a href="javascript:document.getElementById('logoutform').submit()">Logout</a><br />
-                </form>
-            {% else %}
-                <a href="/support/">Support</a><br />
-                <a href="/humans/login/">Login</a><br />
-            {% endif %}
-        </td></tr></table>
-    </div>
+<br>
+<div class="leftmenu">
+<table align="right"><tr><td align="left">
+    <a href="{% url 'homepage' %}">Home</a><br />
     {% if request.user.is_authenticated %}
+        <a href="/humans/update/">Account</a><br />
+        <a href="/profiles/">Profiles</a>
         <p>
-            <input type="button"
-                value="New Post"
-                onclick="self.location.href='/posts/create/'"
-                style="width:10em;height:2em;">
-        </p>
+        <img src="/static/nophoto_MODEL.png" alt="Avatar" class="avatar-small">
+        <a href="/builds/">My Builds</a><br />
+        <img src="/static/nophoto_CLUB.png" alt="Avatar" class="avatar-small">
+        <a href="/clubs/">My Clubs</a><br />
+        <img src="/static/nophoto_EVENT.png" alt="Avatar" class="avatar-small">
+        <a href="/events/">My Events</a><br />
+        <img src="/static/nophoto_LOCATION.png" alt="Avatar" class="avatar-small">
+        <a href="/locations/">My Locations</a><br />
+        <img src="/static/nophoto_RACE.png" alt="Avatar" class="avatar-small">
+        <a href="/races/">My Races</a><br />
+        <img src="/static/nophoto_STORE.png" alt="Avatar" class="avatar-small">
+        <a href="/stores/">My Stores</a><br />
+        <img src="/static/nophoto_TEAM.png" alt="Avatar" class="avatar-small">
+        <a href="/teams/">My Teams</a><br />
+        <img src="/static/nophoto_TRACK.png" alt="Avatar" class="avatar-small">
+        <a href="/tracks/">My Tracks</a><br />
+        <p>
+        <a href="/support/">Support</a><br />
+        <form id="logoutform" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <a href="javascript:document.getElementById('logoutform').submit()">Logout</a><br />
+        </form>
+    {% else %}
+        <a href="/support/">Support</a><br />
+        <a href="/humans/login/">Login</a><br />
     {% endif %}
+    {% if request.user.is_authenticated %}
+        <p><input type="button" value="New Post" onclick="self.location.href='/posts/create/'"></p>
+    {% endif %}
+</td></tr></table>
 </div>

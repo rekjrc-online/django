@@ -1,14 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import ListView, DetailView, View, DeleteView
-from django.views.generic.edit import FormView
+from django.views.generic import ListView, View, DeleteView
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db.models import Count, Max
-from django.db import IntegrityError
 from profiles.models import Profile
 from .models import Race, RaceDriver, LapMonitorResult, RaceDragRace
-from .forms import RaceForm, RaceAttributeFormSet
+from .forms import RaceForm
 from io import TextIOWrapper
 import random
 import math
@@ -20,7 +18,7 @@ class RaceDragRaceView(LoginRequiredMixin, View):
     def get(self, request, profile_id, race_id):
         race = get_object_or_404(Race, pk=race_id)
         if race.human != request.user:
-            return redirect("races:race_detail", profile_id=race.profile.id)
+            return redirect("profiles:detail-profile", profile_id=race.profile.id)
         drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
         if not drag_rounds.exists():
             drivers = list(RaceDriver.objects.filter(race=race))
@@ -84,7 +82,7 @@ class RaceDragRaceView(LoginRequiredMixin, View):
 
         # Only the race owner can submit winners
         if race.human != request.user:
-            return redirect("races:race_detail", profile_id=race.profile.id)
+            return redirect("profiles:detail-profile", profile_id=race.profile.id)
 
         # Loop over each drag round and save winner if provided
         for drag_round in RaceDragRace.objects.filter(race=race):
@@ -105,13 +103,13 @@ class LapMonitorUploadView(LoginRequiredMixin, View):
     def get(self, request, race_id):
         race = get_object_or_404(Race, pk=race_id)
         if race.human != request.user:
-            return redirect("races:race_detail", profile_id=race.profile.id)
+            return redirect("profiles:detail-profile", profile_id=race.profile.id)
         return render(request, self.template_name, {"race": race})
 
     def post(self, request, race_id):
         race = get_object_or_404(Race, pk=race_id)
         if race.human != request.user:
-            return redirect("races:race_detail", profile_id=race.profile.id)
+            return redirect("profiles:detail-profile", profile_id=race.profile.id)
 
         file = request.FILES.get("file")
         if not file:
@@ -162,7 +160,7 @@ class LapMonitorUploadView(LoginRequiredMixin, View):
         except Exception as e:
             messages.error(request, f"❌ Error processing CSV: {e}")
 
-        return redirect("races:race_detail", profile_id=race.profile.id)
+        return redirect("profiles:detail-profile", profile_id=race.profile.id)
 
 
 class RaceListView(LoginRequiredMixin, ListView):
@@ -177,38 +175,13 @@ class RaceListView(LoginRequiredMixin, ListView):
             .annotate(driver_count=Count("race__race_drivers"))
             .order_by("displayname"))
 
-
-class RaceDetailView(LoginRequiredMixin, DetailView):
-    model = Race
-    template_name = "races/race_detail.html"
-    context_object_name = "race"
-    pk_url_kwarg = "profile_id"
-
-    def get_object(self, queryset=None):
-        profile = get_object_or_404(Profile, pk=self.kwargs["profile_id"])
-        if profile.human != self.request.user:
-            return redirect("races:race_list")
-        return getattr(profile, "race", None)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        race = self.object
-        context["profile"] = race.profile
-        context["event"] = getattr(race, "event", None)
-        context["location"] = getattr(race, "location", None)
-        context["attributes"] = getattr(race, "attributes", None)
-        context["race_drivers"] = race.race_drivers.select_related("human", "driver", "model")
-        context["user_is_in_race"] = race.race_drivers.filter(human=self.request.user).exists()
-        return context
-
-
 class RaceBuildView(View):
     template_name = "races/race_build.html"
     def dispatch(self, request, *args, **kwargs):
         self.profile = get_object_or_404(Profile, id=kwargs["profile_id"])
         existing_race = Race.objects.filter(profile=self.profile).first()
         if existing_race:
-            return redirect("races:race_update", profile_id=self.profile.id)
+            return redirect("profiles:detail-profile", profile_id=self.profile.id)
         return super().dispatch(request, *args, **kwargs)
     def get(self, request, *args, **kwargs):
         form = RaceForm()
@@ -220,35 +193,8 @@ class RaceBuildView(View):
             race.profile = self.profile
             race.human = request.user
             race.save()
-            return redirect("races:race_detail", profile_id=self.profile.id)
+            return redirect("profiles:detail-profile", profile_id=self.profile.id)
         return render(request, self.template_name, {"form": form, "profile": self.profile})
-
-class RaceUpdateView(LoginRequiredMixin, FormView):
-    template_name = "races/race_update.html"
-    form_class = RaceForm
-    def dispatch(self, request, *args, **kwargs):
-        self.profile = get_object_or_404(Profile, id=kwargs["profile_id"])
-        self.race = get_object_or_404(Race, profile=self.profile)
-        return super().dispatch(request, *args, **kwargs)
-    def get_form(self, form_class=None):
-        return self.form_class(instance=self.race, **self.get_form_kwargs())
-    def get(self, request, *args, **kwargs):
-        form = self.get_form()
-        attribute_formset = RaceAttributeFormSet(instance=self.race)
-        return self.render_to_response(
-            self.get_context_data(form=form, attribute_formset=attribute_formset, profile=self.profile))
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, instance=self.race)
-        attribute_formset = RaceAttributeFormSet(request.POST, instance=self.race)
-        if form.is_valid() and attribute_formset.is_valid():
-            race = form.save(commit=False)
-            race.profile = self.profile
-            race.human = request.user
-            race.save()
-            attribute_formset.save()
-            return redirect("races:race_update", profile_id=self.profile.id)
-        return self.render_to_response(
-            self.get_context_data(form=form, attribute_formset=attribute_formset, profile=self.profile))
 
 class RaceDeleteView(LoginRequiredMixin, DeleteView):
     model = Race
@@ -292,4 +238,4 @@ class RaceJoinView(LoginRequiredMixin, View):
                 model=model_profile,
                 transponder=transponder,
             )
-        return redirect("races:race_detail", profile_id=race.profile.id)
+        return redirect("profiles:detail-profile", profile_id=race.profile.id)

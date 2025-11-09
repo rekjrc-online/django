@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="post card" style="text-align:center; padding: 0px; margin-bottom: 0px;">
-    <h3>My Races</h3>
-</div>
+<div class="page_header">My Races</div>
 
 {% if profiles %}
     {% for profile in profiles %}
-        <div class="post card" style="margin-top: 5px; margin-bottom: 0px;">
-            <table>
+        <div class="post card">
+            <table cellpadding="5" cellspacing="0">
                 <tr>
-                    <td valign="top" align="center" nowrap style="padding-right:10px;">
+                    <td valign="top" align="center" nowrap>
                         {% if profile.avatar %}
                             <a target="_blank" href="{{ profile.avatar.url }}">
                                 <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
@@ -19,47 +17,37 @@
                             <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                         {% endif %}
                         <p>
-                            {% if profile.race %}
-                                <a href="{% url 'races:race_detail' profile.id %}">View</a><br />
-                                <a href="{% url 'races:race_update' profile.id %}">Update</a><br />
-                                <a href="{% url 'races:race_delete' profile.id %}">Delete</a>
-                            {% else %}
-                                <a href="{% url 'races:race_build' profile.id %}">Build</a>
-                            {% endif %}
+                            <a href="{% url 'profiles:detail-profile' profile.id %}">View</a><br />
+                            <a href="{% url 'profiles:update-profile' profile.id %}">Update</a>
                         </p>
                     </td>
                     <td valign="top">
                         {% if not profile.race %}
-                            <p style="color:gray; font-size:0.9em;">No race info yet.</p>
+                            <p>No race info yet.</p>
                         {% else %}
-                            <ul style="list-style-type:none; padding-left:0; padding:0px; margin:0px;">
-                                <li><u>Profile:</u> {{ profile.displayname }}</li>
-                                <li><u>Race Type:</u> {{ profile.race.race_type }}</li>
-                                {% if profile.race.event %}
-                                    <li><u>Event:</u> {{ profile.race.event }}</li>
+                            <u>Profile:</u> {{ profile.displayname }}<br />
+                            <u>Race Type:</u> {{ profile.race.race_type }}<br />
+                            {% if profile.race.event %}
+                                <u>Event:</u> {{ profile.race.event }}<br />
+                            {% endif %}
+                            {% if profile.race.location %}
+                                <u>Location:</u> {{ profile.race.location }}<br />
+                            {% endif %}
+                            {% if profile.race.club %}
+                                <u>Club:</u> {{ profile.race.club }}<br />
+                            {% endif %}
+                            {% if profile.race.team %}
+                                <u>Team:</u> {{ profile.race.team }}<br />
+                            {% endif %}
+                            <u>Entries:</u> {{ profile.driver_count }}<br />
+                            <div style="padding:10px;">
+                                <u>Results:</u><br />
+                                {% if profile.race.race_type == "Lap Race" %}
+                                    <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br />
+                                    <a href="">Upload MyLaps</a><br />
                                 {% endif %}
-                                {% if profile.race.location %}
-                                    <li><u>Location:</u> {{ profile.race.location }}</li>
-                                {% endif %}
-                                {% if profile.race.club %}
-                                    <li><u>Club:</u> {{ profile.race.club }}</li>
-                                {% endif %}
-                                {% if profile.race.team %}
-                                    <li><u>Team:</u> {{ profile.race.team }}</li>
-                                {% endif %}
-                                <li><u>Entries:</u> {{ profile.driver_count }}</li>
-                                <p>
-                                <li>
-                                    <u>Results:</u>
-                                    <ul style="padding:0px; margin-left:15px;">
-                                        {% if profile.race.race_type == "Lap Race" %}
-                                            <li type="disc"><a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br>
-                                            <li type="disc"><a href="">Upload MyLaps</a><br>
-                                        {% endif %}
-                                        <li type="disc"><a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
-                                    </ul>
-                                </li>
-                            </ul>
+                                <a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
+                            </div>
                         {% endif %}
                     </td>
                 </tr>
@@ -67,7 +55,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card" style="text-align:center; padding: 20px;">
+    <div class="post card">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a> /
         <a href="/profiles/build/">Create Profile</a>

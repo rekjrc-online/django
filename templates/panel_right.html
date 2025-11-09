@@ -1,12 +1,14 @@
-<center><h3>Visit Our Friends</h3></center>
+<br />
+<script src="/static/sponsors.js"></script>
+<center>Visit Our Friends</center>
 <div>
     {% for sponsor in sponsors_list %}
         <p>
             <a href="{{ sponsor.website }}" onclick="recordSponsorClick('{{ sponsor.id }}', '{{ sponsor.website }}'); return false;">
-                <img src="{{ sponsor.image.url }}" alt="{{ sponsor.name }}" style="max-width: 100%; border-radius: 8px;">
+                <img src="{{ sponsor.image.url }}" alt="{{ sponsor.name }}">
             </a>
         </p>
     {% empty %}
-        <p style="text-align:center;">No sponsors yet</p>
+        <p>No sponsors yet</p>
     {% endfor %}
 </div>
