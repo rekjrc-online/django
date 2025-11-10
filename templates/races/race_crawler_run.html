@@ -1,42 +1,113 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Crawler Run: {{ racedriver.profile.displayname }}</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RekjRC Online - Run {{ racedriver.driver.displayname }}</title>
+<link rel="icon" href="/static/favicon.ico">
+<link rel="stylesheet" href="/static/colors-dark.css" />
+<link rel="stylesheet" href="/static/styles.css" />
+<link rel="stylesheet" href="/static/nav.css" />
 
 <style>
-.lcd-display {
+html { font-size: 16px; }
+
+body {
     font-family: 'Courier New', monospace;
-    font-size: 3em;
+    background-color: #111;
+    color: #fff;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h2 { margin-bottom: 1rem; font-size: 2rem; }
+
+.timers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 20rem;
+}
+
+.lcd-display {
+    font-size: 2.5rem;
     background-color: #111;
     color: #39ff14;
-    padding: 10px 20px;
-    border-radius: 10px;
-    text-align: right;
-    width: 250px;
-    margin: 10px auto;
-    box-shadow: 0 0 20px #0f0 inset;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    width: 12rem;
+    text-align: center;
+    box-shadow: 0 0 1rem #0f0 inset;
 }
-.button-grid {
+
+.button-row {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+    width: 100%;
+    max-width: 18rem;
 }
-.button-grid button {
-    padding: 10px 20px;
-    font-size: 1em;
+
+.button-row button {
+    flex: 1;
+    min-width: 3.75rem;
+    padding: 0.6rem;
+    font-size: 1rem;
     border: none;
-    border-radius: 8px;
-    background-color: #222;
-    color: white;
+    border-radius: 0.375rem;
+    background-color: #ff0;
+    color: #000;
     cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
-.button-grid button:hover {
-    background-color: #333;
+
+.button-row button:hover:enabled {
+    background-color: #ff0;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#penaltyLog {
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 20rem;
+    font-family: monospace;
+    color: #ff0;
+}
+
+#penaltyLog h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+#penaltyList div {
+    line-height: 1.5rem;
+    text-align: center;
+}
+
+@media (max-width: 400px) {
+    .lcd-display { font-size: 2rem; padding: 0.4rem 0.8rem; width: 10rem; }
+    .button-row button { font-size: 1.25rem; padding: 0.4rem; }
 }
 </style>
+</head>
+<body>
 
-<div style="text-align:center;">
+<center>
+
+<h2>Run: {{ racedriver.driver.displayname }}</h2>
+
+<div class="timers">
     <div>
         <div class="lcd-display" id="elapsedDisplay">00:00.00</div>
         <small>Elapsed Time</small>
@@ -47,32 +118,53 @@
     </div>
 </div>
 
-<form method="post" id="runForm" style="text-align:center;">
+<form method="post" id="runForm">
     {% csrf_token %}
-    <input type="hidden" id="elapsed_time" name="elapsed_time" value="">
-    <input type="hidden" id="penalty_time" name="penalty_time" value="">
-    
-    <div class="button-grid">
+    <input type="hidden" id="elapsed_time" name="elapsed_time" value="{{ run.elapsed_time|default:"0" }}">
+    <input type="hidden" id="penalty_time" name="penalty_time" value="{{ run.penalty_time|default:"0" }}">
+
+    <div class="button-row">
         <button type="button" id="startStopBtn">Start</button>
+    </div>
+    <div class="button-row">
         <button type="button" id="penalty1">+1s</button>
         <button type="button" id="penalty5">+5s</button>
         <button type="button" id="penalty10">+10s</button>
-        <button type="submit" id="submitBtn">Submit</button>
+    </div>
+    <div class="button-row">
+        <button type="button" id="finishBtn">Finish</button>
+    </div>
+    <div class="button-row">
+        <button type="submit" id="submitBtn" disabled>Submit</button>
     </div>
 </form>
 
+<!-- Penalty log -->
+<div id="penaltyLog">
+    <div id="penaltyList"></div>
+</div>
+
 <script>
 let startTime = 0;
-let elapsed = 0;
-let penalty = 0;
+let elapsed = parseFloat(document.getElementById('elapsed_time').value) || 0;
+let penalty = parseFloat(document.getElementById('penalty_time').value) || 0;
 let running = false;
 let interval;
 
 const elapsedDisplay = document.getElementById('elapsedDisplay');
 const totalDisplay = document.getElementById('totalDisplay');
+
 const startStopBtn = document.getElementById('startStopBtn');
+const penalty1Btn = document.getElementById('penalty1');
+const penalty5Btn = document.getElementById('penalty5');
+const penalty10Btn = document.getElementById('penalty10');
+const finishBtn = document.getElementById('finishBtn');
+const submitBtn = document.getElementById('submitBtn');
+
 const elapsedInput = document.getElementById('elapsed_time');
 const penaltyInput = document.getElementById('penalty_time');
+
+let penaltyHistory = []; // store penalties
 
 function formatTime(sec) {
     const minutes = Math.floor(sec / 60);
@@ -82,14 +174,31 @@ function formatTime(sec) {
 }
 
 function updateDisplays() {
-    const now = running ? (Date.now() - startTime) / 1000 + elapsed : elapsed;
+    const now = running ? (Date.now() - startTime)/1000 + elapsed : elapsed;
     elapsedDisplay.textContent = formatTime(now);
     totalDisplay.textContent = formatTime(now + penalty);
     elapsedInput.value = now.toFixed(2);
     penaltyInput.value = penalty.toFixed(2);
 }
 
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // cancel previous
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 1;
+        utter.pitch = 1;
+        window.speechSynthesis.speak(utter);
+    }
+}
+
+function addPenaltyToLog(text) {
+    penaltyHistory.unshift(text);
+    document.getElementById('penaltyList').innerHTML = penaltyHistory.map(p => `<div>${p}</div>`).join('');
+}
+
+// Start / Pause
 startStopBtn.addEventListener('click', () => {
+    speak(startStopBtn.textContent);
     if (!running) {
         running = true;
         startTime = Date.now();
@@ -104,9 +213,53 @@ startStopBtn.addEventListener('click', () => {
     }
 });
 
-document.getElementById('penalty1').addEventListener('click', () => { penalty += 1; updateDisplays(); });
-document.getElementById('penalty5').addEventListener('click', () => { penalty += 5; updateDisplays(); });
-document.getElementById('penalty10').addEventListener('click', () => { penalty += 10; updateDisplays(); });
+// Penalty buttons
+penalty1Btn.addEventListener('click', () => {
+    penalty += 1;
+    updateDisplays();
+    speak("+1");
+    addPenaltyToLog("+1 second penalty");
+});
+penalty5Btn.addEventListener('click', () => {
+    penalty += 5;
+    updateDisplays();
+    speak("+5");
+    addPenaltyToLog("+5 second penalty");
+});
+penalty10Btn.addEventListener('click', () => {
+    penalty += 10;
+    updateDisplays();
+    speak("+10");
+    addPenaltyToLog("+10 second penalty");
+});
+
+// Finish button
+finishBtn.addEventListener('click', () => {
+    speak("Finish");
+
+    if (running) {
+        // Capture current elapsed time
+        elapsed += (Date.now() - startTime) / 1000;
+        running = false;
+        clearInterval(interval);
+    }
+
+    // Disable all buttons except Submit
+    startStopBtn.disabled = true;
+    penalty1Btn.disabled = true;
+    penalty5Btn.disabled = true;
+    penalty10Btn.disabled = true;
+    finishBtn.disabled = true;
+
+    submitBtn.disabled = false;
+
+    // Update displays and hidden inputs
+    updateDisplays();
+});
+
+updateDisplays();
 </script>
 
-{% endblock %}
+</center>
+</body>
+</html>

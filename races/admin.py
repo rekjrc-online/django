@@ -1,5 +1,27 @@
 from django.contrib import admin
-from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult, RaceDriver, RaceDragRace
+from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult, RaceDriver, RaceDragRace, RaceCrawlerRun
+
+@admin.register(RaceCrawlerRun)
+class RaceCrawlerRunAdmin(admin.ModelAdmin):
+    list_display = (
+        'race',
+        'racedriver',
+        'elapsed_time',
+        'penalty_time',
+        'total_time_display',
+    )
+    list_filter = ('race',)
+    search_fields = ('racedriver__driver__displayname', 'race__name')
+    ordering = ('race', 'racedriver')
+
+    readonly_fields = ('total_time_display',)
+
+    def total_time_display(self, obj):
+        """Show total time nicely in admin list/detail."""
+        if obj.elapsed_time is not None:
+            return f"{obj.total_time:.2f}s (elapsed {obj.elapsed_time:.2f}s + penalty {obj.penalty_time or 0:.2f}s)"
+        return "No time recorded"
+    total_time_display.short_description = "Total Time"
 
 # Inline for RaceAttribute to edit directly within Race
 class RaceAttributeInline(admin.TabularInline):

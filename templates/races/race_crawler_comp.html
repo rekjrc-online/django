@@ -1,30 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
+{% load race_filters %}
 
 <h2>{{ race.profile.displayname }}</h2>
 
 <table class="card" style="width:100%; text-align:center;">
     <tr>
+        <th>Action</th>
         <th>Driver</th>
+        <th>Model</th>
+        <th>Total</th>
         <th>Elapsed</th>
         <th>Penalty</th>
-        <th>Total</th>
-        <th>Action</th>
     </tr>
     {% for d in racedrivers %}
         <tr>
-            <td>{{ d.driver.displayname }}</td>
-            <td>{{ d.run.elapsed_time|default:"--" }}</td>
-            <td>{{ d.run.penalty_time|default:"--" }}</td>
-            <td>{{ d.run.total_time|default:"--" }}</td>
             <td>
-                <a href="{% url 'races:race_crawler_run' profile_id=d.driver.pk race_id=race.id racedriver_id=d.id %}">
-                    {% if d.run and d.run.elapsed_time %}Re-run{% else %}Run{% endif %}
-                </a>
+                {% if d.run and d.run.elapsed_time %}
+                    --
+                {% else %}
+                    <a href="{% url 'races:race_crawler_run' profile_id=d.driver.pk race_id=race.id racedriver_id=d.id %}">
+                        Run
+                    </a>
+                {% endif %}
             </td>
+            <td>{{ d.driver.displayname }}</td>
+            <td>{{ d.model.displayname }}</td>
+            <td>{{ d.run.total_time|format_seconds }}</td>
+            <td>{{ d.run.elapsed_time|format_seconds }}</td>
+            <td>{% if d.run.penalty_time %}+{% endif %}{{ d.run.penalty_time|format_seconds:False }}</td>
         </tr>
     {% empty %}
-        <tr><td colspan="5">No drivers signed up yet.</td></tr>
+        <tr><td colspan="6">No drivers signed up yet.</td></tr>
     {% endfor %}
 </table>
 

@@ -22,6 +22,7 @@ ALLOWED_HOSTS = [
     'www.rekjrc.com',
     '10.1.1.63',
     '127.0.0.1',
+    'aa97a0f2ef11.ngrok-free.app',
 ]
 
 # ------------------------------
@@ -102,6 +103,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://10.1.1.63",
     "http://127.0.0.1",
     "http://localhost",
+    "https://aa97a0f2ef11.ngrok-free.app",
 ]
 
 # ------------------------------
