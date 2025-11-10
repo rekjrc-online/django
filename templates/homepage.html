@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-  <script src="static/scroll.js"></script>
-  <script src="static/likes.js"></script>
-  <div id="feed">
-    {% include "posts/post_list.html" %}
-  </div>
-  <div id="loading">Loading more posts...</div>
-  <div class="post" id="end-message">You have run out of posts</div>
+<script src="static/scroll.js"></script>
+<script src="static/likes.js"></script>
+<div id="feed">
+  {% include "posts/post_list.html" %}
+</div>
+<div id="loading">Loading more posts...</div>
+<div class="post" id="end-message">You have run out of posts</div>
 {% endblock %}

@@ -43,6 +43,13 @@ html, body {
     line-height: 1.75rem;
 }
 
+.nav-mobile {
+    display: none;
+}
+.nav-main {
+    display: block;
+}
+
 /* === Posts, Cards, Forms, Buttons, Links === */
 .page_header {
     font-size: 1.25rem;
@@ -169,13 +176,39 @@ a {
 
 /* === Responsive Layouts === */
 @media (max-width: 768px) {
-    .container { grid-template-columns: 1fr; padding: 10px; }
-    .middle-col, .left-col, .right-col { width: 100%; position: relative; margin-bottom: 20px; }
+    .container {
+        width: 100%;
+        grid-template-columns: 1fr;
+        padding: 0px;
+    }
+    .left-col,
+    .right-col {
+        display: none;
+    }
+    .middle-col {
+        max-width: none;
+        width: 100%;
+        position: relative;
+        margin: 0px;
+        padding: 0px;
+    }
+    .nav-mobile {
+        display: block;
+    }
+    .nav-main {
+        display: none;
+    }
     html, body { overflow-y: auto; }
 }
 
 @media (max-width: 1024px) and (min-width: 769px) {
     .container { grid-template-columns: 150px minmax(0, 1fr) 200px; }
     .middle-col { max-width: 1000px; width: 100%; }
+    .nav-mobile {
+        display: block;
+    }
+    .nav-main {
+        display: none;
+    }
     html, body { overflow-y: auto; }
 }

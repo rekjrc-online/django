@@ -1,6 +1,6 @@
 <br>
 <div class="leftmenu">
-<table align="right"><tr><td align="left">
+<table align="right"><tr><td align="left" nowrap>
     <a href="{% url 'homepage' %}">Home</a><br />
     {% if request.user.is_authenticated %}
         <a href="/humans/update/">Account</a><br />
