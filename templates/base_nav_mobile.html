@@ -8,12 +8,12 @@
                 color: var(--font4);
                 resize: vertical;">
         <option value="">Welcome to Rekj RC</option>
+        {% if request.user.is_staff %}
+            <option value="/admin/">Admin</option>
+        {% endif %}
         <option value="">----</option>
         <option value="/">Home Feed</option>
         {% if request.user.is_authenticated %}
-            {% if request.user.is_staff %}
-                <option value="/admin/">Admin</option>
-            {% endif %}
             <option value="/posts/create/">New Post</option>
             <option value="/humans/update/">Account</option>
             <option value="/profiles/">Profiles</option>
