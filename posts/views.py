@@ -1,6 +1,7 @@
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.views import View
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from .models import Post, PostLike
 from .forms import PostForm
+
 
 class PostCreateView(CreateView):
     model = Post
@@ -21,7 +23,7 @@ class PostCreateView(CreateView):
         return kwargs
 
     def form_valid(self, form):
-        form.instance.human_id = self.request.user
+        form.instance.human = self.request.user
         return super().form_valid(form)
 
 class PostDetail(DetailView):
@@ -31,7 +33,7 @@ class PostDetail(DetailView):
     pk_url_kwarg = 'post_id'
     def get_object(self, queryset=None):
         return get_object_or_404(
-            Post.objects.select_related('human_id', 'profile_id'),
+            Post.objects.select_related('human', 'profile'),
             pk=self.kwargs['post_id'])
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,7 +42,7 @@ class PostDetail(DetailView):
             self.request.user.is_authenticated
             and post.likes.filter(human=self.request.user).exists())
         context['likes'] = post.likes.select_related('human').all()
-        replies_qs = post.replies.select_related('human_id', 'profile_id').order_by('-insertdate')
+        replies_qs = post.replies.select_related('human', 'profile').order_by('-insertdate')
         paginator = Paginator(replies_qs, 5)
         page_number = self.request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
@@ -65,7 +67,7 @@ class PostDetail(DetailView):
 class PostRepliesAjax(View):
     def get(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id)
-        replies_qs = post.replies.select_related('profile_id', 'human_id').order_by('-insertdate')
+        replies_qs = post.replies.select_related('profile', 'human').order_by('-insertdate')
         paginator = Paginator(replies_qs, 5)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
@@ -85,6 +87,7 @@ class PostRepliesAjax(View):
 
 
 class PostReplyView(LoginRequiredMixin, CreateView):
+    from .models import Post
     login_url = '/humans/login/'
     model = Post
     form_class = PostForm
@@ -92,16 +95,35 @@ class PostReplyView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['human'] = self.request.user
+        kwargs['human'] = self.request.user  # pass logged-in user so form can filter profiles
         return kwargs
 
     def form_valid(self, form):
-        human = self.request.user
         parent_post = get_object_or_404(Post, id=self.kwargs['post_id'])
-        # ✅ Optional security: prevent replying to deleted or restricted posts
-        form.instance.human = human
+
+        # Assign relationships
+        form.instance.human = self.request.user
         form.instance.parent = parent_post
-        return super().form_valid(form)
+        # ⬆️ NOTE: We NO LONGER override profile — it comes from the form dropdown now.
+
+        # --- DEBUG ---
+        print("=== DEBUG: PostReplyView.form_valid() ===")
+        print("Form data:", form.data)
+        print("Assigned fields:")
+        for field in ['human', 'profile', 'parent', 'content', 'image', 'video_url']:
+            print(f"{field}: {getattr(form.instance, field, None)}")
+        print("Form valid?", form.is_valid())
+        print("Form errors:", form.errors)
+        print("=========================================")
+
+        if not form.is_valid():
+            return self.form_invalid(form)
+
+        response = super().form_valid(form)
+        return response
+
+    def get_success_url(self):
+        return reverse('posts:post_detail', args=[self.kwargs['post_id']])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -186,13 +208,11 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'posts/post_form.html'
     login_url = '/humans/login/'
 
-    def get_object(self, queryset=None):
-        post = super().get_object(queryset)
-        # Ownership check
-        if post.human != self.request.user:
-            # Redirect to the post's profile page if the user doesn't own this post
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.human != request.user:
             return redirect('profiles:detail-profile', profile_id=post.profile.id)
-        return post
+        return super().dispatch(request, *args, **kwargs)
 
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
@@ -200,11 +220,11 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'posts/post_confirm_delete.html'
     login_url = '/humans/login/'
 
-    def get_object(self, queryset=None):
-        post = super().get_object(queryset)
-        if post.human != self.request.user:
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.human != request.user:
             return redirect('profiles:detail-profile', profile_id=post.profile.id)
-        return post
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return redirect('posts:homepage')
+        return reverse('posts:homepage')

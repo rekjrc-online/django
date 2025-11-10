@@ -57,7 +57,7 @@ class ProfileUpdateView(LoginRequiredMixin, View):
             'subforms': {
                 'attributes': {
                     'fk': 'track',
-                    'formset': TrackAttributeFormSet}}},
+                    'formset': TrackAttributeFormSet } } },
         'event': {'model': Event, 'form': EventForm},
         'location': {'model': Location, 'form': LocationForm},
         'store': {'model': Store, 'form': StoreForm},

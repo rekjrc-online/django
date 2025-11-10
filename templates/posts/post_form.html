@@ -12,8 +12,8 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div>
-                    {{ form.profile_id.label_tag }}
-                    {{ form.profile_id }}
+                    {{ form.profile.label_tag }}
+                    {{ form.profile }}
                 </div>
                 <div>
                     {{ form.content }}

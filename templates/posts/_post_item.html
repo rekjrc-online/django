@@ -1,11 +1,11 @@
 <div class="post" onclick="window.location.href='/posts/{{ post.id }}/';">
     <!-- Post Header -->
     <strong>
-        <a href="/profiles/{{ post.profile_id.pk }}/">
-            {{ post.profile_id.displayname }}
+        <a href="/profiles/{{ post.profile.pk }}/">
+            {{ post.profile.displayname }}
         </a>
     </strong>
-    - {{ post.profile_id.get_profiletype_display }}
+    - {{ post.profile.get_profiletype_display }}
     - {{ post.insertdate|date:"m/d/y h:iA" }}
 
     <!-- Post Content -->

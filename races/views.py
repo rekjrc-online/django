@@ -4,13 +4,59 @@ from django.views.generic import ListView, View, DeleteView
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db.models import Count, Max
+from django.db import models
 from profiles.models import Profile
-from .models import Race, RaceDriver, LapMonitorResult, RaceDragRace
+from .models import Race, RaceDriver, LapMonitorResult, RaceDragRace, RaceCrawlerRun
 from .forms import RaceForm
 from io import TextIOWrapper
 import random
 import math
 import csv
+
+
+class RaceCrawlerCompView(View):
+    template_name = 'races/race_crawler_comp.html'
+
+    def get(self, request, profile_id, race_id):
+        race = get_object_or_404(Race, id=race_id)
+        # Get all drivers for this race in signup order
+        racedrivers = RaceDriver.objects.filter(race=race).order_by('id')
+
+        # Prefetch or annotate each driver with their run
+        for driver in racedrivers:
+            driver.run = RaceCrawlerRun.objects.filter(race=race, racedriver=driver).first()
+
+        return render(request, self.template_name, {
+            'race': race,
+            'racedrivers': racedrivers,
+        })
+
+class RaceCrawlerRunView(View):
+    template_name = 'races/race_crawler_run.html'
+
+    def get(self, request, profile_id, race_id, racedriver_id):
+        race = get_object_or_404(Race, id=race_id)
+        racedriver = get_object_or_404(RaceDriver, id=racedriver_id)
+        run, _ = RaceCrawlerRun.objects.get_or_create(race=race, racedriver=racedriver)
+        return render(request, self.template_name, {
+            'race': race,
+            'racedriver': racedriver,
+            'run': run
+        })
+
+    def post(self, request, profile_id, race_id, racedriver_id):
+        run = get_object_or_404(RaceCrawlerRun, race_id=race_id, racedriver_id=racedriver_id)
+        elapsed = request.POST.get('elapsed_time')
+        penalty = request.POST.get('penalty_time')
+
+        if elapsed:
+            run.elapsed_time = float(elapsed)
+        if penalty:
+            run.penalty_time = float(penalty)
+
+        run.save()
+        return redirect('races:race_crawler_comp', profile_id=profile_id, race_id=race_id)
+
 
 class RaceDragRaceView(LoginRequiredMixin, View):
     template_name = "races/race_drag_race.html"

@@ -7,12 +7,12 @@ from humans.models import Human
 from PIL import Image
 
 class Post(BaseModel):
-    human_id = models.ForeignKey (
+    human = models.ForeignKey (
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name='posts',
         db_index=True )
-    profile_id = models.ForeignKey (
+    profile = models.ForeignKey (
         Profile,
         on_delete=models.PROTECT,
         related_name='posts',
@@ -31,7 +31,7 @@ class Post(BaseModel):
     reposts_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.profile_id.displayname}: {self.content[:50]}"
+        return f"{self.profile.displayname}: {self.content[:50]}"
 
     @property
     def likes_count(self):

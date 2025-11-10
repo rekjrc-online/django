@@ -1,18 +1,18 @@
 from django import forms
-from .models import Post
 from profiles.models import Profile
+from .models import Post
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['profile_id', 'content', 'image', 'video_url']
+        fields = ['profile', 'content', 'image', 'video_url']
         widgets = {
             'content': forms.Textarea(attrs={
                 'rows': 3,
                 'placeholder': "What's happening?",
                 'class': 'full-width'
             }),
-            'profile_id': forms.Select(attrs={'class': 'full-width'}),
+            'profile': forms.Select(attrs={'class': 'full-width'}),
             'image': forms.ClearableFileInput(attrs={'class': 'full-width'}),
             'video_url': forms.URLInput(attrs={'class': 'full-width'}),
         }
@@ -20,10 +20,10 @@ class PostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         human = kwargs.pop('human', None)  # pass the logged-in user
         super().__init__(*args, **kwargs)
+
         if human:
-            # Limit profile dropdown to only this human’s profiles
-            self.fields['profile_id'].queryset = self.fields['profile_id'].queryset = (
-                Profile.objects
-                    .filter(human=human)
-                    .order_by('profiletype', 'displayname'))
-        self.fields['profile_id'].label_from_instance = lambda obj: f"{obj.get_profiletype_display()} - {obj.displayname}"
+            # Limit dropdown to this user's profiles
+            self.fields['profile'].queryset = Profile.objects.filter(human=human).order_by('profiletype', 'displayname')
+
+        # Label format: "TYPE - Name"
+        self.fields['profile'].label_from_instance = lambda obj: f"{obj.get_profiletype_display()} - {obj.displayname}"

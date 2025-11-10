@@ -13,29 +13,29 @@ class PostAdmin(admin.ModelAdmin):
         'deleted',
     )
     search_fields = (
-        'human_id__username',
-        'profile_id__displayname',
+        'human__username',
+        'profile__displayname',
         'content',
     )
     list_filter = (
-        ('human_id', RelatedOnlyFieldListFilter),
-        ('profile_id', RelatedOnlyFieldListFilter),
+        ('human', RelatedOnlyFieldListFilter),
+        ('profile', RelatedOnlyFieldListFilter),
         'deleted',
         'insertdate',
     )
-    autocomplete_fields = ('profile_id', 'human_id')
+    autocomplete_fields = ('profile', 'human')
 
     def human(self, obj):
-        return obj.human_id.username
+        return obj.human.username
     human.short_description = 'Human'
 
     def profile(self, obj):
-        return obj.profile_id.displayname
+        return obj.profile.displayname
     profile.short_description = 'Profile'
 
     def profile_type(self, obj):
         # assumes Profile has a field called profiletype or profile_type
-        return getattr(obj.profile_id, 'profiletype', None) or '-'
+        return getattr(obj.profile, 'profiletype', None) or '-'
     profile_type.short_description = 'Profile Type'
 
     def short_content(self, obj):

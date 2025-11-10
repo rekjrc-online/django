@@ -6,9 +6,9 @@
 <div class="card post">
     <!-- Post Header -->
     <div>
-        <strong>@{{ post.profile_id.displayname }}</strong>
+        <strong>@{{ post.profile.displayname }}</strong>
         <font size="-1">
-            - {{ post.profile_id.get_profiletype_display }}
+            - {{ post.profile.get_profiletype_display }}
             - {{ post.insertdate|date:"m/d/y h:iA" }}
         </font>
     </div>
@@ -27,8 +27,8 @@
     {% endif %}
 
     <!-- Join Race -->
-    {% if post.profile_id.profiletype == "RACE" %}
-        <a href="{% url 'races:race_join' post.profile_id_id %}">Join Race</a>
+    {% if post.profile.profiletype == "RACE" %}
+        <a href="{% url 'races:race_join' post.profile_id %}">Join Race</a>
     {% endif %}
 
     <!-- Post Stats -->
@@ -36,10 +36,6 @@
         {% include "posts/post_metrics.html" %}
     </div>
 
-    <!-- Reply Button -->
-    <div>
-        <a href="{% url 'posts:post_reply' post.id %}">Reply</a>
-    </div>
 </div>
 
 {% if replies %}

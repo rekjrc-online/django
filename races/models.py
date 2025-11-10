@@ -10,10 +10,12 @@ from tracks.models import Track
 
 class Race(BaseModel):
     RACE_TYPE_CHOICES = [
-        ('Lap Race', 'Lap Race'),
         ('Drag Race', 'Drag Race'),
+        ('Crawler Comp', 'Crawler Comp'),
+        ('Lap Race', 'Lap Race'),
 		('Out and Back', 'Out and Back'),
-        ('Long Jump', 'Long Jump')]
+        ('Long Jump', 'Long Jump'),
+    ]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
     human = models.ForeignKey(
         Human,
@@ -174,3 +176,26 @@ class RaceDragRace(BaseModel):
         related_name='won_rounds')
     def __str__(self):
         return f"Round {self.round_number}: {self.model1} vs {self.model2 or 'BYE'}"
+
+
+class RaceCrawlerRun(models.Model):
+    race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='crawler_runs')
+    racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE, related_name='crawler_runs')
+
+    elapsed_time = models.FloatField(null=True, blank=True)  # Raw stopwatch time
+    penalty_time = models.FloatField(null=True, blank=True)  # Total penalties in seconds
+
+    @property
+    def total_time(self):
+        """Total = elapsed_time + penalty_time"""
+        return (self.elapsed_time or 0) + (self.penalty_time or 0)
+
+    def __str__(self):
+        if self.elapsed_time is not None:
+            return (
+                f"{self.racedriver} - "
+                f"{self.total_time:.2f}s "
+                f"(elapsed {self.elapsed_time:.2f}s + penalty {self.penalty_time or 0:.2f}s)"
+            )
+        return f"{self.racedriver} - No time recorded"
+
