@@ -140,14 +140,16 @@ class ProfileUpdateView(LoginRequiredMixin, View):
         for key, sub in subforms.items():
             if 'formset' in sub:
                 formset_class = sub['formset']
-                subformsets[key] = formset_class(
-                    request.POST, 
-                    request.FILES, 
-                    instance=related_obj, 
+                fs = formset_class(
+                    request.POST,
+                    request.FILES,
+                    instance=related_obj,
                     queryset=getattr(related_obj, key).all() if related_obj else formset_class.model.objects.none(),
                     prefix=key
                 )
-                print(f"Initialized subformset '{key}' with {len(subformsets[key].forms)} forms.")
+                # Remove empty forms before saving
+                fs.forms = [f for f in fs.forms if f.has_changed()]
+                subformsets[key] = fs
 
         # Validate all forms
         all_valid = profile_form.is_valid() and related_form.is_valid() and all(fs.is_valid() for fs in subformsets.values())
