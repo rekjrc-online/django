@@ -17,7 +17,9 @@
     <p>{{ post.content }}</p>
 
     {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post image">
+        <a target="_blank" href="{{ post.image.url }}">
+            <img src="{{ post.image.url }}" alt="Post image">
+        </a>
     {% endif %}
 
     {% if post.video_url %}
