@@ -135,7 +135,7 @@ class VerifyInvitationView(LoginRequiredMixin, View):
 
         if not code.isdigit() or len(code) != 8:
             messages.error(request, "Please enter a valid 8-digit code.")
-            return redirect('profiles:detail-profile', current_user.profile.id)
+            return redirect('/humans/update/')
 
         try:
             inviter = Human.objects.get(
@@ -145,11 +145,11 @@ class VerifyInvitationView(LoginRequiredMixin, View):
             )
         except Human.DoesNotExist:
             messages.error(request, "Invalid or inactive invitation code.")
-            return redirect('profiles:detail-profile', current_user.profile.id)
+            return redirect('/humans/update/')
 
         if inviter == current_user:
             messages.error(request, "You cannot use your own invitation code.")
-            return redirect('profiles:detail-profile', current_user.profile.id)
+            return redirect('/humans/update/')
 
         # Verify and record
         current_user.is_verified = True
@@ -165,7 +165,7 @@ class VerifyInvitationView(LoginRequiredMixin, View):
             )
         except Exception as e:
             messages.error(request, "Failed to record invitation.")
-            return redirect('profiles:detail-profile', current_user.profile.id)
+            return redirect('/humans/update/')
 
         messages.success(request, "Invitation verified successfully.")
-        return redirect('profiles:detail-profile', current_user.profile.id)
+        return redirect('/humans/update/')
