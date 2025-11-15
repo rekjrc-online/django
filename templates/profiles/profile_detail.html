@@ -48,7 +48,9 @@
         {% elif profile.profiletype == "RACE" %}
             <center>
                 <h1>Join Race Link</h1>
-                <img src="/media/qrcodes/race_{{ profile.id }}.png">
+                <a href="/media/qrcodes/race_{{ profile.id }}.png" target="_blank">
+                    <img src="/media/qrcodes/race_{{ profile.id }}.png">
+                </a>
             </center>
         {% elif profile.profiletype == "TRACK" %}
             <h1>Track Attributes</h1>
