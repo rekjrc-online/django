@@ -280,31 +280,21 @@ class RaceBuildView(View):
             race.profile = self.profile
             race.human = request.user
             race.save()
-
-            # --- Generate QR code for join page ---
             join_url = "https://" + request.build_absolute_uri(
-                reverse('races:race_join', kwargs={'profile_id': self.profile.id})
-            )
+                reverse('races:race_join', kwargs={'profile_id': self.profile.id}))
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_H,
                 box_size=8,
-                border=4
-            )
+                border=4)
             qr.add_data(join_url)
             qr.make(fit=True)
             img = qr.make_image(fill_color="black", back_color="white")
-
-            # Save to MEDIA_ROOT/qrcodes/race_<profile_id>.png
             qr_dir = os.path.join(settings.MEDIA_ROOT, "qrcodes")
             os.makedirs(qr_dir, exist_ok=True)
             qr_filename = f"race_{self.profile.id}.png"
             img.save(os.path.join(qr_dir, qr_filename))
-
-            print("made qrcode")
-
             return redirect("profiles:detail-profile", profile_id=self.profile.id)
-
         return render(self.template_name, {"form": form, "profile": self.profile})
 
 class RaceDeleteView(LoginRequiredMixin, DeleteView):
