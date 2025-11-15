@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from profiles.models import Profile
 from .models import Club
 from .forms import ClubForm
@@ -14,77 +15,72 @@ class ClubListView(LoginRequiredMixin, ListView):
     login_url = '/humans/login/'
 
     def get_queryset(self):
-        # ✅ Show only clubs owned by this human
-        return Club.objects.filter(profile__human=self.request.user).select_related('profile').order_by('id')
+        return (
+            Club.objects
+            .filter(profile__human=self.request.user)
+            .select_related('profile')
+            .order_by('id')
+        )
 
-class ClubBuildView(LoginRequiredMixin, View):
+class ProfileMixin:
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.profile = get_object_or_404(
+            Profile,
+            id=self.kwargs['profile_id'],
+            human=self.request.user
+        )
+        return None
+
+class ClubBuildView(LoginRequiredMixin, ProfileMixin, View):
     template_name = 'clubs/club_build.html'
     login_url = '/humans/login/'
 
     def get(self, request, profile_id):
-        profile = get_object_or_404(Profile, id=profile_id)
+        # If a club exists for this profile, redirect to update page
+        existing = Club.objects.filter(profile=self.profile).first()
+        if existing:
+            return redirect('clubs:club_update', profile_id=self.profile.id)
 
-        # ✅ Ownership check
-        if profile.human != request.user:
-            return redirect('profiles:detail-profile', profile.id)
-
-        existing_club = Club.objects.filter(profile=profile).first()
-        if existing_club:
-            return redirect('profiles:update-profile', profile.id)
-
-        form = ClubForm()
         return render(request, self.template_name, {
-            'profile': profile,
-            'form': form,
+            'profile': self.profile,
+            'form': ClubForm(),
         })
 
     def post(self, request, profile_id):
-        profile = get_object_or_404(Profile, id=profile_id)
-
-        # ✅ Ownership check
-        if profile.human != request.user:
-            return redirect('profiles:detail-profile', profile.id)
-
+        # Ownership already guaranteed by ProfileMixin
         form = ClubForm(request.POST)
+
         if form.is_valid():
             club = form.save(commit=False)
-            club.profile = profile
+            club.profile = self.profile
             club.save()
-            return redirect('clubs:club_detail', profile_id=profile_id)
+            return redirect('clubs:club_detail', profile_id=self.profile.id)
 
         return render(request, self.template_name, {
-            'profile': profile,
+            'profile': self.profile,
             'form': form,
         })
 
-class ClubDeleteView(LoginRequiredMixin, DeleteView):
+class ClubDeleteView(LoginRequiredMixin, ProfileMixin, DeleteView):
     model = Club
     template_name = 'clubs/club_confirm_delete.html'
     login_url = '/humans/login/'
 
-    def get_object(self):
-        profile_id = self.kwargs['profile_id']
-        club = get_object_or_404(Club, profile__id=profile_id)
+    def dispatch(self, request, *args, **kwargs):
+        self.club = get_object_or_404(
+            Club,
+            profile=self.profile
+        )
+        return super().dispatch(request, *args, **kwargs)
 
-        # ✅ Ownership check
-        if club.profile.human != self.request.user:
-            # Redirect immediately if ownership fails
-            self.permission_denied_redirect = redirect('profiles:detail-profile', profile_id)
-            return None
-
-        return club
-
-    def get(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj is None:
-            return self.permission_denied_redirect
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj is None:
-            return self.permission_denied_redirect
-        return super().post(request, *args, **kwargs)
+    def get_object(self, queryset=None):
+        return self.club
 
     def get_success_url(self):
-        return reverse('clubs:club_list')
+        return reverse_lazy('clubs:club_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = self.profile
+        return context

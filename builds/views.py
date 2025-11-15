@@ -30,19 +30,19 @@ class BuildBuildView(LoginRequiredMixin, View):
     template_name = 'builds/build_build.html'
 
     def get_profile(self, profile_id):
-        profile = get_object_or_404(Profile, id=profile_id)
-        if profile.human != self.request.user:
-            return None
+        profile = get_object_or_404(Profile, id=profile_id, human=self.request.user)
         return profile
 
     def get(self, request, profile_id):
         profile = self.get_profile(profile_id)
         if not profile:
             return redirect('profiles:detail-profile', profile_id)
+        if profile.human != self.request.user:
+            return redirect('profiles:detail-profile', profile_id)
 
         existing_build = Build.objects.filter(profile=profile).first()
         if existing_build:
-            return redirect('builds:build_update', profile_id=profile.id)
+            return redirect('profiles:detail-profile', profile_id=profile.id)
 
         form = BuildForm()
         return render(request, self.template_name, {'form': form, 'profile': profile})
@@ -54,7 +54,7 @@ class BuildBuildView(LoginRequiredMixin, View):
 
         existing_build = Build.objects.filter(profile=profile).first()
         if existing_build:
-            return redirect('builds:build_update', profile_id=profile.id)
+            return redirect('profiles:detail-profile', profile_id=profile.id)
 
         form = BuildForm(request.POST)
         if form.is_valid():

@@ -12,68 +12,67 @@ class LocationListView(LoginRequiredMixin, ListView):
     template_name = 'locations/location_list.html'
     context_object_name = 'locations'
     login_url = '/humans/login/'
-    def get_queryset(self):
-        return Location.objects.filter(profile__human=self.request.user).select_related('profile').order_by('profile__displayname')
 
-class LocationBuildView(LoginRequiredMixin, CreateView):
+    def get_queryset(self):
+        return (
+            Location.objects
+            .filter(profile__human=self.request.user)
+            .select_related('profile')
+            .order_by('profile__displayname')
+        )
+
+class ProfileMixin:
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.profile = get_object_or_404(
+            Profile,
+            id=self.kwargs['profile_id'],
+            human=request.user
+        )
+        return None
+
+class LocationBuildView(LoginRequiredMixin, ProfileMixin, CreateView):
     model = Location
     form_class = LocationForm
     template_name = 'locations/location_form.html'
     login_url = '/humans/login/'
 
     def dispatch(self, request, *args, **kwargs):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-
-        # ✅ Ownership check
-        if not hasattr(request.user, 'human') or profile.human != request.user.human:
-            messages.error(request, "You do not have permission to create a location for this profile.")
-            return redirect('profiles:detail-profile', profile.id)
-
-        # Redirect if location already exists
-        if Location.objects.filter(profile=profile).exists():
-            return redirect('locations:location_update', profile_id=profile.id)
+        # If the location already exists, redirect to update view
+        if Location.objects.filter(profile=self.profile).exists():
+            return redirect('locations:location_update', profile_id=self.profile.id)
 
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        context['profile'] = self.profile
         context['is_update'] = False
         return context
 
     def form_valid(self, form):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-        form.instance.profile = profile
-
-        if hasattr(self.request.user, 'human'):
-            form.instance.human = self.request.user.human
-
+        form.instance.profile = self.profile
+        form.instance.human = self.request.user  # Human *is* the Django user
         self.object = form.save()
-        return redirect('locations:location_detail', profile_id=profile.id)
+        return redirect('locations:location_detail', profile_id=self.profile.id)
 
-class LocationDeleteView(LoginRequiredMixin, DeleteView):
+class LocationDeleteView(LoginRequiredMixin, ProfileMixin, DeleteView):
     model = Location
     template_name = 'locations/location_confirm_delete.html'
     login_url = '/humans/login/'
 
-    def get_object(self, queryset=None):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-        return get_object_or_404(Location, profile=profile)
-
     def dispatch(self, request, *args, **kwargs):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-
-        # ✅ Ownership check
-        if not hasattr(request.user, 'human') or profile.human != request.user.human:
-            messages.error(request, "You do not have permission to delete this location.")
-            return redirect('profiles:detail-profile', profile.id)
-
+        # Ensure the location exists AND belongs to this profile
+        self.location = get_object_or_404(Location, profile=self.profile)
         return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        return self.location
 
     def get_success_url(self):
         return reverse_lazy('locations:location_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        context['profile'] = self.profile
         return context

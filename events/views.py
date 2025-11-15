@@ -21,10 +21,8 @@ class EventBuildView(LoginRequiredMixin, CreateView):
     login_url = '/humans/login/'
 
     def dispatch(self, request, *args, **kwargs):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-
-        # Ownership check
-        if request.user != profile.human:
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'], human=self.request.user)
+        if not profile:
             return redirect('profiles:detail-profile', profile.id)
 
         if Event.objects.filter(profile=profile).exists():
@@ -32,14 +30,14 @@ class EventBuildView(LoginRequiredMixin, CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'], human=self.request.user)
         form.instance.profile = profile
         form.save()
         return redirect('profiles:detail-profile', profile_id=profile.id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'], human=self.request.user)
         return context
 
 class EventDeleteView(LoginRequiredMixin, DeleteView):
@@ -48,48 +46,40 @@ class EventDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/humans/login/'
 
     def get_object(self):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-
-        # Ownership check
-        if self.request.user != profile.human:
-            return redirect('profiles:detail-profile', profile.id)
-
-        return get_object_or_404(Event, profile=profile)
+        event = get_object_or_404(Event, id=self.kwargs['profile_id'], human=self.request.user)
+        if not event:
+            return redirect('profiles:detail-profile', id=self.kwargs['profile_id'])
+        return event
 
     def get_success_url(self):
         return reverse_lazy('events:event_list')
 
     def get(self, request, *args, **kwargs):
-        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'])
-        if request.user != profile.human:
+        profile = get_object_or_404(Profile, id=self.kwargs['profile_id'], human=self.request.user)
+        if not profile:
             return redirect('profiles:detail-profile', profile.id)
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'])
+        context['profile'] = get_object_or_404(Profile, id=self.kwargs['profile_id'], human=self.request.user)
         return context
 
 class AddInterestView(LoginRequiredMixin, View):
     login_url = '/humans/login/'
-
-    def post(self, request, profile_id, event_id):
-        profile = get_object_or_404(Profile, id=profile_id)
-
-        # Ownership check
-        if request.user != profile.human:
-            return redirect('profiles:detail-profile', profile.id)
-
+    def post(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
-        EventInterest.objects.get_or_create(event=event, human=request.user)
-        return redirect('profiles:detail-profile', profile_id=profile_id)
+        EventInterest.objects.get_or_create(
+            event=event,
+            human=request.user)
+        return redirect('events:event_detail', event_id=event_id)
 
 class RemoveInterestView(LoginRequiredMixin, View):
     login_url = '/humans/login/'
-    def post(self, request, profile_id, event_id):
-        profile = get_object_or_404(Profile, id=profile_id)
-        if request.user != profile.human:
-            return redirect('profiles:detail-profile', profile.id)
+    def post(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
-        EventInterest.objects.filter(event=event, human=request.user).delete()
-        return redirect('/profiles/')
+        EventInterest.objects.filter(
+            event=event,
+            human=request.user
+        ).delete()
+        return redirect('events:event_detail', event_id=event_id)

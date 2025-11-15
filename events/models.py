@@ -9,14 +9,11 @@ class Event(BaseModel):
     human = models.ForeignKey(
         Human,
         on_delete=models.PROTECT,
-        related_name='events',
-        null=True,
-        blank=True)
+        related_name='events')
     profile = models.OneToOneField(
         Profile,
         on_delete=models.PROTECT,
-        related_name='events',
-        default=1)
+        related_name='events')
     location = models.ForeignKey(
         Location,
         on_delete=models.PROTECT,
