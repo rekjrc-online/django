@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = "Generate QR codes for all Race profiles that do not already have one."
 
     def handle(self, *args, **options):
-        base_dir = "static/qrcodes/"
+        base_dir = "media/qrcodes/"
 
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)
