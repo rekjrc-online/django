@@ -27,6 +27,8 @@ urlpatterns = [
     path('support/', include('support.urls')),
     path('teams/', include('teams.urls')),
     path('tracks/', include('tracks.urls')),
+    path('u/', include('urls_app.urls')),
+
 ]
 
 handler404 = 'rekjrc.urls.custom_404'

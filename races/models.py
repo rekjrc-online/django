@@ -181,21 +181,51 @@ class RaceDragRace(BaseModel):
 class RaceCrawlerRun(models.Model):
     race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='crawler_runs')
     racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE, related_name='crawler_runs')
+    elapsed_time = models.FloatField(null=True, blank=True)
+    penalty_points = models.IntegerField(default=0)
 
-    elapsed_time = models.FloatField(null=True, blank=True)  # Raw stopwatch time
-    penalty_time = models.FloatField(null=True, blank=True)  # Total penalties in seconds
-
-    @property
-    def total_time(self):
-        """Total = elapsed_time + penalty_time"""
-        return (self.elapsed_time or 0) + (self.penalty_time or 0)
+    def total_log_points(self):
+        """Return the sum of all deltas from the related CrawlerRunLog entries."""
+        return self.log_entries.aggregate(models.Sum('delta'))['delta__sum'] or 0
 
     def __str__(self):
         if self.elapsed_time is not None:
-            return (
-                f"{self.racedriver} - "
-                f"{self.total_time:.2f}s "
-                f"(elapsed {self.elapsed_time:.2f}s + penalty {self.penalty_time or 0:.2f}s)"
-            )
+            return f"{self.racedriver} - {self.penalty_points} points - {self.elapsed_time:.2f}s"
         return f"{self.racedriver} - No time recorded"
 
+class CrawlerRunLog(models.Model):
+    human = models.ForeignKey(
+        Human,
+        on_delete=models.CASCADE,
+        related_name='crawler_human_run_logs')
+    
+    driver = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='crawler_driver_run_logs',
+        null=True,
+        blank=True,
+        limit_choices_to={'profiletype':'DRIVER'})
+    
+    model = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='crawler_model_run_logs',
+        null=True,
+        blank=True,
+        limit_choices_to={'profiletype':'MODEL'})
+    
+    run = models.ForeignKey(
+        'RaceCrawlerRun',
+        on_delete=models.CASCADE,
+        related_name='log_entries')
+    
+    milliseconds = models.PositiveIntegerField()
+    label = models.CharField(max_length=255)
+    delta = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['milliseconds']
+
+    def __str__(self):
+        return f"{self.milliseconds}ms - {self.label} ({self.delta:+})"

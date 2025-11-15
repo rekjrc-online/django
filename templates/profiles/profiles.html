@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-
+<!-- profiles.html -->
 <div class="page_header">Your Profiles (<a href="/profiles/build/">New</a>)</div>
 
 {% for profile in profiles %}
     <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ profile.id }}/';">
-        <table>
+        <table border="0">
             <tr>
                 <td valign="top" align="center" nowrap>
                     {{ profile.get_profiletype_display }}<br />

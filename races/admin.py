@@ -1,32 +1,54 @@
 from django.contrib import admin
-from .models import Race, RaceAttributeEnum, RaceAttribute, LapMonitorResult, RaceDriver, RaceDragRace, RaceCrawlerRun
+from .models import (
+    Race,
+    RaceAttributeEnum,
+    RaceAttribute,
+    LapMonitorResult,
+    RaceDriver,
+    RaceDragRace,
+    RaceCrawlerRun,
+    CrawlerRunLog
+)
+
+# Inline for CrawlerRunLog within RaceCrawlerRun
+class CrawlerRunLogInline(admin.TabularInline):
+    model = CrawlerRunLog
+    extra = 1
+    readonly_fields = ('milliseconds', 'label', 'delta')
+    autocomplete_fields = ['human', 'driver', 'model']
+    can_delete = True
 
 @admin.register(RaceCrawlerRun)
 class RaceCrawlerRunAdmin(admin.ModelAdmin):
     list_display = (
         'race',
         'racedriver',
-        'elapsed_time',
-        'penalty_time',
-        'total_time_display',
+        'penalty_points_display',
+        'elapsed_time_display',
     )
     list_filter = ('race',)
-    search_fields = ('racedriver__driver__displayname', 'race__name')
+    search_fields = ('racedriver__driver__displayname', 'race__profile__displayname')
     ordering = ('race', 'racedriver')
+    readonly_fields = ('penalty_points_display', 'elapsed_time_display')
+    inlines = [CrawlerRunLogInline]
 
-    readonly_fields = ('total_time_display',)
+    @admin.display(description="Points")
+    def penalty_points_display(self, obj):
+        return obj.penalty_points
 
-    def total_time_display(self, obj):
-        """Show total time nicely in admin list/detail."""
+    @admin.display(description="Time")
+    def elapsed_time_display(self, obj):
         if obj.elapsed_time is not None:
-            return f"{obj.total_time:.2f}s (elapsed {obj.elapsed_time:.2f}s + penalty {obj.penalty_time or 0:.2f}s)"
+            minutes = int(obj.elapsed_time // 60)
+            seconds = int(obj.elapsed_time % 60)
+            hundredths = int((obj.elapsed_time % 1) * 100)
+            return f"{minutes}:{str(seconds).zfill(2)}.{str(hundredths).zfill(2)}"
         return "No time recorded"
-    total_time_display.short_description = "Total Time"
 
 # Inline for RaceAttribute to edit directly within Race
 class RaceAttributeInline(admin.TabularInline):
     model = RaceAttribute
-    extra = 1  # number of empty rows to show
+    extra = 1
     autocomplete_fields = ['attribute']
     fields = ['attribute', 'value']
 
@@ -68,14 +90,17 @@ class RaceDriverAdmin(admin.ModelAdmin):
         'driver__displayname',
         'model__displayname',
         'race__profile__displayname',)
+
     @admin.display(description='Human')
     def human_name(self, obj):
         if obj.human:
             return f"{obj.human.first_name} {obj.human.last_name}"
         return "-human-"
+
     @admin.display(description='Driver')
     def driver_name(self, obj):
         return obj.driver.displayname if obj.driver else "-driver-"
+
     @admin.display(description='Model')
     def model_name(self, obj):
         return obj.model.displayname if obj.model else "-model-"
@@ -98,3 +123,27 @@ class RaceDragRaceAdmin(admin.ModelAdmin):
         'winner__displayname',
     ]
     autocomplete_fields = ['race', 'model1', 'model2', 'winner']
+
+@admin.register(CrawlerRunLog)
+class CrawlerRunLogAdmin(admin.ModelAdmin):
+    list_display = ('run', 'human', 'driver', 'model', 'milliseconds', 'label', 'delta')
+    
+    # Filters for quick navigation
+    list_filter = (
+        'human',               # Filter by human
+        'driver',              # Filter by driver profile
+        'model',               # Filter by model profile
+    )
+
+    search_fields = (
+        'run__racedriver__driver__displayname',
+        'run__race__profile__displayname',
+        'human__first_name',
+        'human__last_name',
+        'driver__displayname',
+        'model__displayname',
+        'label',
+    )
+    
+    ordering = ('run', 'milliseconds')
+    autocomplete_fields = ['run', 'human', 'driver', 'model']

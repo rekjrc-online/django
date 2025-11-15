@@ -31,6 +31,11 @@ class RaceCrawlerCompView(View):
             'racedrivers': racedrivers,
         })
 
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views import View
+from .models import Race, RaceDriver, RaceCrawlerRun, CrawlerRunLog
+import json
+
 class RaceCrawlerRunView(View):
     template_name = 'races/race_crawler_run.html'
 
@@ -46,16 +51,43 @@ class RaceCrawlerRunView(View):
 
     def post(self, request, profile_id, race_id, racedriver_id):
         run = get_object_or_404(RaceCrawlerRun, race_id=race_id, racedriver_id=racedriver_id)
+
+        # Update elapsed time and penalty points
         elapsed = request.POST.get('elapsed_time')
-        penalty = request.POST.get('penalty_time')
-
-        if elapsed:
+        points = request.POST.get('penalty_points')
+        if elapsed is not None:
             run.elapsed_time = float(elapsed)
-        if penalty:
-            run.penalty_time = float(penalty)
-
+        if points is not None:
+            run.penalty_points = int(points)
         run.save()
-        return redirect('races:race_crawler_comp', profile_id=profile_id, race_id=race_id)
+
+        # Handle CrawlerRunLog JSON
+        run_log_json = request.POST.get('run_log')
+        if run_log_json:
+            try:
+                log_entries = json.loads(run_log_json)
+                # Optional: clear existing log entries
+                run.log_entries.all().delete()
+
+                for entry in log_entries:
+                    CrawlerRunLog.objects.create(
+                        run=run,
+                        human=run.racedriver.human,
+                        driver=run.racedriver.driver,
+                        model=run.racedriver.model,
+                        milliseconds=entry['milliseconds'],
+                        label=entry['label'],
+                        delta=entry['delta'],
+                    )
+            except (json.JSONDecodeError, KeyError, TypeError) as e:
+                # Optionally log the error
+                print(f"Failed to save run log: {e}")
+
+        return redirect(
+            'races:race_crawler_comp',
+            profile_id=profile_id,
+            race_id=race_id,
+        )
 
 
 class RaceDragRaceView(LoginRequiredMixin, View):
@@ -65,21 +97,26 @@ class RaceDragRaceView(LoginRequiredMixin, View):
         race = get_object_or_404(Race, pk=race_id)
         if race.human != request.user:
             return redirect("profiles:detail-profile", profile_id=race.profile.id)
+
         drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
+
+        # --- ROUND 1: initialize bracket ---
         if not drag_rounds.exists():
             drivers = list(RaceDriver.objects.filter(race=race))
-            #random.shuffle(drivers)
+            random.shuffle(drivers)
             num_entrants = len(drivers)
+
             if num_entrants < 2:
                 return render(request, self.template_name, {
                     "race": race,
                     "rounds": [],
                     "message": "Not enough drivers to start drag race."
                 })
+
             next_power_of_2 = 2 ** math.ceil(math.log2(num_entrants))
             total_matches = next_power_of_2 // 2
-
             num_byes = next_power_of_2 - num_entrants
+
             i = 0
             for match in range(total_matches):
                 if match < num_byes:
@@ -90,6 +127,7 @@ class RaceDragRaceView(LoginRequiredMixin, View):
                     model1 = drivers[i]
                     model2 = drivers[i + 1] if i + 1 < num_entrants else None
                     i += 2
+
                 RaceDragRace.objects.create(
                     race=race,
                     model1=model1,
@@ -97,22 +135,31 @@ class RaceDragRaceView(LoginRequiredMixin, View):
                     winner=None,
                     round_number=1
                 )
+
             drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
+
+        # --- LATER ROUNDS ---
         else:
             max_round = drag_rounds.aggregate(max_round_number=Max("round_number"))["max_round_number"]
             last_round_records = drag_rounds.filter(round_number=max_round)
+
+            # Only proceed when all winners for the last round are known
             if all(r.winner for r in last_round_records):
                 winners = [r.winner for r in last_round_records]
-                random.shuffle(winners)
+
+                # 🧩 keep order: 1v2, 3v4, etc.  (no shuffle!)
                 if len(winners) == 1:
+                    # Tournament complete
                     return render(request, self.template_name, {
                         "race": race,
                         "rounds": drag_rounds,
                         "final_winner": winners[0],
                     })
+
                 for i in range(0, len(winners), 2):
                     model1 = winners[i]
                     model2 = winners[i + 1] if i + 1 < len(winners) else None
+
                     RaceDragRace.objects.create(
                         race=race,
                         model1=model1,
@@ -120,7 +167,9 @@ class RaceDragRaceView(LoginRequiredMixin, View):
                         winner=None,
                         round_number=max_round + 1
                     )
+
                 drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
+
         return render(request, self.template_name, {"race": race, "rounds": drag_rounds})
 
     def post(self, request, profile_id, race_id):
