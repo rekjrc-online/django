@@ -16,18 +16,20 @@
         <option value="/">Home Feed</option>
         {% if request.user.is_authenticated %}
             <option value="/posts/create/">New Post</option>
-            <option value="/humans/update/">Account</option>
-            <option value="/profiles/">Profiles</option>
             <option value="">----</option>
             <option value="/builds/">Builds</option>
-            <option value="/clubs/">Clubs</option>
-            <option value="/events/">Events</option>
             <option value="/locations/">Locations</option>
-            <option value="/races/">Races</option>
-            <option value="/stores/">Stores</option>
-            <option value="/teams/">Teams</option>
             <option value="/tracks/">Tracks</option>
+            <option value="/races/">Races</option>
+            {% comment %}
+                <option value="/clubs/">Clubs</option>
+                <option value="/events/">Events</option>
+                <option value="/stores/">Stores</option>
+                <option value="/teams/">Teams</option>
+            {% endcomment %}
             <option value="">----</option>
+            <option value="/humans/update/">Account</option>
+            <option value="/profiles/">Profiles</option>
             <option value="/humans/logout/">Log Out</option>
         {% else %}
             <option value="/humans/login/">Log In</option>

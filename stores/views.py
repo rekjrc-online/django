@@ -1,19 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, DeleteView
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from .models import Store
 from .forms import StoreForm
+from profiles.models import Profile
 
 class StoreListView(LoginRequiredMixin, ListView):
     model = Store
     template_name = 'stores/store_list.html'
     context_object_name = 'stores'
+
     def get_queryset(self):
-        profile = getattr(self.request.user, 'profile', None)
-        if profile:
-            return Store.objects.filter(profile=profile)
-        return Store.objects.none()
+        return Store.objects.filter(profile__human=self.request.user)
 
 class StoreBuildView(LoginRequiredMixin, CreateView):
     model = Store
@@ -21,19 +20,15 @@ class StoreBuildView(LoginRequiredMixin, CreateView):
     template_name = 'stores/store_form.html'
 
     def dispatch(self, request, *args, **kwargs):
-        """Redirect to update if a store already exists for this profile."""
-        profile = getattr(request.user, 'profile', None)
-        if profile:
-            existing_store = Store.objects.filter(profile=profile).first()
-            if existing_store:
-                return redirect('store:update', pk=existing_store.pk)
+        profile_id = kwargs.get('profile_id')
+        self.profile = get_object_or_404(Profile, id=profile_id, human=request.user)
+        if hasattr(self.profile, 'store'):
+            return redirect('store:update', pk=self.profile.store.pk)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        """Assign the store to the logged-in user's profile."""
-        profile = getattr(self.request.user, 'profile', None)
-        if profile:
-            form.instance.profile = profile
+        form.instance.profile = self.profile
+        form.instance.human = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -42,11 +37,11 @@ class StoreBuildView(LoginRequiredMixin, CreateView):
 class StoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Store
     template_name = 'stores/store_confirm_delete.html'
-    success_url = reverse_lazy('store:list')
 
-    def get_queryset(self):
-        """Only allow deletion of stores belonging to the logged-in user's profile."""
-        profile = getattr(self.request.user, 'profile', None)
-        if profile:
-            return Store.objects.filter(profile=profile)
-        return Store.objects.none()
+    def get_object(self):
+        profile_id = self.kwargs.get('profile_id')
+        profile = get_object_or_404(Profile, id=profile_id, human=self.request.user)
+        return getattr(profile, 'store', None)
+
+    def get_success_url(self):
+        return reverse_lazy('store:list')

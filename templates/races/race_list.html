@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <!-- race_list.html -->
-<div class="page_header">My Races</div>
+
+<div class="page_header">
+    My Races
+    (<a href="/profiles/build/?profiletype=driver">New</a>)
+</div>
 
 {% if profiles %}
     {% for profile in profiles %}

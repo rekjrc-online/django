@@ -18,17 +18,25 @@ class LocationListView(LoginRequiredMixin, ListView):
             Location.objects
             .filter(profile__human=self.request.user)
             .select_related('profile')
-            .order_by('profile__displayname')
-        )
+            .order_by('profile__displayname'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        unused_location_profiles = (
+            Profile.objects
+            .filter(
+                human=self.request.user,
+                profiletype='LOCATION',
+                locations__isnull=True
+            ).order_by('displayname'))
+
+        context['unused_location_profiles'] = unused_location_profiles
+        return context
 
 class ProfileMixin:
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.profile = get_object_or_404(
-            Profile,
-            id=self.kwargs['profile_id'],
-            human=request.user
-        )
+        self.profile = get_object_or_404(Profile,id=self.kwargs['profile_id'],human=self.request.user)
         return None
 
 class LocationBuildView(LoginRequiredMixin, ProfileMixin, CreateView):

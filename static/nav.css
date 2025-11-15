@@ -1,6 +1,6 @@
 nav {
     text-align: center;
-    padding: 3px;
+    padding: 10px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -14,4 +14,8 @@ nav a {
     text-decoration: none;
     color: var(--accent1);
     font-weight: bold;
+}
+
+nav a:hover {
+    color: var(--font1);
 }

@@ -10,7 +10,6 @@ from django.http import JsonResponse
 from .models import Post, PostLike
 from .forms import PostForm
 
-
 class PostCreateView(CreateView):
     model = Post
     form_class = PostForm
@@ -85,42 +84,22 @@ class PostRepliesAjax(View):
             'html': html,
             'has_next': page_obj.has_next()})
 
-
 class PostReplyView(LoginRequiredMixin, CreateView):
-    from .models import Post
-    login_url = '/humans/login/'
     model = Post
     form_class = PostForm
     template_name = 'posts/post_reply.html'
+    login_url = '/humans/login/'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['human'] = self.request.user  # pass logged-in user so form can filter profiles
+        kwargs['human'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
         parent_post = get_object_or_404(Post, id=self.kwargs['post_id'])
-
-        # Assign relationships
         form.instance.human = self.request.user
         form.instance.parent = parent_post
-        # ⬆️ NOTE: We NO LONGER override profile — it comes from the form dropdown now.
-
-        # --- DEBUG ---
-        print("=== DEBUG: PostReplyView.form_valid() ===")
-        print("Form data:", form.data)
-        print("Assigned fields:")
-        for field in ['human', 'profile', 'parent', 'content', 'image', 'video_url']:
-            print(f"{field}: {getattr(form.instance, field, None)}")
-        print("Form valid?", form.is_valid())
-        print("Form errors:", form.errors)
-        print("=========================================")
-
-        if not form.is_valid():
-            return self.form_invalid(form)
-
-        response = super().form_valid(form)
-        return response
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('posts:post_detail', args=[self.kwargs['post_id']])
@@ -129,7 +108,6 @@ class PostReplyView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['parent_post'] = get_object_or_404(Post, id=self.kwargs['post_id'])
         return context
-
 
 class HomepageView(ListView):
     model = Post
@@ -164,10 +142,8 @@ class HomepageView(ListView):
             return render(self.request, 'posts/post_list.html', {'posts': context['posts']})
         return super().render_to_response(context, **response_kwargs)
 
-
 @login_required
 def toggle_like(request, post_id):
-    # ✅ Ensure user has a Human profile
     try:
         human = request.user
     except AttributeError:
@@ -178,7 +154,6 @@ def toggle_like(request, post_id):
     if not created:
         like.delete()
     return redirect(request.META.get('HTTP_REFERER', '/'))
-
 
 @login_required
 @require_POST
@@ -201,7 +176,6 @@ def toggle_like_ajax(request, post_id):
         print(traceback.format_exc())
         return JsonResponse({'error': str(e)}, status=500)
 
-
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     fields = ['content']
@@ -213,7 +187,6 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         if post.human != request.user:
             return redirect('profiles:detail-profile', profile_id=post.profile.id)
         return super().dispatch(request, *args, **kwargs)
-
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post

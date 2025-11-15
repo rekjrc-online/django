@@ -1,40 +1,34 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import ListView, View, DeleteView
+from django.conf import settings
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Max
-from django.db import models
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse_lazy, reverse
+from django.views import View
+from django.views.generic import ListView, View, DeleteView
 from profiles.models import Profile
-from .models import Race, RaceDriver, LapMonitorResult, RaceDragRace, RaceCrawlerRun
+from .models import Race, RaceDriver, LapMonitorResult, RaceDragRace, RaceCrawlerRun, CrawlerRunLog
 from .forms import RaceForm
 from io import TextIOWrapper
 import random
 import math
+import json
 import csv
-
+import os
+import qrcode
 
 class RaceCrawlerCompView(View):
     template_name = 'races/race_crawler_comp.html'
 
     def get(self, request, profile_id, race_id):
         race = get_object_or_404(Race, id=race_id)
-        # Get all drivers for this race in signup order
         racedrivers = RaceDriver.objects.filter(race=race).order_by('id')
-
-        # Prefetch or annotate each driver with their run
         for driver in racedrivers:
             driver.run = RaceCrawlerRun.objects.filter(race=race, racedriver=driver).first()
-
         return render(request, self.template_name, {
             'race': race,
             'racedrivers': racedrivers,
         })
-
-from django.shortcuts import get_object_or_404, render, redirect
-from django.views import View
-from .models import Race, RaceDriver, RaceCrawlerRun, CrawlerRunLog
-import json
 
 class RaceCrawlerRunView(View):
     template_name = 'races/race_crawler_run.html'
@@ -173,24 +167,19 @@ class RaceDragRaceView(LoginRequiredMixin, View):
         return render(request, self.template_name, {"race": race, "rounds": drag_rounds})
 
     def post(self, request, profile_id, race_id):
-        race = get_object_or_404(Race, pk=race_id)
-
-        # Only the race owner can submit winners
+        race = get_object_or_404(Race, id=race_id)
         if race.human != request.user:
             return redirect("profiles:detail-profile", profile_id=race.profile.id)
-
-        # Loop over each drag round and save winner if provided
+        if race.human != request.user:
+            return redirect("profiles:detail-profile", profile_id=race.profile.id)
         for drag_round in RaceDragRace.objects.filter(race=race):
             winner_id = request.POST.get(f"winner_{drag_round.id}")
             if winner_id:
-                print("WINNER_ID", winner_id)
                 winner_driver = RaceDriver.objects.filter(id=winner_id).first()
                 if winner_driver:
                     drag_round.winner = winner_driver
                     drag_round.save()
-
         return redirect("races:race_drag_race", profile_id=profile_id, race_id=race_id)
-
 
 class LapMonitorUploadView(LoginRequiredMixin, View):
     template_name = "races/lapmonitor_upload.html"
@@ -272,15 +261,18 @@ class RaceListView(LoginRequiredMixin, ListView):
 
 class RaceBuildView(View):
     template_name = "races/race_build.html"
+
     def dispatch(self, request, *args, **kwargs):
-        self.profile = get_object_or_404(Profile, id=kwargs["profile_id"])
+        self.profile = get_object_or_404(Profile, id=kwargs["profile_id"], human=self.request.user)
         existing_race = Race.objects.filter(profile=self.profile).first()
         if existing_race:
             return redirect("profiles:detail-profile", profile_id=self.profile.id)
         return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
         form = RaceForm()
         return render(request, self.template_name, {"form": form, "profile": self.profile})
+
     def post(self, request, *args, **kwargs):
         form = RaceForm(request.POST)
         if form.is_valid():
@@ -288,14 +280,38 @@ class RaceBuildView(View):
             race.profile = self.profile
             race.human = request.user
             race.save()
+
+            # --- Generate QR code for join page ---
+            join_url = request.build_absolute_uri(
+                reverse('races:race_join', kwargs={'profile_id': self.profile.id})
+            )
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_H,
+                box_size=8,
+                border=4
+            )
+            qr.add_data(join_url)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+
+            # Save to MEDIA_ROOT/qrcodes/race_<profile_id>.png
+            qr_dir = os.path.join(settings.MEDIA_ROOT, "qrcodes")
+            os.makedirs(qr_dir, exist_ok=True)
+            qr_filename = f"race_{self.profile.id}.png"
+            img.save(os.path.join(qr_dir, qr_filename))
+
+            print("made qrcode")
+
             return redirect("profiles:detail-profile", profile_id=self.profile.id)
-        return render(request, self.template_name, {"form": form, "profile": self.profile})
+
+        return render(self.template_name, {"form": form, "profile": self.profile})
 
 class RaceDeleteView(LoginRequiredMixin, DeleteView):
     model = Race
     template_name = "races/race_confirm_delete.html"
     def get_object(self):
-        profile = get_object_or_404(Profile, id=self.kwargs["profile_id"])
+        profile = get_object_or_404(Profile, id=self.kwargs["profile_id"], human=self.request.user)
         return getattr(profile, "race", None)
     def get_success_url(self):
         return reverse_lazy("races:race_list")

@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, reverse, get_object_or_404, render
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView, View
@@ -57,7 +58,7 @@ class ProfileUpdateView(LoginRequiredMixin, View):
             'subforms': {
                 'attributes': {
                     'fk': 'track',
-                    'formset': TrackAttributeFormSet } } },
+                    'formset': TrackAttributeFormSet}}},
         'event': {'model': Event, 'form': EventForm},
         'location': {'model': Location, 'form': LocationForm},
         'store': {'model': Store, 'form': StoreForm},
@@ -65,20 +66,20 @@ class ProfileUpdateView(LoginRequiredMixin, View):
     }
 
     def get(self, request, profile_id):
-        profile = get_object_or_404(Profile, pk=profile_id)
+        profile = get_object_or_404(Profile, pk=profile_id, human=request.user)
         profile_form = ProfileEditForm(instance=profile)
         context = {'profile': profile, 'profile_form': profile_form}
+
         profiletype_info = self.related_models.get(profile.profiletype.lower())
         if not profiletype_info:
             return render(request, self.template_name, context)
+
         model_class = profiletype_info['model']
         form_class = profiletype_info['form']
         subforms = profiletype_info.get('subforms', {})
         obj = model_class.objects.filter(profile=profile).first()
         related_form = form_class(instance=obj)
-        context['related_form'] = related_form
-        context['related_obj'] = obj
-        context['related_type'] = profile.profiletype
+
         subformsets = {}
         for key, sub in subforms.items():
             formset_class = sub.get('formset')
@@ -88,6 +89,7 @@ class ProfileUpdateView(LoginRequiredMixin, View):
                     queryset=getattr(obj, key).all() if obj else formset_class.model.objects.none(),
                     prefix=key
                 )
+
         context.update({
             'related_form': related_form,
             'related_obj': obj,
@@ -97,45 +99,24 @@ class ProfileUpdateView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, profile_id):
-        print()
-        print()
-        print("=================================")
-        print("Submitted POST data:", request.POST)
-        print("=================================")
-        print()
-        print()
-        print(f"\n--- ProfileUpdateView POST called for profile_id={profile_id} ---")
-        
-        profile = get_object_or_404(Profile, pk=profile_id)
-        print(f"Loaded Profile: {profile}")
-
+        profile = get_object_or_404(Profile, pk=profile_id, human=request.user)
         profile_form = ProfileEditForm(request.POST, request.FILES, instance=profile)
-        print(f"Profile form initialized. POST keys: {list(request.POST.keys())}, FILES keys: {list(request.FILES.keys())}")
 
         profiletype_info = self.related_models.get(profile.profiletype.lower())
         if not profiletype_info:
-            print("No related model for this profile type.")
             if profile_form.is_valid():
-                print("Profile form valid. Saving...")
                 profile_form.save()
                 return redirect('profiles:detail-profile', profile_id=profile.id)
-            else:
-                print("Profile form invalid:", profile_form.errors)
-                return render(self.request, self.template_name, {'profile': profile, 'profile_form': profile_form})
+            return render(request, self.template_name, {'profile': profile, 'profile_form': profile_form})
 
         model_class = profiletype_info['model']
         form_class = profiletype_info['form']
         subforms = profiletype_info.get('subforms', {})
-        print(f"Related model: {model_class}, Form: {form_class}, Subforms: {list(subforms.keys())}")
 
-        # Ensure related object exists
-        related_obj, created = model_class.objects.get_or_create(profile=profile)
-        print(f"Related object: {related_obj} (created={created})")
-
+        # Ensure human is set when creating related object
+        related_obj, created = model_class.objects.get_or_create(profile=profile, defaults={'human': request.user})
         related_form = form_class(request.POST, request.FILES, instance=related_obj)
-        print(f"Related form initialized. Valid? {related_form.is_valid()}")
 
-        # Build inline formsets
         subformsets = {}
         for key, sub in subforms.items():
             if 'formset' in sub:
@@ -147,45 +128,33 @@ class ProfileUpdateView(LoginRequiredMixin, View):
                     queryset=getattr(related_obj, key).all() if related_obj else formset_class.model.objects.none(),
                     prefix=key
                 )
-                # Remove empty forms before saving
                 fs.forms = [f for f in fs.forms if f.has_changed()]
                 subformsets[key] = fs
 
-        # Validate all forms
         all_valid = profile_form.is_valid() and related_form.is_valid() and all(fs.is_valid() for fs in subformsets.values())
-        print(f"Validation: profile_form={profile_form.is_valid()}, related_form={related_form.is_valid()}, all subforms valid={all(fs.is_valid() for fs in subformsets.values())}")
 
         if not all_valid:
-            print("Form validation failed.")
-            print("Profile form errors:", profile_form.errors)
-            print("Related form errors:", related_form.errors)
-            for key, fs in subformsets.items():
-                print(f"Subformset '{key}' errors: {fs.errors}")
             context = {
                 'profile': profile,
                 'profile_form': profile_form,
                 'related_form': related_form,
                 'related_type': profile.profiletype,
-                'subformsets': subformsets,
+                'subformsets': subformsets
             }
             return render(request, self.template_name, context)
 
-        # Save all forms
-        print("All forms valid. Saving...")
+        # Save all forms safely
         profile_form.save()
         related_obj = related_form.save(commit=False)
         related_obj.profile = profile
+        related_obj.human = request.user  # <-- ensures NOT NULL
         related_obj.save()
-        print(f"Saved related object: {related_obj}")
 
         for key, fs in subformsets.items():
-            fs.instance = related_obj  # ensure FK is set
-            saved_instances = fs.save()
-            print(f"Saved subformset '{key}' with {len(saved_instances)} instances.")
+            fs.instance = related_obj
+            fs.save()
 
-        print("Redirecting to profile detail page.")
         return redirect('profiles:detail-profile', profile_id=profile.id)
-
 
 class ProfilesListView(LoginRequiredMixin, ListView):
     model = Profile
@@ -201,11 +170,23 @@ class ProfileBuildView(LoginRequiredMixin, CreateView):
     form_class = ProfileCreateForm
     template_name = 'profiles/profile_build.html'
     login_url = '/humans/login/'
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        profiletype_param = self.request.GET.get('profiletype', '').upper()
+        allowed_types = [choice[0] for choice in Profile.PROFILE_TYPE_CHOICES]
+
+        if profiletype_param in allowed_types:
+            # Hide the field and set initial value
+            form.fields['profiletype'].initial = profiletype_param
+            form.fields['profiletype'].widget = forms.HiddenInput()
+
+        return form
+
     def form_valid(self, form):
         form.instance.human = self.request.user
         self.object = form.save()
         return redirect('profiles:detail-profile', profile_id=self.object.pk)
-
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = Profile
@@ -259,14 +240,13 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         context['related_objs'] = related_objs
         return context
 
-
 class ProfileDeleteView(LoginRequiredMixin, DeleteView):
     model = Profile
     template_name = 'profiles/confirm_delete.html'
     pk_url_kwarg = 'profile_id'
     login_url = '/humans/login/'
     def get_object(self, queryset=None):
-        profile = get_object_or_404(Profile, pk=self.kwargs['profile_id'])
+        profile = get_object_or_404(Profile, pk=self.kwargs['profile_id'], human=self.request.user)
         if profile.human != self.request.user:
             return redirect('profiles:detail-profile', profile_id=profile.id)
         return profile

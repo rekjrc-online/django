@@ -2,7 +2,10 @@
 {% block content %}
 <!-- track_list.html -->
 
-<div class="page_header">My Tracks</div>
+<div class="page_header">
+    My Tracks
+    (<a href="/profiles/build/?profiletype=track">New</a>)
+</div>
 
 {% if tracks %}
     {% for track in tracks %}

@@ -46,7 +46,7 @@ class EventDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/humans/login/'
 
     def get_object(self):
-        event = get_object_or_404(Event, id=self.kwargs['profile_id'], human=self.request.user)
+        event = get_object_or_404(Event, id=self.kwargs['event_id'], human=self.request.user)
         if not event:
             return redirect('profiles:detail-profile', id=self.kwargs['profile_id'])
         return event
@@ -69,17 +69,12 @@ class AddInterestView(LoginRequiredMixin, View):
     login_url = '/humans/login/'
     def post(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
-        EventInterest.objects.get_or_create(
-            event=event,
-            human=request.user)
+        EventInterest.objects.get_or_create(event=event, human=request.user)
         return redirect('events:event_detail', event_id=event_id)
 
 class RemoveInterestView(LoginRequiredMixin, View):
     login_url = '/humans/login/'
     def post(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
-        EventInterest.objects.filter(
-            event=event,
-            human=request.user
-        ).delete()
+        EventInterest.objects.filter(event=event, human=request.user).delete()
         return redirect('events:event_detail', event_id=event_id)

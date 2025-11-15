@@ -16,6 +16,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('builds/', include('builds.urls')),
     path('clubs/', include('clubs.urls')),
+    path('drivers/', include('drivers.urls')),
     path('events/', include('events.urls')),
     path('humans/', include('humans.urls')),
     path('locations/', include('locations.urls')),

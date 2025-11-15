@@ -5,6 +5,7 @@ from .models import Build, BuildAttribute, BuildAttributeEnum
 class BuildAdmin(admin.ModelAdmin):
     list_display = ('human', 'profile')
     search_fields = ('human__username',)
+    list_filter = ('human__username',)
 
 @admin.register(BuildAttribute)
 class BuildAttributeAdmin(admin.ModelAdmin):

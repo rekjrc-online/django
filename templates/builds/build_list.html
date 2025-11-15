@@ -2,7 +2,10 @@
 {% block content %}
 <!-- build_list.html -->
 
-<div class="page_header">My Builds</div>
+<div class="page_header">
+    My Builds
+    (<a href="/profiles/build/?profiletype=model">New</a>)
+</div>
 
 {% if builds %}
     {% for build in builds %}

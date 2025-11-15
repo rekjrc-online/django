@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- driver_list.html -->
+
+<div class="page_header">
+    My Drivers
+    (<a href="/profiles/build/?profiletype=driver">New</a>)
+</div>
+
+{% if drivers %}
+    {% for driver in drivers %}
+        <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ driver.id }}/';">
+            <a href="{% url 'profiles:detail-profile' profile_id=driver.id %}">
+                {{ driver.displayname }}
+            </a>
+            {% if driver.avatar %}
+                <img src="{{ driver.avatar.url }}" alt="{{ driver.displayname }}" style="height:50px; width:50px; object-fit:cover; border-radius:50%;">
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No drivers found.</p>
+{% endif %}
+
+{% endblock %}

@@ -7,9 +7,7 @@ class Location(BaseModel):
     human = models.ForeignKey(
         Human,
         on_delete=models.PROTECT,
-        related_name='locations',
-        null=True,
-        blank=True)
+        related_name='locations')
     profile = models.ForeignKey(
         Profile,
         on_delete=models.PROTECT,

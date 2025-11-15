@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Your apps
     "builds",
     "clubs",
+    "drivers",
     "events",
     "humans",
     "locations",

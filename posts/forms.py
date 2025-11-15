@@ -18,12 +18,14 @@ class PostForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        human = kwargs.pop('human', None)  # pass the logged-in user
+        self.human = kwargs.pop('human', None)
         super().__init__(*args, **kwargs)
-
-        if human:
-            # Limit dropdown to this user's profiles
-            self.fields['profile'].queryset = Profile.objects.filter(human=human).order_by('profiletype', 'displayname')
-
-        # Label format: "TYPE - Name"
+        if self.human:
+            self.fields['profile'].queryset = Profile.objects.filter(human=self.human).order_by('profiletype', 'displayname')
         self.fields['profile'].label_from_instance = lambda obj: f"{obj.get_profiletype_display()} - {obj.displayname}"
+
+    def clean_profile(self):
+        profile = self.cleaned_data.get('profile')
+        if profile and profile.human != self.human:
+            raise forms.ValidationError("Invalid profile selected.")
+        return profile

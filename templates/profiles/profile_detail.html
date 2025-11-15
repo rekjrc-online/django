@@ -39,6 +39,20 @@
     </table>
 
     {% if related_objs %}
+        {% if profile.profiletype == "MODEL" %}
+            <h1>Build Attributes</h1>
+        {% elif profile.profiletype == "DRIVER" %}
+            <h1>Driver Attributes</h1>
+        {% elif profile.profiletype == "LOCATION" %}
+            <h1>Location Attributes</h1>
+        {% elif profile.profiletype == "RACE" %}
+            <center>
+                <h1>Join Race Link</h1>
+                <img src="/media/qrcodes/race_{{ profile.id }}.png">
+            </center>
+        {% elif profile.profiletype == "TRACK" %}
+            <h1>Track Attributes</h1>
+        {% endif %}
         {% for key, info in related_objs.items %}
             {% if info %}
                 {% if info.locations %}
