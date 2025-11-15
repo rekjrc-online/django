@@ -282,7 +282,7 @@ class RaceBuildView(View):
             race.save()
 
             # --- Generate QR code for join page ---
-            join_url = request.build_absolute_uri(
+            join_url = "https://" + request.build_absolute_uri(
                 reverse('races:race_join', kwargs={'profile_id': self.profile.id})
             )
             qr = qrcode.QRCode(
