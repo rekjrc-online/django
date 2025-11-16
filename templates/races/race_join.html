@@ -17,7 +17,11 @@
                 <td>
                     {% if profile.avatar %}
                         <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}" class="avatar">
+                    {% else %}
+                        <img src="/static/nophoto_DRIVER.png" class="avatar">
                     {% endif %} &nbsp;
+                </td>
+                <td>
                     {{ profile.displayname }}
                 </td>
             </tr>
@@ -36,7 +40,11 @@
                 <td>
                     {% if profile.avatar %}
                         <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}" class="avatar">
+                    {% else %}
+                        <img src="/static/nophoto_MODEL.png" class="avatar">
                     {% endif %} &nbsp;
+                </td>
+                <td>
                     {{ profile.displayname }}
                 </td>
             </tr>
