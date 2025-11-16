@@ -20,23 +20,25 @@ document.addEventListener('DOMContentLoaded', () => {
             loading = true;
             loadingIndicator.style.display = 'block';
             console.log("listener 3");
-            fetch(`?page=${page}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(response => response.text())
-                .then(html => {
-                    if (html.trim() === '') {
-                        hasMore = false;
-                        endMessage.style.display = 'block';
-                    } else {
-                        feed.insertAdjacentHTML('beforeend', html);
-                        page += 1;
-                    }
-                })
-                .catch(err => console.error('Error fetching posts:', err))
-                .finally(() => {
-                    loading = false;
-                    loadingIndicator.style.display = hasMore ? 'block' : 'none';
-                });
-            console.log("listener 4");
+            setTimeout(() => {
+                fetch(`?page=${page}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(response => response.text())
+                    .then(html => {
+                        if (html.trim() === '') {
+                            hasMore = false;
+                            endMessage.style.display = 'block';
+                        } else {
+                            feed.insertAdjacentHTML('beforeend', html);
+                            page += 1;
+                        }
+                    })
+                    .catch(err => console.error('Error fetching posts:', err))
+                    .finally(() => {
+                        loading = false;
+                        loadingIndicator.style.display = hasMore ? 'block' : 'none';
+                    });
+                console.log("listener 4");
+            }, 2000);  // <-- 2 seconds
         }
         console.log("observer bottom");
     }, {
